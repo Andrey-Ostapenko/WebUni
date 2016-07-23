@@ -1,0 +1,28 @@
+﻿@{ Layout = null;}
+@using livemenu.Helpers
+@model livemenu.Common.Kernel.Settings.CatalogSettings
+
+
+@using (Ajax.BeginForm(MVC.Settings.Home.SaveCatalogSettings(), new AjaxOptions()
+{
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "catalogsettings-edit"
+}))
+{
+    <div class="row">
+
+        <div class="form-group">
+            <label>Очищать кэш страниц при сохранении </label>
+
+            @Html.BasicCheckBoxFor(m => m.ClearCacheOnSave, new {data_init_plugin = "switchery"})
+        </div>
+        
+    </div>
+}
+<script>
+    $(document).ready(function() {
+        $.Pages.initSwitcheryPlugin('switchery');
+    });
+</script>
+  

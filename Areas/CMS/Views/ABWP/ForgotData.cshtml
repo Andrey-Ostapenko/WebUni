@@ -1,0 +1,30 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniForgot
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniForgotData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.ForgotDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    //initUniTextCard($('#WebUniProfileData-@Model.ID'), '@Model.ID');
+
+
+
+
+</script>

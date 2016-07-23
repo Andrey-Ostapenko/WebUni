@@ -1,0 +1,93 @@
+﻿@model System.Collections.Generic.List<livemenu.Areas.Projects.Controllers.DynamicEntityTableRecordModel>
+
+@{
+    Layout = null;
+}
+
+<style>
+    .dyn-table-columns-hide-btn, .dyn-table-columns {
+        display: none;
+    }
+
+    .dyn-table-columns-show-btn, .dyn-table-columns-hide-btn {
+        cursor: pointer;
+            /*padding: 7px 0px 3px 0px;*/
+    height: auto;
+    line-height: initial;
+        font-weight: normal;
+    /*border-bottom: dashed rgb(91, 91, 91) 1px;*/
+        position: relative;
+    text-decoration: underline;
+    }
+
+    .dyn-table-name {
+        text-transform: uppercase
+
+    }
+
+    .dyn-table-columns-visible .dyn-table-columns {
+        display: block;
+     }
+
+     .dyn-table-columns-visible .dyn-table-columns-show-btn {
+        display: none;
+     }
+
+     .dyn-table-columns-visible .dyn-table-columns-hide-btn {
+        display: inline-block;
+     }
+
+     .dyn-table-overview {
+         margin-top: 25px;
+     }
+
+</style>
+<script>
+    function showDynTableOverview(el) {
+        el.closest('.dyn-table-overview').addClass('dyn-table-columns-visible');
+    }
+
+    function hideDynTableOverview(el) {
+        el.closest('.dyn-table-overview').removeClass('dyn-table-columns-visible');
+    }
+</script>
+
+@foreach (var item in Model)
+{
+    if (!string.IsNullOrEmpty(item.TableVersionName))
+    {
+        item.TableVersionName = "(" + item.TableVersionName + ")";
+    }
+
+    <div class="dyn-table-overview">
+        
+        <div >
+            <span class="dyn-table-name">@item.TableDisplayName @item.TableVersionName #@item.EntityID</span>
+            <span class="dyn-table-columns-show-btn" onclick="showDynTableOverview($(this));">посмотреть</span>
+            <span class="dyn-table-columns-hide-btn" onclick="hideDynTableOverview($(this));">скрыть</span>
+        </div>
+
+        <div class="dyn-table-columns" >
+            @foreach (var column in item.Columns)
+            {
+                var value = item.Entity.GetType().GetProperty(column.Name).GetValue(item.Entity);
+                var val = (value != null ? value.ToString() : "");
+                var code = (column.DynamicColumnCode != null ? column.DynamicColumnCode.FirstOrDefault() : null);
+                var codeName = code != null ? code.Code : null;
+                var codeNamef = (codeName != null ? "{{" + codeName + "#"+ item.EntityID.ToString() + "}}" : "");
+
+            <div class="form-group WebUni-form-group WebUni-form-group-input WebUni-form-group-ple-info" style="margin-top: 0px !important">
+
+                <div class="">
+                    <label>
+                        <span class="WebUni-form-group-ple-info-name">@column.DisplayName: </span><span class="WebUni-form-group-ple-info-value"> @val </span>
+                        <span class="WebUni-form-group-ple-info-value">@codeNamef </span>
+                    </label>
+                </div>
+            </div>
+            }
+
+        </div>
+        
+    </div>
+}

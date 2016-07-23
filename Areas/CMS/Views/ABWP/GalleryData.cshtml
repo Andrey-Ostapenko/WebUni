@@ -1,0 +1,39 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniGallery
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div   id='WebUniGalleryData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.GalleryDataInternal, Model); }
+        </div>
+    </div>
+</div>
+
+<script>
+    initUniLineCard($('#WebUniGalleryData-@Model.ID'));
+
+    var rad = $('#gallery-carouselwithbrowsing-radio');
+    rad.on("change", function (ev) {
+        changeAddititionalDesign(this.checked);
+    });
+    var rad2 = $('#gallery-carousel-radio');
+    rad2.on("change", function (ev) {
+        changeAddititionalDesign(!this.checked);
+    });
+    changeAddititionalDesign(rad[0].checked);
+
+    function changeAddititionalDesign(show) {
+        if (show) {
+            $('#gallery-design-view-size').show();
+            $('#gallery-design-carousel-size').show();
+        }
+        else {
+            $('#gallery-design-view-size').hide();
+            $('#gallery-design-carousel-size').hide();
+        }
+        $('#CarouselWithBrowsing').val(show);
+        $('#CarouselEnabled').val(!show);
+    }
+</script>

@@ -1,0 +1,68 @@
+﻿@using DevExpress.Data.Linq
+@using livemenu.Helpers
+@using livemenu.Kernel.Settings
+@using Microsoft.Practices.ServiceLocation
+@{
+    Layout = MVC.Shared.Views._ResponsiveLayout;
+    var applications = ServiceLocator.Current.GetInstance<IApplicationService>().GetAll().OrderBy(x => x.Priority);
+}
+
+<style>
+    #apps {
+            margin-left: 6px;
+    }
+     #apps .WebUni-checkbox {
+         float: left;
+     }
+</style>
+
+<div id="apps">
+    @{
+        var pl = applications.First(x => x.ID == 15);
+    }
+    <div class="row">
+        <div class="form-group WebUni-form-group WebUni-form-group-big application-cont" data-id="@pl.ID">
+            <label for="Height" class="col-xs-3 control-label">@pl.Name</label>
+            <div class="col-xs-5" style="height: 35px;">
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    @foreach (var application in applications.Where(x=>x.ID != 15))
+    {
+        <div class="row">
+            <div class="form-group WebUni-form-group WebUni-form-group-big application-cont" data-id="@application.ID">
+                <label for="Height" class="col-xs-3 control-label">@application.Name</label>
+                <div class="col-xs-5">
+                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                        @Html.BasicCheckBoxFor(x => application.IsEnabled, new {data_init_plugin = "switchery_internal", onchange = "onApplicationEnabledChanged($(this))",})
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+        if (!$('#apps').hasClass('already-init'))
+        {
+            $.Pages.initSwitcheryPluginInElement('switchery_internal', $('#apps'));
+            $('#apps').addClass('already-init');
+        }
+    });
+   
+    function onApplicationEnabledChanged(element) {
+        var url = '@Url.Action(MVC.Settings.Home.ApplicationStateChanged())';
+        var id = element.closest('.application-cont').data('id');
+        var state = element.is(":checked");
+        $.post(url,
+        {
+            ID: id,
+            State: state
+        });
+    }
+</script>

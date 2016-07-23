@@ -1,0 +1,58 @@
+﻿@using livemenu.Common.Entities
+@using livemenu.Helpers
+
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+
+    var id = "ID " + Model.ID;
+}
+
+@model livemenu.Kernel.Account.WebUniAccountModelBase
+
+
+
+<div class="panel panel-transparent">
+    <div class="panel-body no-padding">
+        <div class="panel panel-default" style="overflow: auto; ">
+          
+            <div class="panel-body">
+
+                <div class="row" style="margin-top: 20px">
+                    <div class="col-sm-12">
+                        <div class="pull-left">
+                            <div class="">Аккаунт</div>
+                        </div>
+                        <div class="pull-right" >
+                            <div class="btn account-id-btn" style="min-width: 100px">@id</div>
+                        </div>    
+                    </div>
+                    
+                </div>
+
+                @{
+                    switch (Model.Type)
+                    {
+                        case ClientLegalTypeValue.LegalPersonality:
+                            {
+                                Html.RenderPartial(MVC.Account.Views.LegalPersonalityCard, Model);
+                                break;
+                            }
+                        case ClientLegalTypeValue.NaturalPerson:
+                            {
+                                Html.RenderPartial(MVC.Account.Views.NaturalPersonCard, Model);
+                                break;
+                            }
+                        case ClientLegalTypeValue.IndividualProprietor:
+                            {
+                                Html.RenderPartial(MVC.Account.Views.IndividualProprietorCard, Model);
+                                break;
+                            }
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

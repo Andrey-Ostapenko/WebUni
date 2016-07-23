@@ -1,0 +1,46 @@
+﻿@using livemenu.Kernel.Executing
+@{
+    Layout = MVC.Shared.Views._MenuLayout;
+}
+<div class="sidebar-menu" id="main-menu">
+    <ul class="menu-items">
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.Tasks.Home.Index())"  class="">
+                <span class="title">Панель</span>
+            </a>
+            <span class="icon-thumbnail"><i class="fa fa-th-list"></i></span>
+        </li>
+        
+        <li class="">
+            <a href="@Url.Action(MVC.Tasks.Home.Catalog())"  class="">
+                <span class="title">Задачи</span>
+            </a>
+            <span class="icon-thumbnail"><i class="fa fa-th"></i></span>
+        </li>
+        <li class="">
+            <a href="#">
+                <span class="title">База данных</span>
+                <span class="arrow"></span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-database"></i></span>
+            <ul class="sub-menu" style="display: none; overflow: hidden;">
+                <li class="">
+                    <a href="@Url.Action(MVC.Tasks.Home.DataBase())">Таблицы</a>
+                    <span class="icon-thumbnail"><i class="fa fa-table"></i></span>
+                </li>
+                <li class="">
+                    <a href="@Url.Action(MVC.Tasks.Home.Codes())">Коды</a>
+                    <span class="icon-thumbnail"><i class="fa fa-code"></i></span>
+                </li>
+            </ul>
+        </li>
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.FileManager.Index(LMExecutingType.Tasks))"  class="detailed">
+                <span class="title">Файлы</span>
+                <span class="details">Управление файлами</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-cloud"></i></span>
+        </li>
+    </ul>
+    <div class="clearfix"></div>
+</div>

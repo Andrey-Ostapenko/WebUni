@@ -1,0 +1,114 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniSearchFilter
+
+
+<style>
+
+
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniSearchFilterData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.SearchFilterDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    initUniSearchFilterCard($('#WebUniSearchFilterData-@Model.ID'), @Model.ID);
+
+    function initUniSearchFilterCard(element, id) {
+        var target = element.find("#CatalogItemTargetID");
+        $.Pages.initSelectFxPluginInElement(element);
+        $.Pages.initSwitcheryPluginInElement('switchery_internal', element);
+        target.select2
+                (
+                    {
+                        multiple: false,
+
+                        allowClear: true,
+                        ajax: {
+                            url: $('#workspace-portlet').data('searchsection'),
+                            dataType: 'json',
+                            data: function (term, page) {
+                                return {
+                                    id: term,
+                                    pageLimit: 10,
+                                    page: page
+                                };
+                            },
+                            results: function (data, page) {
+                                var more = (page * 10) < data.count;
+                                return { results: data.items, more : more};
+                            }
+                        },
+                        initSelection: function (element, callback) {
+                            var id = target.val();
+                            if (id !== null && id.length > 0) {
+                                $.ajax($('#workspace-portlet').data('getsection') + '/' + id, {
+                                    dataType: "json"
+                                }).done(function(data) {
+                                    callback(data[0]);
+                                });
+                            }
+                        },
+                        formatResult: s2FormatResult,
+                        formatSelection: s2FormatSelection
+                    }
+                );
+
+        target.on("change", function (ev) {
+            var choice;
+            var values = ev.val;
+            target.val(values);
+        });
+
+
+
+        var target = element.find('#TagGroupID');
+        target.select2(
+        {
+            multiple: false,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchtaggroup'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term
+                    };
+                },
+                results: function (data) {
+                    return { results: data };
+                }
+            },
+            initSelection: function (element, callback) {
+                var id = target.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('gettaggroup') + '/' + id, {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data[0]);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+
+
+        });
+
+        target.on("change", function (ev) {
+            var choice;
+            var values = ev.val;
+            target.val(values);
+        });
+    };
+</script>

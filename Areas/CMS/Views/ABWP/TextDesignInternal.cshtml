@@ -1,0 +1,648 @@
+﻿@{
+    Layout = null;
+
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var textgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.TextDesignText);
+    var textVisible = textgroup.IsVisible ? string.Empty : "hidden";
+    var textcollapsed = textgroup.IsCollapse ? "collapsed" : string.Empty;
+    var textcollapsein = !textgroup.IsCollapse ? "in" : string.Empty;
+
+    var linkgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.TextDesignLinks);
+    var linkVisible = linkgroup.IsVisible ? string.Empty : "hidden";
+    var linkcollapsed = linkgroup.IsCollapse ? "collapsed" : string.Empty;
+    var linkcollapsein = !linkgroup.IsCollapse ? "in" : string.Empty;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniText
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.TextDesignSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+
+    OnComplete = "OnCatalogItemFormCompleted"
+},
+
+            new
+            {
+                @class = "form-horizontal ",
+            }))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+
+        <div class="@textVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID"  data-vg="@CatalogItemViewGroup.TextDesignText">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-text-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@textcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.TextDesignText]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-text-acc" class="vg-acc-content collapse @textcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-big">
+                            <label for="Height" class="col-sm-7 control-label">Шрифт</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group WebUni-form-group WebUni-form-group-group  WebUni-form-group-input">
+                            <div class="">
+                                <input type="hidden" class="select2-offscreen" id="CatalogItem.FontID" style="width: 100%" value="@Model.CatalogItem.FontID" />
+                                <input type="text" id="FontID" class='tag-input full-width' name="CatalogItem.FontID" value="@Model.CatalogItem.FontID" />
+                            </div>
+                        </div>
+
+
+                        <ul class="nav nav-tabs nav-tabs-fillup WebUni-vg-tabs">
+                            <li class="active">
+                                <a data-toggle="tab" href="#@Model.CatalogItemID-text-before"><span>до наведения</span></a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" href="#@Model.CatalogItemID-text-after"><span>при наведении</span></a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" href="#@Model.CatalogItemID-text-active"><span>при включении</span></a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="@Model.CatalogItemID-text-before">
+                                <div class="form-group WebUni-form-group ">
+                                    <label for="Height" class="col-sm-7 control-label">Местоположение</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <div class="col-sm-7 ">
+                                        @Html.DropDownListFor(m => m.Align, new SelectList(
+                    new[]
+                    {
+                        new {Value = 0, Text = "Слева"},
+                        new {Value = 1, Text = "По центру"},
+                        new {Value = 2, Text = "Справа"},
+                    },
+                    "Value",
+                    "Text",
+                    Model.Align),
+                    new {@class = "cs-select cs-skin-slide", data_init_plugin = "cs-select"}
+                    )
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group ">
+                                    <label for="Height" class="col-sm-7 control-label">Размер</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.Size, new
+                {
+                    @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+                    placeholder = "авто"
+                })
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Цвет</label>
+                                    @{
+                var item = Model.Color;
+                if (string.IsNullOrEmpty(item))
+                {
+                    Model.Color = "rgb(0, 0, 0)";
+                }
+                                    }
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.Color, new
+                {
+                    @class = "color-picker-fe_internal form-control WebUni-form-element"
+                })
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Жирный</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                        var idr = "c" + Model.CatalogItemID + "Bold";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.Bold, new {id = idr})
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Курсив</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                        idr = "c" + Model.CatalogItemID + "Italic";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.Italic, new {id = idr})
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Подчеркивать</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                        idr = "c" + Model.CatalogItemID + "Underline";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.Underline, new {id = idr})
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane" id="@Model.CatalogItemID-text-after">
+
+                                <div class="form-group WebUni-form-group ">
+                                    <label for="Height" class="col-sm-7 control-label">Местоположение</label>
+                                    <div class="col-sm-5" style="float: right;">
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <div class="col-sm-7 ">
+                                        @Html.DropDownListFor(m => m.HoverAlign, new SelectList(
+                    new[]
+                    {
+                        new {Value = 0, Text = "Слева"},
+                        new {Value = 1, Text = "По центру"},
+                        new {Value = 2, Text = "Справа"},
+                    },
+                    "Value",
+                    "Text",
+                    Model.HoverAlign),
+                    new {@class = "cs-select cs-skin-slide", data_init_plugin = "cs-select"}
+                    )
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group ">
+                                    <label for="Height" class="col-sm-7 control-label">Размер</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.HoverSize, new
+                {
+                    @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+                    placeholder = "авто"
+                })
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Цвет</label>
+                                    @{
+                item = Model.HoverColor;
+                if (string.IsNullOrEmpty(item))
+                {
+                    Model.HoverColor = "rgb(0, 0, 0)";
+                }
+                                    }
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.HoverColor, new
+                {
+                    @class = "color-picker-fe_internal form-control WebUni-form-element"
+                })
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Жирный</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                        idr = "c" + Model.CatalogItemID + "HoverBold";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.HoverBold, new {id = idr})
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Курсив</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                        idr = "c" + Model.CatalogItemID + "HoverItalic";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.HoverItalic, new {id = idr})
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Подчеркивать</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                        idr = "c" + Model.CatalogItemID + "HoverUnderline";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.HoverUnderline, new {id = idr})
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="tab-pane" id="@Model.CatalogItemID-text-active">
+                                <div class="form-group WebUni-form-group ">
+                                    <label for="Height" class="col-sm-7 control-label">Местоположение</label>
+                                    <div class="col-sm-5" style="float: right;">
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <div class="col-sm-7 ">
+                                        @Html.DropDownListFor(m => m.ActiveAlign, new SelectList(
+                    new[]
+                    {
+                        new {Value = 0, Text = "Слева"},
+                        new {Value = 1, Text = "По центру"},
+                        new {Value = 2, Text = "Справа"},
+                    },
+                    "Value",
+                    "Text",
+                    Model.ActiveAlign),
+                    new {@class = "cs-select cs-skin-slide", data_init_plugin = "cs-select"}
+                    )
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group ">
+                                    <label for="Height" class="col-sm-7 control-label">Размер</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.ActiveSize, new
+                {
+                    @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+                    placeholder = "авто"
+                })
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Цвет</label>
+                                    @{
+                item = Model.ActiveColor;
+                if (string.IsNullOrEmpty(item))
+                {
+                    Model.ActiveColor = "rgb(0, 0, 0)";
+                }
+                                    }
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.ActiveColor, new
+                {
+                    @class = "color-picker-fe_internal form-control WebUni-form-element"
+                })
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Жирный</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                        idr = "c" + Model.CatalogItemID + "ActiveBold";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.ActiveBold, new {id = idr})
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Курсив</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                        idr = "c" + Model.CatalogItemID + "ActiveItalic";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.ActiveItalic, new {id = idr})
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Подчеркивать</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                        idr = "c" + Model.CatalogItemID + "ActiveUnderline";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.ActiveUnderline, new {id = idr})
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="@linkVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID"  data-vg="@CatalogItemViewGroup.TextDesignLinks">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-link-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@linkcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.TextDesignLinks]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-link-acc" class="vg-acc-content collapse @linkcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+                        <ul class="nav nav-tabs nav-tabs-fillup WebUni-vg-tabs">
+                            <li class="active">
+                                <a data-toggle="tab" href="#@Model.CatalogItemID-link-before"><span>до наведения</span></a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" href="#@Model.CatalogItemID-link-after"><span>при наведении</span></a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" href="#@Model.CatalogItemID-link-active"><span>при включении</span></a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="@Model.CatalogItemID-link-before">
+
+                                <div class="form-group WebUni-form-group ">
+                                    <label for="Height" class="col-sm-7 control-label">Размер</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.LinkSize, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Цвет</label>
+                                    @{
+                                        item = Model.LinkColor;
+                                        if (string.IsNullOrEmpty(item))
+                                        {
+                                            Model.LinkColor = "rgb(0, 0, 0)";
+                                        }
+                                    }
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.LinkColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Жирный</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                                                idr = "c" + Model.CatalogItemID + "LinkBold";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.LinkBold, new { id = idr })
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Курсив</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                                                idr = "c" + Model.CatalogItemID + "LinkItalic";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.LinkItalic, new { id = idr })
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Подчеркивать</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                                                idr = "c" + Model.CatalogItemID + "LinkUnderline";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.LinkUnderline, new { id = idr })
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="tab-pane" id="@Model.CatalogItemID-link-after">
+
+
+
+                                <div class="form-group WebUni-form-group ">
+                                    <label for="Height" class="col-sm-7 control-label">Размер</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.HoverLinkSize, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Цвет</label>
+                                    @{
+                                        item = Model.HoverLinkColor;
+                                        if (string.IsNullOrEmpty(item))
+                                        {
+                                            Model.HoverLinkColor = "rgb(0, 0, 0)";
+                                        }
+                                    }
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.HoverLinkColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Жирный</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                                                idr = "c" + Model.CatalogItemID + "HoverLinkBold";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.HoverLinkBold, new { id = idr })
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Курсив</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                                                idr = "c" + Model.CatalogItemID + "HoverLinkItalic";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.HoverLinkItalic, new { id = idr })
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Подчеркивать</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                                                idr = "c" + Model.CatalogItemID + "HoverLinkUnderline";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.HoverLinkUnderline, new { id = idr })
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="tab-pane" id="@Model.CatalogItemID-link-active">
+
+
+
+                                <div class="form-group WebUni-form-group ">
+                                    <label for="Height" class="col-sm-7 control-label">Размер</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.ActiveLinkSize, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Цвет</label>
+                                    @{
+                                        item = Model.ActiveLinkColor;
+                                        if (string.IsNullOrEmpty(item))
+                                        {
+                                            Model.ActiveLinkColor = "rgb(0, 0, 0)";
+                                        }
+                                    }
+                                    <div class="col-sm-5" style="float: right;">
+                                        @Html.TextBoxFor(m => m.ActiveLinkColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Жирный</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                                                idr = "c" + Model.CatalogItemID + "ActiveLinkBold";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.ActiveLinkBold, new { id = idr })
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Курсив</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                                                idr = "c" + Model.CatalogItemID + "ActiveLinkItalic";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.ActiveLinkItalic, new { id = idr })
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group WebUni-form-group">
+                                    <label for="Height" class="col-sm-7 control-label">Подчеркивать</label>
+                                    <div class="col-sm-5" style="float: right;">
+                                        <div class="checkbox WebUni-checkbox check-success ">
+                                            @{
+                                                idr = "c" + Model.CatalogItemID + "ActiveLinkUnderline";
+                                            }
+                                            @Html.BasicCheckBoxFor(x => x.ActiveLinkUnderline, new { id = idr })
+                                            <label for="@idr"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+                        }

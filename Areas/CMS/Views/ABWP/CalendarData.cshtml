@@ -1,0 +1,12 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniCalendar
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniCalendarData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.CalendarDataInternal, Model); }
+        </div>
+    </div>
+</div>

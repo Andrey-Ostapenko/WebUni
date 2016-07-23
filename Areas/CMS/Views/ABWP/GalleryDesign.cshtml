@@ -1,0 +1,19 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniGallery
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniGalleryDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.GalleryDesignInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    initUniLineCard($('#WebUniGalleryDesign-@Model.ID'));
+</script>

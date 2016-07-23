@@ -1,0 +1,24 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniMenu
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniMenuDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.MenuDesignInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+<script>
+    initUniLineCard($('#WebUniMenuDesign-@Model.ID'), true);
+</script>

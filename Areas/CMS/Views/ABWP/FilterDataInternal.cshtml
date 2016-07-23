@@ -1,0 +1,153 @@
+﻿@{
+    Layout = null;
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var viewgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.FilterDataFilter);
+    var viewVisible = viewgroup.IsVisible ? string.Empty : "hidden";
+    var viewcollapsed = viewgroup.IsCollapse ? "collapsed" : string.Empty;
+    var viewcollapsein = !viewgroup.IsCollapse ? "in" : string.Empty;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniFilter
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.FilterDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+
+        <div class="@viewVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID"  data-vg="@CatalogItemViewGroup.FilterDataFilter">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-view-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@viewcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.FilterDataFilter]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-view-acc" class="vg-acc-content collapse @viewcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+                        
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Элемент управления</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" class="select2-offscreen" id="CatalogItemTargetIDHDN" style="width:100%" value="@Model.CatalogItemTargetID" />
+                                <input type="text" id="CatalogItemTargetID" class='tag-input full-width' name="CatalogItemTargetID" value="@Model.CatalogItemTargetID" />
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Тип выбора</label>
+                            <div class="col-sm-5" style="float: right;">
+
+                            </div>
+                        </div>
+                        <div class="form-group WebUni-form-group">
+                            <div class="col-sm-7 ">
+                                @Html.DropDownListFor(m => m.IsMultiple, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Множественный" },
+                        new { Value = "false", Text = "Единичный" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsVertical),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                            </div>
+
+                            <div class="col-sm-5" style="float: right;">
+
+                            </div>
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="CustomMode" class="col-sm-7 control-label">Режим пользовательских фильтров</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.CustomMode, new { data_init_plugin = "switchery_internal" })
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Отображение</label>
+                            <div class="col-sm-5" style="float: right;">
+
+                            </div>
+                        </div>
+                        <div class="form-group WebUni-form-group">
+                            <div class="col-sm-7 ">
+                                @Html.DropDownListFor(m => m.IsVertical, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Вертикальное" },
+                        new { Value = "false", Text = "Горизонтальное" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsVertical),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                            </div>
+
+                            <div class="col-sm-5" style="float: right;">
+
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="ActivateFirstFilterByDefault" class="col-sm-7 control-label">Активировать фильтр при запуске</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.ActivateFirstFilterByDefault, new { data_init_plugin = "switchery_internal" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="ShowAllByDefault" class="col-sm-7 control-label">Показывать элементы при не активированном фильтре</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.ShowAllByDefault, new { data_init_plugin = "switchery_internal" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}

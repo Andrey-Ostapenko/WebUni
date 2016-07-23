@@ -1,0 +1,17 @@
+﻿@{
+    Layout = MVC.Shared.Views._ResponsiveLayout;
+}
+
+<style>
+    .dxgvGroupPanel_Moderno {
+        border: none;
+    }
+</style>
+<div id="user-list" style="overflow: auto;">
+
+    @{Html.RenderAction(MVC.Users.UsersGridViewPartial());}
+
+</div>
+<div id="user-content">
+
+</div>

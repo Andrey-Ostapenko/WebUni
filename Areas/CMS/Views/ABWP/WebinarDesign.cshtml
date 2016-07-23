@@ -1,0 +1,12 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniWebinar
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div   id='WebUniWebinarDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.WebinarDesignInternal, Model); }
+        </div>
+    </div>
+</div>

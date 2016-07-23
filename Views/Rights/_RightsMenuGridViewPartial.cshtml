@@ -1,0 +1,35 @@
+﻿@using System.Web.UI.WebControls
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "RightsMenuGridView";
+        settings.CallbackRouteValues = new { Controller = "Rights", Action = "RightsMenuGridViewPartial", id = (long)ViewBag.RightSubjectID };
+
+        settings.Width = new Unit(100, UnitType.Percentage);
+        settings.CommandColumn.Visible = false;
+
+        settings.KeyFieldName = "ID";
+
+        settings.SettingsPager.Visible = false;
+        settings.Settings.ShowGroupPanel = false;
+        settings.Settings.ShowFilterRow = false;
+        settings.Settings.ShowColumnHeaders = false;
+        settings.SettingsBehavior.AllowFocusedRow = true;
+        settings.ClientSideEvents.FocusedRowChanged = "OnRightsMenuGridViewFocusedRowChanged";
+        //settings.ClientSideEvents.BeginCallback = "function(s, e) { LoadingPanel.Show(); }";
+        //settings.ClientSideEvents.EndCallback = "function(s, e) { LoadingPanel.Hide(); }";
+        settings.Columns.Add((column) =>
+        {
+            column.Caption = "";
+            column.FieldName = "Name";
+            column.ReadOnly = true;
+        });
+    });
+
+    if (ViewData["EditError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()
+

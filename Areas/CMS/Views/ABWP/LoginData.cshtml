@@ -1,0 +1,70 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniLogin
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniLoginData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.LoginDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    
+    var element = $('#WebUniLoginData-@Model.ID');
+    initVGElements(element);
+    var redirecttarget = element.find("#RedirectPageCatalogItemID");
+    redirecttarget.select2
+    (
+        {
+            placeholder: 'Выберите страницу',
+            multiple: true,
+            maximumSelectionSize: 1,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchpage'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        pageLimit: 10,
+                        page: page
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data.items, more: more };
+                }
+
+            },
+            initSelection: function (element, callback) {
+                var id = redirecttarget.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('getpage') + '/' + id, {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data[0]);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+    redirecttarget.on("change", function (ev) {
+        var values = ev.val;
+        redirecttarget.val(values);
+    });
+</script>

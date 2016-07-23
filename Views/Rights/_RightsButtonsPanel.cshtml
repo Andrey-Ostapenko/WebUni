@@ -1,0 +1,42 @@
+﻿@{
+    Layout = null;
+}
+@model  livemenu.Models.Rights.RightsButtonsPanelModel
+@if(Model.IsEnabled)
+{ 
+
+
+    string allowedStyle = "btn-white";
+    if (Model.Allowed)
+    {
+        allowedStyle = "btn-success checked";
+    }
+
+    string deniedStyle = "btn-white";
+    if (Model.Denied)
+    {
+        deniedStyle = "btn-danger checked";
+    }
+
+    string syncStyle = "btn-white";
+    if (Model.IsSync)
+    {
+        syncStyle = "btn-white active checked";
+    }
+
+
+<div class="btn-group">
+    <button class="btn  btn-xs @allowedStyle" onclick="@string.Format("OnRightsCatalogCheckedChanged('{0}',{1}, {2}, {3}, GetRightsCatalogCheckedValue($(this)));", Url.Action(MVC.Rights.RightsCatalogChanged()), Model.RightsHolderID, Model.RightSubjectID, (int)Model.AllowedType)" >
+        <i class="fa fa-check"></i>
+    </button>
+    <button class="btn btn-xs @deniedStyle" onclick="@string.Format("OnRightsCatalogCheckedChanged('{0}',{1}, {2}, {3}, GetRightsCatalogCheckedValue($(this)));", Url.Action(MVC.Rights.RightsCatalogChanged()), Model.RightsHolderID, Model.RightSubjectID, (int)Model.DeniedType)">
+        <i class="fa fa-times"></i>
+    </button>
+    @if (Model.Allowed || Model.Denied)
+{
+    <button class="btn btn-default btn-xs @syncStyle" onclick="@string.Format("OnRightsCatalogCheckedChanged('{0}',{1}, {2}, {3}, GetRightsCatalogCheckedValue($(this)));", Url.Action(MVC.Rights.RightsCatalogChanged()), Model.RightsHolderID, Model.RightSubjectID, (int) Model.IsSyncType)">
+        <i class="fa fa-refresh"></i>
+    </button>
+}
+</div>
+}

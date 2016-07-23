@@ -1,0 +1,37 @@
+﻿@{
+    Layout = null;
+    var title = Model.IsNew ? "Создание юридического лица" : "Редактирование юридического лица";
+}
+
+@model livemenu.Common.Entities.Entities.ClientLegalPersonality 
+
+<div class="row" style="margin-top: 0px">
+    <div class="col-sm-12 col-md-12">
+        <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default widget-back-btn " onclick="clientCardGoBack()">
+
+                    <i class="fa fa-reply"></i>
+                </button>
+
+                <a class="btn btn-default widget-save-btn" id="workspace-save-btn" style=" " onclick="$('#LegalPersonalityCard' ).find('form').submit()">
+                    <i class="fa fa-check"></i>
+                </a>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        @{
+            ViewContext.Writer.Write("<div id='LegalPersonalityCard'>");
+            Html.RenderPartial(MVC.CRM.Clients.Views.LegalPersonalityCard, Model);
+            ViewContext.Writer.Write("</div>");
+        }
+    </div>
+</div>
+
+
+

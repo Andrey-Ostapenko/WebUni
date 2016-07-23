@@ -1,0 +1,12 @@
+﻿
+@{
+    Layout = null;
+}
+@{
+    var id1 = Guid.NewGuid();
+}
+
+@model livemenu.Common.IWidgetModel
+<div id="@id1" class="widget-container" style="padding-left: 20px; padding-right: 20px">
+    @{Html.RenderAction(Model.Url);}
+</div>

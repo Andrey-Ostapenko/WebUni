@@ -1,0 +1,63 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using livemenu.Helpers
+
+@{
+    Layout = null;
+    const string name = "PositionsGridView";
+}
+
+@Html.DevExpress().GridView(settings =>
+{
+    settings.Width = new Unit(100, UnitType.Percentage);
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.Name = name;
+    settings.CallbackRouteValues = new { Controller = MVC.Position.Name, Action = MVC.Position.ActionNames.PositionsGridViewPartial };
+    settings.SettingsEditing.AddNewRowRouteValues = new { Controller = MVC.Position.Name, Action = MVC.Position.ActionNames.PositionsGridViewAddNewPartial };
+    settings.SettingsEditing.UpdateRowRouteValues = new { Controller = MVC.Position.Name, Action = MVC.Position.ActionNames.PositionsGridViewUpdatePartial };
+    settings.SettingsEditing.DeleteRowRouteValues = new { Controller = MVC.Position.Name, Action = MVC.Position.ActionNames.PositionsGridViewDeletePartial };
+
+    settings.Settings.ShowFilterRow = false;
+    settings.KeyFieldName = "ID";
+    settings.SettingsText.EmptyDataRow = "Нажмите на \" + \", чтобы создать новую должность";
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Name";
+        column.Caption = "Название";
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        //(column.PropertiesEdit as TextBoxProperties).ValidationSettings.ShowModelErrors = true;
+        var properies = (column.PropertiesEdit as TextBoxProperties);
+        properies.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        properies.ValidationSettings.ErrorTextPosition = ErrorTextPosition.Right;
+    });
+
+    settings.CommandColumn.Visible = false;
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+            ViewContext.Writer.Write(Html.GridViewStartEditButton(name, index));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.GridViewCreateButton(name)));
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewSaveButton(name)));
+
+    });
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(1, UnitType.Percentage);
+
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewCancelEditButton(name)));
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+    });
+
+
+}).Bind(Model).GetHtml()

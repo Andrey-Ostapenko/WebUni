@@ -1,0 +1,656 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniProfile
+@{
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var textsgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.ProfileDataText);
+    var textsVisible = textsgroup.IsVisible ? string.Empty : "hidden";
+    var textsDisabled = string.Empty;
+    var textscollapsed = textsgroup.IsCollapse ? "collapsed" : string.Empty;
+    var textscollapsein = !textsgroup.IsCollapse ? "in" : string.Empty;
+}
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.ProfileDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+        <div class="@textsVisible @textsDisabled vg-links vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.ProfileDataText">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.ID-link-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@textscollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.ProfileDataText]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.ID-link-acc" class="vg-acc-content collapse @textscollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле логина</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.LoginText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля логина"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле пароля</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.PasswordText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля пароля"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Заголовок</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.AccountText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Заголовок карточки аккаунта"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Заголовок основных данных</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.BasicDataText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Заголовок блока основных данных"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Заголовок контактных данных</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.ContactInfoText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Заголовок блока контактных данных"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле телефон</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.PhoneText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля телефон"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле электронная почта</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.EmailText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля электронная почта"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Заголовок выбора типа учетной записи</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.SelectAccountTypeText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Заголовок выбора типа учетной записи"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Тип физического лица</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.IndividualTypeText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название типа физического лица"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Тип организации</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrganizationTypeText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название типа организации"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Тип индивидуального предпринимателя</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.IndividualBusinessmanTypeText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название типа индивидуального предпринимателя"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Кнопка сохранить</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.SaveText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название кнопки сохранения"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Заголовок дополнительных данных</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.AddititionalDataText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Заголовок блока дополнительных данных"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле Имя физического лица</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.IndividualNameText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля Имя физического лица"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле Фамилия физического лица</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.IndividualSurnameText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля Фамилия физического лица"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле Отчество физического лица</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.IndividualMiddleNameText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля Отчество физического лица"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле дата рождения физического лица</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.IndividualBirthText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля дата рождения физического лица"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле полное название организации</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrganizationFullNameText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля полное название организации"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле краткое название организации</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrganizationShortNameText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля краткое название организации"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле ОГРН организации</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrganizationOGRNText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля ОГРН организации"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле ИНН организации</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrganizationINNText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля ИНН организации"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле КПП организации</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrganizationKPPText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля КПП организации"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле дата регистрации организации</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrganizationRegisterDateText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля дата регистрации организации"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле юридический адрес организации</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrganizationLegalAddressText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля юридический адрес организации"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле фактический адрес организации</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrganizationPhysicalAddressText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля фактический адрес организации"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле Имя индивидуального предпринимателя</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.BusinessmanNameText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля Имя индивидуального предпринимателя"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле Фамилия индивидуального предпринимателя</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.BusinessmanSurnameText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля Фамилия индивидуального предпринимателя"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле Отчество индивидуального предпринимателя</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.BusinessmanMiddleNameText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля Отчество индивидуального предпринимателя"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле ИНН индивидуального предпринимателя</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.BusinessmanINNText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля ИНН индивидуального предпринимателя"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле ОГРНИП индивидуального предпринимателя</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.BusinessmanOGRNIPText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля ОГРНИП индивидуального предпринимателя"
+                       })
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле дата регистрации индивидуального предпринимателя</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.BusinessmanRegisterDateText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля дата регистрации индивидуального предпринимателя"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Сообщение о сохранении введенных данных</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.DataSavedText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Текс сообщения об успешном сохранении данных"
+                       })
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+}

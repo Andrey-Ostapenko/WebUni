@@ -1,0 +1,82 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.CMS.Controllers
+@using livemenu.Kernel.BWP
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    Layout = null;
+
+}
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+}
+
+
+@{
+
+    Layout = null;
+
+    var settings = (ViewContext.Controller as SearchController).GetGridViewSettings();
+
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+
+    settings.CallbackRouteValues = new { Area = MVC.CMS.Name, Controller = MVC.CMS.Search.Name, Action = MVC.CMS.Search.ActionNames.SelectorGridViewPartial };
+
+
+    settings.SettingsBehavior.AllowDragDrop = true;
+
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 10;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100", "500", "1000" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFooter = true;
+
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+
+    settings.ClientSideEvents.SelectionChanged = "PLSearchSelectorSelectionChanged";
+
+    settings.SettingsBehavior.AllowFocusedRow = false;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = true;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = false;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = false;
+ 
+    settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.AllPages;
+    settings.CommandColumn.Visible = true;
+    settings.CommandColumn.ShowSelectCheckbox = true;
+
+}
+
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    e.QueryableSource = ServiceLocator.Current.GetInstance<ISearchPropertyService>().RawDataQueryable;
+}).GetHtml()
+

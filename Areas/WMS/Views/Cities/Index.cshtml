@@ -1,0 +1,88 @@
+﻿@using livemenu.Helpers
+@{
+    Layout = MVC.Shared.Views._ResponsiveLayout;
+}
+
+@using (Html.BeginForm(MVC.WMS.Cities.ExportTo(), FormMethod.Post, new { data_name = "exportToForm" }))
+{
+
+    <div id="exportToFormPlaceHolder">
+
+    </div>
+
+    <div class="row" style="margin-top: 0px">
+        <div class="col-sm-12 col-md-12">
+            <div class="pull-left">
+
+                <div class="btn-group">
+                    <a class="btn btn-default" onclick="CityGridView.PerformCallback() "><i class="fa fa-refresh"></i> Обновить</a>
+
+
+
+                    <div class="btn-group  pull-left" style="margin-right: 20px">
+                        <button type="button" class="btn btn-default" onclick="CityGridView.CancelEdit()">
+                            <i class="fa fa-times"></i>
+                        </button>
+
+                        <a class="btn btn-success" id="" onclick="CityGridView.UpdateEdit()" style="display: block;">
+                            <i class="fa fa-check"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="pull-right">
+                <div class="btn-group">
+                    <a class="btn btn-default" data-url="@Url.Action(MVC.WMS.Cities.Import())" onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onPLExcelSelected)"><i class="fa fa-save"></i> Импорт</a>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    @*<ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="@Url.Content("~/BWP/Resources/template.xlsx")">Загрузить шаблон</a>
+                            </li>
+                        </ul>*@
+                </div>
+                <div class="btn-group">
+
+                    <a class="btn btn-default" onclick="submitExportTo('@GridViewExportType.Xlsx.ToString()') "><i class="fa fa-save"></i> Выгрузить</a>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Xlsx.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Xlsx].Title</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Xls.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Xls].Title</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Pdf.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Pdf].Title</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Rtf.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Rtf].Title</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Csv.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Csv].Title</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+                    <div class="row" style="margin-top: 20px">
+                        <div class="col-sm-12 col-md-12">
+                            @{ Html.RenderAction(MVC.WMS.Cities.GridViewPartial()); }
+                        </div>
+                    </div>
+                                }
+<script>
+    function submitExportTo(typeName) {
+        $('#exportToFormPlaceHolder').html("<input type='hidden' name=" + typeName + " value='' />");
+        $("[data-name='exportToForm']").submit();
+        }
+</script>

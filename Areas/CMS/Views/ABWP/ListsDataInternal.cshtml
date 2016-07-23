@@ -1,0 +1,146 @@
+﻿@{
+    Layout = null;
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var viewgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.ListDataList);
+    var viewVisible = viewgroup.IsVisible ? string.Empty : "hidden";
+    var viewcollapsed = viewgroup.IsCollapse ? "collapsed" : string.Empty;
+    var viewcollapsein = !viewgroup.IsCollapse ? "in" : string.Empty;
+
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniLists
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.ListsDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    OnComplete = "OnCatalogItemFormCompleted"
+},
+
+                                    new
+                                    {
+                                        @class = "form-horizontal ",
+                                    }))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+        <div class="@viewVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID"  data-vg="@CatalogItemViewGroup.ListDataList">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-view-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@viewcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.ListDataList]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-view-acc" class="vg-acc-content collapse @viewcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Включить выпадающий список</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.IsEnabled, new { data_init_plugin = "switchery_internal", onchange = "onVGElementsEnabledChanged($(this))", })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group WebUni-form-group WebUni-form-group-group">
+                        <label for="Height" class="col-sm-7 control-label">Раскрыть при загрузке</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                @Html.BasicCheckBoxFor(x => x.ActivateFirstByDefault, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-group">
+                        <label for="Height" class="col-sm-7 control-label">Скрыть текст при раскрытии списка</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                @Html.BasicCheckBoxFor(x => x.HideNameAfterShowing, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-group">
+                        <label for="Height" class="col-sm-7 control-label">Раскрыть, если есть ссылка</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                @Html.BasicCheckBoxFor(x => x.AutoExpand, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group WebUni-form-group">
+                        <label for="Height" class="col-sm-7 control-label">Текст до раскрытия списка</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success ">
+                                @{
+                                    var l = "c" + Model.CatalogItemID + "IsTextEnabled";
+                                }
+                                @Html.BasicCheckBoxFor(x => x.IsTextEnabled, new {id = l})
+                                <label for="@l"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group">
+                        <label for="Height" class="col-sm-7 control-label">Текст при раскрытии списка</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success ">
+                                @{
+                                    l = "c" + Model.CatalogItemID + "IsActiveTextEnabled";
+                                }
+                                @Html.BasicCheckBoxFor(x => x.IsActiveTextEnabled, new { id = l })
+                                <label for="@l"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                
+                    <ul class="nav nav-tabs nav-tabs-fillup WebUni-vg-tabs">
+                        <li class="active">
+                            <a data-toggle="tab" href="#@Model.CatalogItemID-text-before"><span>текст до раскрытия списка</span></a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#@Model.CatalogItemID-text-after"><span>текст при раскрытии списка</span></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="@Model.CatalogItemID-text-before">
+                            <div class="form-group WebUni-form-group " style="margin-top: 20px;">
+                                <div class="col-sm-12" style="">
+                                    @Html.TextAreaFor(m => m.Text, new
+                           {
+                               @class = "form-control WebUni-form-element ckeditor_internal-" + Model.ID
+                           })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="@Model.CatalogItemID-text-after">
+                            <div class="form-group WebUni-form-group " style="margin-top: 20px;">
+                                <div class="col-sm-12" style="">
+                                    @Html.TextAreaFor(m => m.ActiveText, new
+                           {
+                               @class = "form-control WebUni-form-element ckeditor_internal-" + Model.ID
+                           })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}

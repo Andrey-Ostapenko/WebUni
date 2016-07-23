@@ -1,0 +1,612 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Common.Entities
+@model livemenu.Areas.BWP.Models.Catalog.CatalogMainModel
+
+<style>
+    .fancytree-node span {
+        vertical-align: middle !important;
+    }
+
+
+    .fancytree-node:hover {
+        background-color: #EBEBEB;
+        border-color: rgba(98, 98, 98, 0.27);
+    }
+
+    .fancytree-active {
+        background-color: #D5D5D5;
+        border-color: rgba(98, 98, 98, 0.27);
+    }
+
+    .fancytree-node {
+        padding-left: 7px;
+    }
+
+    .fancytree-active .fancytree-btn {
+        display: inline-block;
+    }
+
+    .fancytree-btn-visible {
+        display: inline-block !important;
+    }
+
+    .fancytree-btn {
+        display: none;
+        margin-left: 8px;
+        color: rgb(98, 98, 98);
+        cursor: pointer;
+    }
+
+    .fancytree-container {
+        overflow: auto;
+    }
+
+    .fancytree-icon {
+        display: none !important;
+    }
+
+
+
+
+    .tree-cart-ok i {
+        color: #10cfbd;
+    }
+
+    .tree-create-btn:hover {
+        color: #10cfbd;
+    }
+
+    .tree-delete-btn:hover {
+        color: #f55753;
+    }
+</style>
+
+<div class="">
+    <div id="cTree" class="ztree catalog-tree-panel" style="padding-left: 0" data-reorder-url="@Url.Action(MVC.CMS.Catalog.Reorder())" data-assign-url="@Url.Action(MVC.CMS.Catalog.Assign())"></div>
+</div>
+
+
+<script type="text/javascript">
+
+
+    function zTreeOnClick(event, treeId, treeNode) {
+
+        ciWorkspaceLoad(treeNode.id);
+    };
+    function filter(treeId, parentNode, childNodes) {
+        if (!childNodes) return null;
+        for (var i = 0, l = childNodes.length; i < l; i++) {
+
+            var value = childNodes[i];
+            var style = '';
+            if (!value.isActive) {
+                style += 'opacity: 0.5;';
+            }
+
+            if (value.isLink) {
+                style += 'color: #66cd00;';
+            }
+
+            childNodes[i].name = "<span style='" + style + "' >" + childNodes[i].name + "</span>";
+        }
+        return childNodes;
+    }
+
+    function getFont(treeId, node) {
+        return "{'font-family': ''Noto Sans', sans-serif, 'Helvetica Neue', Helvetica, Arial, sans-serif '}";
+    }
+
+    function beforeDrag(treeId, treeNodes) {
+        //for (var i = 0, l = treeNodes.length; i < l; i++) {
+        //    if (treeNodes[i].drag === false) {
+        //        return false;
+        //    }
+        //}
+        return true;
+    }
+    function beforeDrop(treeId, treeNodes, targetNode, moveType) {
+
+        var type = moveType == 'prev' ? 0 : moveType == 'next' ? 1 : 2;
+
+
+
+        var ids = treeNodes.map(function (v) {
+            return v.id;
+        });
+
+        var params = { IDs: ids, targetID: targetNode.id, type: type };
+
+        $.ajax({
+            type: "POST",
+            url: url,
+
+            dataType: "json",
+            data: params,
+            traditional: true,
+            complete: function (data) {
+
+
+            }
+
+
+        });
+
+        console.log(moveType + ' ' + treeNodes + ' ' + targetNode);
+        return true;
+    }
+
+    var setting = {
+        data: {
+            simpleData: {
+                enable: false
+            }
+        },
+        check: {
+            enable: true,
+            chkboxType: { "Y": "s", "N": "s" },
+            autoCheckTrigger: false
+        },
+        edit: {
+            enable: true,
+            showRemoveBtn: false,
+            showRenameBtn: false,
+            drag: {
+                autoExpandTrigger: true,
+
+                isCopy: true,
+                isMove: true,
+                prev: true,
+                inner: true,
+                next: true,
+            },
+        },
+        view: {
+
+            //   fontCss: getFont,
+            nameIsHTML: true
+        },
+        async: {
+            enable: true,
+            dataType: 'json',
+            url: '@Url.Action(MVC.CMS.Catalog.GetCatalogTreeItemModels(Model.CatalogItemID))',
+            autoParam: ["id", "name=Name", "level=lv"],
+            dataFilter: filter,
+            otherParam: { "otherParam": "zTreeAsyncTest" },
+        },
+        callback: {
+            //    onAsyncSuccess: zTreeOnAsyncSuccess,
+            onClick: zTreeOnClick,
+            beforeDrag: beforeDrag,
+            beforeDrop: beforeDrop
+        },
+
+    };
+
+    var typingTimer;
+    var doneTypingInterval = 10;
+    var finaldoneTypingInterval = 1000;
+
+    $('#catalog-searchingbox').keydown(function () {
+        clearTimeout(typingTimer);
+        if ($('#catalog-searchingbox').val) {
+            typingTimer = setTimeout(function () {
+            }, doneTypingInterval);
+        }
+    });
+
+    $('#catalog-searchingbox').keyup(function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(function () {
+            var input = $('#catalog-searchingbox');
+            var url = input.data('url');
+            $.get(url,
+                {
+                    str: input.val()
+                },
+                function (data) {
+                    setting.async.enable = false;
+                    setting.data.simpleData.enable = true;
+
+                    var zNodes = [];
+                    jQuery.each(data, function (i, val) {
+                        var node =
+                        {
+                            id: val.id, pId: 0, name: val.name, open: false
+                        }
+
+                        zNodes.push(node);
+                    });
+
+                    $.fn.zTree.init($("#cTree"), setting, zNodes);
+                });
+        }, finaldoneTypingInterval);
+    });
+
+    //$("#catalog-searchingbox").on("change keyup paste", function() {
+    //    console.log($('#catalog-searchingbox').val());
+    //});
+
+    //function filter(treeId, parentNode, childNodes) {
+    //	if (!childNodes) return null;
+    //	for (var i=0, l=childNodes.length; i<l; i++) {
+    //		childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+    //	}
+    //	return childNodes;
+    //}
+    var cpref = '@Model.CatalogItemCode-';
+    var isTreeInfoPriorityShown = false;
+    $(window).keydown(function (evt) {
+        if (evt.which == 80 && ctrlPressed && altPressed) {
+            isTreeInfoPriorityShown = true;
+            $('.tree-info-priority').css('display', 'inline-block');
+        } else
+        if (evt.which == 68 && ctrlPressed && altPressed) {
+            showUtilityModal();
+        }
+    }).keyup(function (evt) {
+        if (evt.which == 80 && isTreeInfoPriorityShown) {
+            isTreeInfoPriorityShown = false;
+            $('.tree-info-priority').hide();
+        }
+    });
+
+    $(document).ready(function () {
+        $("#cTree").fancytree({
+            @*source: $.ajax({
+                url: '@Url.Action(MVC.CMS.Catalog.GetCatalogTreeItemRoot(Model.CatalogItemID))',
+                cache: false,
+                dataType: "json"
+            }),*@
+            autoScroll: true,
+            source: {
+                url: '@Url.Action(MVC.CMS.Catalog.GetCatalogTreeItemRoot(Model.CatalogItemID))',
+                cache: false
+            },
+            lazyLoad: function (event, data) {
+                var node = data.node;
+                data.result = {
+                    url: '@Url.Action(MVC.CMS.Catalog.GetCatalogTreeItemModels(Model.CatalogItemID))',
+                    data: { id: node.data.ID },
+                    cache: false
+                };
+            },
+            wide: {
+
+            },
+            checkbox: true,
+            selectMode: 3,
+            loadChildren: function (event, ctx) {
+                ctx.node.fixSelection3AfterClick();
+
+                ctx.node.visit(function (subNode) {
+                    if (subNode.isUndefined() && subNode.isExpanded()) {
+                        subNode.load();
+                    }
+                });
+            },
+            extensions: ["persist", "dnd", "glyph"],
+            glyph: {
+                map: {
+                    doc: "fa fa-file-o",
+                    docOpen: "fa fa-file-o",
+                    checkbox: "fa fa-square-o",
+                    checkboxSelected: "fa fa-check-square-o",
+                    checkboxUnknown: "fa fa-square",
+                    error: "fa fa-warning",
+                    expanderClosed: "fa fa-arrow-right",
+                    expanderLazy: "fa fa-arrow-right",
+                    expanderOpen: "fa fa-arrow-down",
+                    folder: "fa fa-folder-o",
+                    folderOpen: "fa fa-folder-open-o",
+                    loading: "fa fa-spinner fa-pulse"
+                }
+            },
+            persist: {
+                cookieDelimiter: "~",
+                cookiePrefix: 'bwp-catalog-tree-' + cpref,
+                cookie: {
+                    raw: false,
+                    expires: "",
+                    path: "/",
+                    domain: "",
+                    secure: false
+                },
+                expandLazy: true,
+                overrideSource: true,
+                store: "cookie",
+                types: "active expanded focus selected"
+            },
+            dnd: {
+                // Available options with their default:
+                autoExpandMS: 1000, // Expand nodes after n milliseconds of hovering.
+                draggable: null, // Additional options passed to jQuery draggable
+                droppable: null, // Additional options passed to jQuery droppable
+                preventRecursiveMoves: true, // Prevent dropping nodes on own descendants
+                preventVoidMoves: false, // Prevent dropping nodes 'before self', etc.
+                focusOnClick: false, // Focus, although draggable cancels mousedown event (#270)
+                // Events that make tree nodes draggable
+                dragStart: function (node, data) {
+                    // This function MUST be defined to enable dragging for the tree.
+                    // Return false to cancel dragging of node.
+                    //    if( data.originalEvent.shiftKey ) ...
+                    return true;
+                },
+                dragEnter: function (node, data) {
+                    /* data.otherNode may be null for non-fancytree droppables.
+                     * Return false to disallow dropping on node. In this case
+                     * dragOver and dragLeave are not called.
+                     * Return 'over', 'before, or 'after' to force a hitMode.
+                     * Return ['before', 'after'] to restrict available hitModes.
+                     * Any other return value will calc the hitMode from the cursor position.
+                     */
+                    // Prevent dropping a parent below another parent (only sort
+                    // nodes under the same parent):
+                    //    if(node.parent !== data.otherNode.parent){
+                    //      return false;
+                    //    }
+                    // Don't allow dropping *over* a node (would create a child). Just
+                    // allow changing the order:
+                    //    return ["before", "after"];
+                    // Accept everything:
+                    return true;
+                },
+                dragOver: function (node, data) {
+                },
+                dragLeave: function (node, data) {
+                },
+                dragStop: function (node, data) {
+                },
+                dragDrop: dropTreeCatalogItem
+
+            },
+            restore: function (event, data) {
+                OnTreeRestoredCallback();
+            },
+            renderNode: function (event, data) {
+                //var tree = data.tree;
+                var node = data.node;
+
+                var $span = $(node.span);
+
+
+                var typeName = node.data.typeName;
+                var elementName = node.data.ElementName;
+
+                var titleText = !node.data.isSaved ? (typeName != '' ? '(' + elementName + ') ' + node.data.ItemName : node.data.ItemName) : node.data.ItemName;
+                node.setTitle(titleText.replace('Старница', 'Страница'));
+
+                var title = $span.find("> span.fancytree-title");
+
+                if (!node.data.isActive) {
+                    title.css({
+                        opacity: "0.5"
+                    });
+                }
+
+                if (node.data.isLink) {
+                    title.css({
+                        color: "#66cd00"
+                    });
+                }
+
+
+
+                if (node.data.IsShopModeEnabled) {
+                    $("<span/>").addClass("fa fa-shopping-cart").html("&nbsp;&nbsp;").css({
+                        color: node.data.HasShopModelPriceListElement ? "#3497C9" : "rgb(98, 98, 98)", // color from tree-cart-ok style
+                        cursor: "default",
+                    }).prependTo(title);
+                } else if (node.data.IsBuyButtonModeEnabled) {
+                    var iconBuyButtonMode = $("<span/>").addClass("fa fa-tag").html("&nbsp;&nbsp;").css({
+                        color: node.data.HasShopModelPriceListElement ? "#3497C9" : "", // color from tree-cart-ok style
+                        cursor: "default",
+                    }).prependTo(title);
+                }
+                
+                if (node.data.FiltersEnabled) {
+                    $("<span/>").addClass("fa fa-filter").html("&nbsp;&nbsp;").css({
+                        color: node.data.HasFilters ? "#3497C9" : "rgb(98, 98, 98)", // color from tree-cart-ok style
+                        cursor: "default",
+                    }).prependTo(title);
+                }
+
+                if (node.data.DynamicEntityEnabled) {
+                    $("<span/>").addClass("fa fa-database").html("&nbsp;&nbsp;").css({
+                        color: node.data.HasDynamicEntity ? "#3497C9" : "rgb(98, 98, 98)", 
+                        cursor: "default",
+                    }).prependTo(title);
+                }
+
+                if (node.data.LinksEnabled) {
+                    var color = node.data.HasLinks ? "#3497C9" : "rgb(98, 98, 98)";
+                    switch (node.data.ActionType) {
+                        case 0:
+                        {
+                                $("<span/>").addClass("fa fa-link").html("&nbsp;&nbsp;").css({
+                                    color: color,
+                                    cursor: "default",
+                                }).prependTo(title);
+                            
+                            break;
+                        }
+                        case 7:
+                            {
+                                $("<span/>").addClass("fa fa-download").html("&nbsp;&nbsp;").css({
+                                    color: color,
+                                    cursor: "default",
+                                }).prependTo(title);
+
+                                break;
+                            }
+                        case 1:
+                            {
+                                $("<span/>").addClass("fa fa-external-link").html("&nbsp;&nbsp;").css({
+                                    color: color,
+                                    cursor: "default",
+                                }).prependTo(title);
+                                break;
+                            }
+                        case 2:
+                            {
+                                $("<span/>").addClass("fa fa-anchor").html("&nbsp;&nbsp;").css({
+                                    color: color,
+                                    cursor: "default",
+                                }).prependTo(title);
+                                break;
+                            }
+                        case 3:
+                            {
+                                $("<span/>").addClass("fa fa-clone").html("&nbsp;&nbsp;").css({
+                                    color: color,
+                                    cursor: "default",
+                                }).prependTo(title);
+                                break;
+                            }
+                    }
+                   
+                }
+
+
+
+              if (node.data.TemplateType === 32) {
+                    $("<span/>").addClass("fa fa-file").html("&nbsp;&nbsp;").css({
+                        color: "rgb(98, 98, 98)", // color from tree-cart-ok style
+                        cursor: "default",
+                    }).prependTo(title);
+                } else if (node.data.TemplateType === 33) {
+                    $("<span/>").addClass("fa fa-code").html("&nbsp;&nbsp;").css({
+                        color: "rgb(98, 98, 98)", // color from tree-cart-ok style
+                        cursor: "default",
+                    }).prependTo(title);
+                } else if (node.data.TemplateType === 38) {
+                    $("<span/>").addClass("fa fa-newspaper-o").html("&nbsp;&nbsp;").css({
+                        color: "rgb(98, 98, 98)", // color from tree-cart-ok style
+                        cursor: "default",
+                    }).prependTo(title);
+                } 
+
+                if (node.data.IsChain) {
+                    var iconChain = $("<span/>").addClass("fa fa-code-fork").html("&nbsp;&nbsp;").css({
+                        color: "rgb(98, 98, 98)",
+                        cursor: "default",
+                    }).prependTo(title);
+                }
+
+                if (node.data.IsGrouped) {
+                    var iconChain = $("<span/>").addClass("fa fa-object-ungroup").html("&nbsp;&nbsp;").css({
+                        color: "rgb(98, 98, 98)",
+                        cursor: "default",
+                    }).prependTo(title);
+                }
+
+                if (node.data.IsGenericDesign) {
+                    var iconChain = $("<span/>").addClass("fa fa-paint-brush").html("&nbsp;&nbsp;").css({
+                        color: "rgb(98, 98, 98)",
+                        cursor: "default",
+                    }).prependTo(title);
+                }
+
+                if (node.data.isSaved) {
+                    title.css({
+                        color: "#3497C9"
+                    });
+                    var iconSaved = $("<span/>").addClass("fa fa-check-circle").html("&nbsp;&nbsp;").css({
+                        color: "#3497C9",
+                        cursor: "default",
+                        opacity: !node.data.isActive ? "0.5" : "1",
+                    }).prependTo(title);
+                }
+
+                if (node.data.isRefreshable) {
+                    var iconRefresh = $("<span/>").addClass("fa fa-refresh").html("&nbsp;&nbsp;").css({
+                        color: "#626262",
+                        cursor: "pointer",
+                        "margin-left": "-2px",
+                    })
+                        .on("click", function () {
+                            node.data.isRefreshable = false;
+                            reloadNodeWithChildrens(node);
+                            node.render();
+                            node.tree.activateKey(node.key);
+                        })
+                        .prependTo(title);
+                }
+
+
+                var priority = $('<div class="tree-info-priority ">' + node.data.Priority + '</a>');
+                $(node.span).find('.fancytree-icon').before(priority);
+
+            },
+            //click: function (event, data) {
+            //    if (data.targetType != 'checkbox' && data.targetType != 'expander') {
+            //        var node = data.node;
+            //        ciWorkspaceLoad(node.key);
+            //    }
+
+            //},
+            activate: function (event, data) {
+                var tree = data.tree;
+                var node = data.node;
+                currentCatalogItemIsGrouped = node.data.IsGrouped;
+                currentCatalogItemKey = node.key;
+                currentCatalogItemID = node.data.ID;
+                currentCatalogItemTypeID = node.data.CatalogItemTypeID;
+				currentCatalogItemIsLink = node.data.isLink;
+                currentCatalogItemCode = node.data.Code;
+
+
+                reloadCatalogInstructionView();
+
+                var portlet = getWorkspacePortletItem();
+                var key = portlet.data('parentid') + '_' + portlet.data('ciid');
+                if (node.key != key) {
+                    ciWorkspaceLoad(node.key);
+                }
+
+                var workspaceRefreshButton = $('#workspace-refresh-btn');
+                if (node.data.isSaved || node.data.isRefreshable) {
+                    workspaceRefreshButton.show();
+                }
+                else {
+                    workspaceRefreshButton.hide();
+                }
+
+                var ctreeCreateButton = $('#ctree-create-btn');
+                var ctreeLinkButton = $('#ctree-link-btn');
+                
+                if (!node.data.AllowCreate) {
+                    ctreeCreateButton.hide();
+                } else {
+                    ctreeCreateButton.show();
+                }
+
+                var ctreeCopyButton = $('#ctree-copy-btn');
+                if (!node.data.AllowCopy) {
+                    ctreeCopyButton.hide();
+                } else {
+                    ctreeCopyButton.show();
+                }
+
+                if (!node.data.AllowLink) {
+                    ctreeLinkButton.hide();
+                } else {
+                    ctreeLinkButton.show();
+                }
+
+                var ctreeDeleteButton = $('#ctree-delete-btn');
+                if (!node.data.AllowDelete || node.data.TemplateType) {
+                    ctreeDeleteButton.hide();
+                } else {
+                    ctreeDeleteButton.show();
+                }
+            },
+        });
+
+      
+
+    });
+
+    reloadCatalogInstructionView();
+</script>

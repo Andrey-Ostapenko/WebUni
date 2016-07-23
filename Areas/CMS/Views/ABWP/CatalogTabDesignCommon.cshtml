@@ -1,0 +1,8 @@
+﻿@{
+    Layout = null;
+}
+
+@using livemenu.Kernel.CMS
+@model long
+
+<div id="catalog-tab-design-structure-container"  class="form-horizontal" data-url="@Url.Action(MVC.CMS.Catalog.Structure(Model, CatalogItemViewType.Design))" data-change-url="@Url.Action(MVC.CMS.Catalog.ChangeStructure())"></div>

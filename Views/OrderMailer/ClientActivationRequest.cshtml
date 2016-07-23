@@ -1,0 +1,37 @@
+﻿@using livemenu.API.Integration
+@using Microsoft.Practices.ServiceLocation
+@using Mvc.Mailer
+@model livemenu.Common.Entities.Entities.Client
+
+@{
+    Layout = null;
+
+    var changes = ServiceLocator.Current.GetInstance<ITrackChangesConfiguration>().SimpleTrackBaseAddress;
+    var address = changes + "/Login/Activation?code=" + Model.ActivationCode;
+}
+<html>
+<head>
+    <link href="" rel="stylesheet">
+    @*<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>*@
+
+</head>
+<body>
+    <style>
+        .page-header {
+            padding-bottom: 10px;
+        }
+    </style>
+
+    @Styles.Render(Url.Abs("/Content/bootstrap.min.css"))
+    <div class="page-header">
+        <div class="container">
+            <h1>Перейдите по ссылке для активации учетной записи</h1>
+            <p>
+                <a href="@address">@address</a>
+            </p>
+        </div>
+    </div>
+
+
+</body>
+</html>

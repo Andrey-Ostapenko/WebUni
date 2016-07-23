@@ -1,0 +1,61 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniInput
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniInputDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.InputDesignInternal, Model); }
+        </div>
+
+    </div>
+</div>
+<script>
+    initUniLineCard($('#WebUniInputDesign-@Model.ID'), '@Model.ID');
+
+    var font = $("#FontID");
+    font.select2
+    (
+        {
+            placeholder: 'Выберите шрифт',
+            multiple: true,
+            maximumSelectionSize: 1,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchfont'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        pageLimit: 10,
+                        page: page
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data, more: more };
+                }
+            },
+            initSelection: function (element, callback) {
+
+                var id = font.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('getfont') + '?id=' + id, {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data[0]);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+    font.on("change", function (ev) {
+        var values = ev.val;
+        font.val(values);
+    });
+</script>

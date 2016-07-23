@@ -1,0 +1,15 @@
+﻿@{
+   
+  
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.Font
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="font-edit">
+            @{ Html.RenderPartial(MVC.UserFonts.Views.InternalEdit, Model); }
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,19 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniText
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div   id='WebUniTextData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.TextDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    initUniTextCard($('#WebUniTextData-@Model.ID'), '@Model.ID');
+</script>

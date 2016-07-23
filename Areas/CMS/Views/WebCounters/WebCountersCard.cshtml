@@ -1,0 +1,51 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.WebCounter
+
+@using (Ajax.BeginForm(MVC.CMS.WebCounters.WebCountersCardSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "WebCounterCard",
+    InsertionMode = InsertionMode.Replace,
+
+}))
+{
+    @Html.HiddenFor(m => m.ID)
+    <div class="row">
+
+        <div class="form-group">
+            <label>Включить </label>
+
+            @Html.BasicCheckBoxFor(m => m.IsEnabled, new {data_init_plugin = "switchery"})
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Название </label>
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Name, string.Empty, new { @class = "error" })
+    </div>
+
+    <div class="form-group">
+        <label>Meta тэг - подтверждение прав </label>
+        @Html.TextBoxFor(m => m.Meta, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        <label>Скрипт </label>
+        @Html.TextAreaFor(m => m.Script, new { @class = "form-control", rows = 40 })
+    </div>
+
+
+
+}
+
+<script>
+    $(document).ready(function() {
+
+        $.Pages.initSwitcheryPlugin('switchery');
+    });
+</script>

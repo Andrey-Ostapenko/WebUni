@@ -1,0 +1,172 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Utils
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Helpers
+@{
+    Layout = null;
+
+    var settings = new GridViewSettings();
+
+
+    settings.Name = "SiteGroupPriceListGridView";
+
+
+    settings.Width = new Unit(100, UnitType.Percentage);
+
+    settings.KeyFieldName = "ID";
+
+    settings.ClientSideEvents.BeginCallback = "function(s, e) { if(s.cpCIID) e.customArgs['cpCIID'] = s.cpCIID; }";
+    settings.CustomJSProperties = (sender, e) =>
+    {
+
+        e.Properties["cpCIID"] = ViewBag.CIID;
+
+    };
+
+    settings.Columns.Add(column =>
+            {
+                column.FieldName = "Priority";
+                column.Caption = "#";
+                column.ReadOnly = true;
+                //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+                //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            });
+
+
+    //settings.Columns.Add(column =>
+    //        {
+    //            column.FieldName = "PriceListElement.ID";
+    //            column.Caption = "ID";
+    //            column.ReadOnly = true;
+    //            //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+    //            //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    //        });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Brand";
+        column.Caption = "Бренд";
+        //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    });
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Group";
+        column.Caption = "Группа";
+        //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    });
+
+    //settings.Columns.Add(column =>
+    //{
+
+    //    column.FieldName = "PriceListElement.Articul";
+    //    column.Caption = "Артикул";
+    //    //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+    //    //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    //});
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Name";
+        column.Caption = "Наименование";
+
+
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Details";
+        column.Caption = "Описание";
+
+
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Properties";
+        column.Caption = "Свойства";
+        //    showPLPropertiesSelector
+        column.Settings.AllowAutoFilter = DefaultBoolean.False;
+        column.Settings.AllowSort = DefaultBoolean.False;
+        column.Settings.AllowGroup = DefaultBoolean.False;
+        //column.Settings.FilterMode = ColumnFilterMode.Value;
+        //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+    });
+
+
+
+    settings.Styles.Row.CssClass = "draggable2";
+
+
+
+    settings.HtmlRowPrepared = (s, e) =>
+    {
+        if (e.RowType == GridViewRowType.Data)
+        {
+            object displayIndex = e.GetValue("Priority");
+            if (displayIndex != null)
+                e.Row.Attributes.Add("displayIndex", displayIndex.ToString());
+        }
+    };
+
+
+    settings.ClientSideEvents.EndCallback = "function(s, e) {SiteGroupPriceListDetailGridView.PerformCallback();}";
+    
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+    settings.CallbackRouteValues = new { Controller = MVC.CMS.Catalog.Name, Action = MVC.CMS.Catalog.ActionNames.SiteGroupPriceListGridViewPartial, id = ViewBag.CIID };
+
+    settings.SettingsEditing.DeleteRowRouteValues = new { Controller = MVC.CMS.Catalog.Name, Action = MVC.CMS.Catalog.ActionNames.SiteGroupPriceListGridViewPartialDeletePartial };
+
+
+    settings.SettingsPager.PageSize = 40;
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Hidden;
+
+    settings.Settings.ShowFooter = false;
+
+    settings.Settings.ShowFilterRow = false;
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = false;
+    settings.SettingsBehavior.AllowSort = false;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.SettingsContextMenu.Enabled = false;
+
+    settings.CommandColumn.Visible = false;
+
+
+    var i = "showPLSelectorForSiteGroup(" + ViewBag.CIID + ")";
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(EditButtonHelpers.CreateButton(i)));
+        column.SetEditItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+
+    });
+
+}
+
+
+
+@Html.DevExpress().GridView(settings).Bind(Model).GetHtml()

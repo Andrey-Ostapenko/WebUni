@@ -1,0 +1,40 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniSite
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.SiteDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+@Html.HiddenFor(m => m.DomainName)
+
+
+        @*<div class="form-group WebUni-form-group WebUni-form-group-big">
+            <label for="Height" class="col-sm-7 control-label">Домен</label>
+            <div class="col-sm-5" style="float: right;">
+                @Html.TextBoxFor(m => m.DomainName, new
+               {
+                   @class = "input-sm form-control WebUni-form-element"
+               })
+            </div>
+        </div>*@
+    </div>
+
+}

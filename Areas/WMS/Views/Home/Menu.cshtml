@@ -1,0 +1,81 @@
+﻿@using livemenu.Kernel.Executing
+@{
+    Layout = MVC.Shared.Views._MenuLayout;
+}
+<div class="sidebar-menu" id="main-menu">
+    <ul class="menu-items">
+
+<li class="m-t-30 ">
+            <a href="@Url.Action(MVC.CRM.Home.Index())" class="">
+                <span class="title">Панель</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-th-list"></i></span>
+        </li>
+		
+		<li class="">
+            <a href="#" class="">
+               <span class="title">Справочник</span>
+			   <span class="arrow"></span>
+            </a>
+            <span class="icon-thumbnail"><i class="fa fa-folder"></i></span>
+	
+			<ul class="sub-menu" style="display: none; overflow: hidden;">
+			  <li class="">
+					<a href="@Url.Action(MVC.WMS.Countries.Index())" class="">
+						<span class="title">Страны</span>
+					</a>
+					<span class="icon-thumbnail"><i class="fa fa-flag "></i></span>
+				</li>
+                <li class="">
+					<a href="@Url.Action(MVC.WMS.Cities.Index())" class="">
+						<span class="title">Города</span>
+					</a>
+					<span class="icon-thumbnail"><i class="fa fa-map-marker"></i></span>
+				</li>
+				 <li class="">
+					<a href="@Url.Action(MVC.WMS.Addresses.Index())" class="">
+						<span class="title">Адреса</span>
+					</a>
+					<span class="icon-thumbnail"><i class="fa fa-location-arrow"></i></span>
+				</li>
+            </ul>
+        </li>
+		
+       
+	<li class="">
+            <a href="#" class="">
+               <span class="title">Склады</span>
+			   <span class="arrow"></span>
+            </a>
+            <span class="icon-thumbnail"><i class="fa fa-sort-amount-desc"></i></span>
+	
+			<ul class="sub-menu" style="display: none; overflow: hidden;">
+			  <li class="">
+					<a href="@Url.Action(MVC.WMS.Storages.Index())" class="">
+						<span class="title">Информация</span>
+					</a>
+					<span class="icon-thumbnail"><i class="fa fa-info "></i></span>
+				</li>
+                <li class="">
+					<a href="@Url.Action(MVC.WMS.Availability.Index())" class="">
+						<span class="title">Наличие</span>
+					</a>
+					<span class="icon-thumbnail"><i class="fa fa-cube"></i></span>
+				</li>
+				
+            </ul>
+        </li>
+	
+        
+		
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.FileManager.Index(LMExecutingType.WMS))" class="detailed">
+                <span class="title">Файлы</span>
+                <span class="details">Управление файлами</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-cloud"></i></span>
+        </li>	
+	
+    </ul>
+    <div class="clearfix"></div>
+</div>

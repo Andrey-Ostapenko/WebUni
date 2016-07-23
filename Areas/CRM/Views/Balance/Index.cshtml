@@ -1,0 +1,43 @@
+﻿@using livemenu.Helpers
+
+@{
+    Layout = MVC.Shared.Views._ResponsiveLayout;
+}
+
+<style>
+    .dxgvGroupPanel_Moderno {
+        border: none;
+    }
+</style>
+
+
+<div class="panel-body">
+    <div class="row" style="margin-top: 0px">
+        <div class="col-sm-12 col-md-12">
+            <div class="pull-left">
+
+                <div class="btn-group  pull-left" style="margin-right: 20px; margin-bottom: 20px;">
+                    <a class="btn btn-default" onclick="BalanceGridView.PerformCallback() "><i class="fa fa-refresh"></i> Обновить</a>
+
+                    <button type="button" class="btn btn-default" onclick="BalanceGridView.CancelEdit()">
+                        <i class="fa fa-times"></i>
+                    </button>
+
+                    <a class="btn btn-success" id="" onclick="BalanceGridView.UpdateEdit()" style="display: block;">
+                        <i class="fa fa-check"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            @{ Html.RenderAction(MVC.CRM.Balance.GridViewPartial()); }
+        </div>
+    </div>
+</div>
+
+

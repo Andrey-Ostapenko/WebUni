@@ -1,0 +1,256 @@
+﻿@using livemenu.Helpers
+
+@{
+    Layout = MVC.Shared.Views._ResponsiveLayout;
+}
+
+<script type="text/javascript">
+
+    var gridviewSortedColumnName;
+    var isf = true;
+    //Javascript
+    function GetSortedColumnIndex(s, e) {
+        isf = false;
+        gridviewSortedColumnName = e.column.fieldName;
+    }
+    </script>
+    <style>
+        .dxgvGroupPanel_Moderno {
+            border: none;
+        }
+    </style>
+
+
+
+    @using (Html.BeginForm(MVC.CRM.PriceList.ExportTo(), FormMethod.Post, new {data_name = "exportToForm"}))
+{
+
+    <div id="exportToFormPlaceHolder">
+
+        </div>
+
+                    <div class="panel-body">
+                        <div class="row" style="margin-top: 0px">
+                            <div class="col-sm-12 col-md-12">
+                                <div class="pull-left">
+
+                                        <div class="btn-group  pull-left" style="margin-right: 20px; margin-bottom: 20px;">
+                                            <a class="btn btn-default" onclick="PriceListGridView.PerformCallback() "><i class="fa fa-refresh"></i> Обновить</a>
+
+                                            <button type="button" class="btn btn-default" onclick="PriceListGridView.CancelEdit()">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+
+                                            <a class="btn btn-success" id="" onclick="PriceListGridView.UpdateEdit()" style="display: block;">
+                                                <i class="fa fa-check"></i>
+                                            </a>
+
+                                        </div>
+
+
+                                        <div class="input-group pull-left" style="margin-right: 20px; margin-bottom: 20px; width:240px;">
+                                            <input type="hidden" class="select2-offscreen" id="PriceListVersionIDHDN" style="width: 100%" value="0" />
+                                            <input type="text" id="PriceListVersionID" class='tag-input full-width' name="PriceListVersionID" value="0" />
+                                            <span class="input-group-btn">
+                                                <button type="button" id="deleteVersionBtn" class="btn btn-default" onclick="DeletePriceListVersion()" style="display:none">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+
+
+                                        <div class="input-group pull-left" style="margin-right: 20px; margin-bottom: 20px; width:240px;">
+                                            <input type="text" id="newPriceListVersionName" class='form-control' name="newPriceListVersionName" placeholder="название новой версии" />
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-success" onclick="CreateNewPriceListVersion()">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    
+                                </div>
+                                
+                            <div class="pull-right" style="margin-bottom: 20px;">
+                                <div class="btn-group">
+                                    <a class="btn btn-default" data-url="@Url.Action(MVC.CRM.PriceList.Import())" onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onPLExcelSelected)"><i class="fa fa-save"></i> Импорт</a>
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li>
+                                            <a href="@Url.Content("~/BWP/Resources/template.xlsx")">Загрузить шаблон</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                    <div class="btn-group">
+                                       
+                                        <a class="btn btn-default" onclick="submitExportTo('@GridViewExportType.Xlsx.ToString()') "><i class="fa fa-save"></i> Выгрузить</a>
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <a href="#" onclick="submitExportTo('@GridViewExportType.Xlsx.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Xlsx].Title</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" onclick="submitExportTo('@GridViewExportType.Xls.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Xls].Title</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" onclick="submitExportTo('@GridViewExportType.Pdf.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Pdf].Title</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" onclick="submitExportTo('@GridViewExportType.Rtf.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Rtf].Title</a>
+                                            </li>
+                                            <li>
+                                                <a href="#" onclick="submitExportTo('@GridViewExportType.Csv.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Csv].Title</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            @{ Html.RenderAction(MVC.CRM.PriceList.GridViewPartial()); }
+                        </div>
+                    </div>
+                </div>
+   
+}
+<script>
+    function submitExportTo(typeName) {
+        $('#exportToFormPlaceHolder').html("<input type='hidden' name=" + typeName + " value='' />");
+        $("[data-name='exportToForm']").submit();
+        }
+</script>
+
+
+
+
+
+<script type="text/javascript">
+
+    function gridView_BatchEditStartEditing(s, e) {
+        var articulColumn = s.GetColumnByField("Articul");
+        if (!e.rowValues.hasOwnProperty(articulColumn.index))
+            return;
+        var cellInfo = e.rowValues[articulColumn.index];
+       Articul.SetValue(cellInfo.value);
+       Articul.SetIsValid(true);
+
+       if (e.focusedColumn === articulColumn)
+            Articul.SetFocus();
+    }
+
+
+
+
+
+    var callbackInitDate;
+    var command;
+
+    //function OnStartCallback(s, e) {
+    //    callbackInitDate = new Date();
+    //    command = e.command;
+    //}
+    //function OnEndCallback(s, e) {
+    //    var currentDate = new Date();
+    //    var time = currentDate - callbackInitDate;
+    //    document.getElementById("Operation").innerHTML = command;
+    //    document.getElementById("Time").innerHTML = time;
+    //}
+
+
+    var priceListVersion = $("#PriceListVersionID");
+    priceListVersion.select2
+        (
+            {
+                multiple: false,
+                placeholder: 'выберите версию',
+                allowClear: false,
+                ajax: {
+                    url: '@Url.Action(MVC.CRM.PriceList.GetPriceListVersions())',
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+
+                initSelection: function (element, callback) {
+                    var id = priceListVersion.val();
+
+                    if (id !== null && id.length > 0) {
+                        $.ajax('@Url.Action(MVC.CRM.PriceList.GetPriceListVersion())' + '/' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data[0]);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+    var batchUpdateUrl = dxo.batchUpdateUrl;
+    var dxoCallbackUrl = dxo.callbackUrl;
+
+    priceListVersion.on("change", function (ev) {
+        onPriceListVersionChange(ev.val);
+    });
+
+    function onPriceListVersionChange(values)
+    {
+        priceListVersion.val(values);
+        dxo.batchUpdateUrl = batchUpdateUrl + '?PriceListVersionID=' + values;
+        dxo.callbackUrl = dxoCallbackUrl + '?PriceListVersionID=' + values;
+        PriceListGridView.PerformCallback();
+
+        if (values == '0') {
+            $('#deleteVersionBtn').hide();
+        }
+        else {
+            $('#deleteVersionBtn').show();
+        }
+    }
+
+
+    function CreateNewPriceListVersion()
+    {
+        var fieldName = $('#newPriceListVersionName');
+        $.get(
+            '@Url.Action(MVC.CRM.PriceList.CreatePriceListVersion())',
+            {
+                name: fieldName.val()
+            },
+            function (data) {
+                var newVerId = data;
+                if (newVerId != null)
+                {
+                    $("#PriceListVersionID").select2("val", newVerId);
+                    onPriceListVersionChange(newVerId);
+                }
+            }
+        );
+        fieldName.val('');
+    }
+
+    function DeletePriceListVersion() {
+        var verId = $("#PriceListVersionID").val();
+        $.get('@Url.Action(MVC.CRM.PriceList.DeletePriceListVersion())', { id: verId });
+        $("#PriceListVersionID").select2("val", "0");
+        onPriceListVersionChange(0);
+    }
+
+</script>

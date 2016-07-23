@@ -1,0 +1,12 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniStorage
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div   id='WebUniStorageDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.StorageDesignInternal, Model); }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniSearchFilterGroup
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.SearchFilterGroupDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    OnComplete = "OnCatalogItemFormCompleted"
+},
+                        new
+                        {
+                            @class = "form-horizontal ",
+                        }))
+
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.CatalogItemID)
+
+    <div class="form-group WebUni-form-group WebUni-form-group-group">
+        <label class="col-sm-7 control-label">Фильтры поиска</label>
+        <div class="col-sm-5" style="float: right;">
+
+        </div>
+    </div>
+
+    <div class="dd" id="SearchFilterGroupRelationsNestable">
+        <ol class="dd-list" id="SearchFilterGroupRelationsList">
+
+            @foreach (var rel in Model.UniSearchFilterGroupRelation.OrderByDescending(r => r.Priority))
+            {
+
+                <li class="dd-item" data-id="@rel.ID">
+                    @Html.Hidden("searchFilterIds", rel.SearchFilterID)
+                    <div class="dd-handle">
+                        @rel.UniSearchFilter.CatalogItem.Name
+                        <span class="fa fa-remove dd-nodrag" style="cursor:pointer; float:right; padding-top:3px;"></span>
+                    </div>
+                </li>
+            }
+
+        </ol>
+    </div>
+
+
+    <div class="form-group WebUni-form-group">
+        <label class="col-sm-7 control-label">Добавить фильтр поиска в группу</label>
+        <div class="col-sm-5" style="float: right;">
+            
+        </div>
+    </div>
+    
+    <div class="form-group WebUni-form-group WebUni-form-group-group">
+        <div class="col-sm-12">
+            <input type="hidden" class="select2-offscreen" id="SearchSearchFilterHDN" style="width: 100%" value="" />
+            <input type="text" id="SearchSearchFilter" class='tag-input full-width' name="PageLinkCatalogItemID" value="" />
+        </div>
+    </div>
+        
+}

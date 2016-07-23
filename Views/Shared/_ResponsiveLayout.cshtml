@@ -1,0 +1,164 @@
+﻿@using livemenu.Helpers
+@{
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+    var style = Model.IsIFrame ? "overflow: hidden !important;" : string.Empty;
+
+
+    var width = Model.OnlyInstruction ? 12 : 4;
+    var x = Model.OnlyInstruction ? 0 : 8;
+
+
+    var mwidth = Model.WithoutInstruction ? 12 : 8;
+
+}
+
+@model livemenu.Models.ResponsiveLayoutModel
+<div class="grid-stack">
+    @if (!Model.OnlyInstruction)
+    {
+
+
+        <div class="grid-stack-item"
+             data-custom-id="grid-stack-item-main"
+             data-gs-x="0" data-gs-y="0"
+             data-gs-width="@mwidth" data-gs-height="14">
+            <div class="panel-title" id="workspace-title" style="display: none;"></div>
+            <div id="main-portlet" class="panel panel-default grid-stack-item-content">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        @Model.Name
+                    </div>
+                    <div class="panel-controls">
+                        <ul>
+                            @*<li>
+                                    <a href="#" class="portlet-collapse" data-toggle="collapse"><i class="pg-arrow_maximize"></i></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="portlet-maximize" data-toggle="maximize"><i class="fa fa-arrows-alt pg-fullscreen"></i></a>
+                                </li>*@
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body" style="margin-bottom: 0px; padding-top: 0px; @style">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            @RenderBody()
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    }
+    else
+    {
+        @RenderBody()
+    }
+
+    @if (!Model.WithoutInstruction)
+    {
+        <div class="grid-stack-item"
+             data-custom-id="grid-stack-item-resp-instruction"
+             data-gs-x="@x" data-gs-y="0" data-saved-height="14"
+             data-gs-width="@width" data-gs-height="14">
+            <div class="panel panel-default grid-stack-item-content" id="grid-stack-item-resp-instruction" data-pages="portlet" style="overflow: hidden;">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Инструкция
+                    </div>
+                    <div class="panel-controls">
+                        <ul>
+
+                            <li>
+                                <a href="#" class="portlet-collapse" data-toggle="collapse"><i class="pg-arrow_minimize"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="portlet-maximize" data-toggle="maximize"><i class="fa fa-arrows-alt pg-fullscreen"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="portlet-refresh" onclick="reloadRespInstruction(true)"><i style="font-size: 12px;" class="fa fa-refresh"></i></a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-heading" style='padding-top: 0px; z-index: 0;'>
+                    <div class="btn-group" style="float: left">
+                        <button class="btn btn-default normal-font respinstruction-btn" style="overflow: hidden;" onclick="changeRespInstructionViewIFrame($(this), 0) ">на телефоне</button>
+                        <button class="btn btn-default normal-font respinstruction-btn" style="overflow: hidden;" onclick="changeRespInstructionViewIFrame($(this), 1) ">на планшете</button>
+                        <button class="btn btn-default normal-font respinstruction-btn" style="overflow: hidden;" onclick="changeRespInstructionViewIFrame($(this), 2) ">на ноутбуке</button>
+                        <button class="btn btn-default normal-font respinstruction-btn active" style="overflow: hidden;" onclick="changeRespInstructionViewIFrame($(this), 3) ">на десктопе</button>
+                    </div>
+                    <div class="checkbox check-success" id="respinstruction-fit-wrapper">
+                        <input data-val="true" id="respinstruction-fit" onchange="onRespInstructionFitChanged()" name="respinstruction-fit" type="checkbox" value="false">
+                        <label for="respinstruction-fit">Реальный размер</label>
+                    </div>
+                </div>
+                <div id="resp-instruction" class="panel-body" style="margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px;" data-link="@Model.InstructionLink?f&nomenu">
+                    <div class="">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+<script>
+    $(function () {
+        var name = '@Model.CustomID';
+        var options = {
+            cell_height: 48,
+            vertical_margin: 10,
+            handle: '.panel-heading',
+        };
+
+        $('.grid-stack').gridstack(options);
+
+        $('.grid-stack').on('dragstop', function (event, ui) {
+            catalogTreeSaveGridData(name);
+        });
+
+        $('.grid-stack').on('resizestop', function (event, ui) {
+            catalogTreeSaveGridData(name);
+            
+            if (ui.element.data('custom-id') == "grid-stack-item-resp-instruction") {
+                setTimeout(function () { reloadRespInstruction(true); }, 500);
+            }
+
+        });
+      
+        var saved = $.cookie(name);
+        if (saved) {
+            catalogTreeLoadGridData(jQuery.parseJSON(saved));
+        }
+        setTimeout(function () { reloadRespInstruction(true); }, 500);
+        
+
+    });
+
+
+    $(document).ready(function () {
+        initWorkspace();
+        $.Pages.initScrollBarPlugin();
+     
+    });
+    $('#main-portlet').portlet({
+        progress: 'circle',
+        onRefresh: function () {
+
+        }
+    });
+
+    //$('#ctree-portlet').portlet({
+    //    progress: 'circle',
+    //    onRefresh: function () {
+
+    //    }
+    //});
+</script>

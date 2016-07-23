@@ -1,0 +1,120 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniLine
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniLineShop-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.LineShopInternal, Model); }
+        </div>
+    </div>
+</div>
+
+
+<script>
+    initUniLineCard($('#WebUniLineShop-@Model.ID'));
+    initUniLineShopCard($('#WebUniLineShop-@Model.ID'));
+    function initUniLineShopCard(element, id) {
+
+        
+        var redirect = element.find("#BuyButtonRedirectPageCatalogItemID");
+        redirect.select2
+        (
+            {
+                multiple: true,
+                maximumSelectionSize: 1,
+                placeholder: 'выберите страницу',
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchpage'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = redirect.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getpage') + '/' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data[0]);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+        redirect.on("change", function (ev) {
+            var values = ev.val;
+            redirect.val(values);
+        });
+
+        var target = element.find("#PriceListElementID");
+        target.select2
+                (
+                    {
+                        multiple: true,
+                        placeholder: "Нажмите для выбора товара",
+                        allowClear: true,
+                        ajax: {
+                            url: $('#workspace-portlet').data('searchple'),
+                            dataType: 'json',
+                            data: function (term, page) {
+                                return {
+                                    id: term
+                                };
+                            },
+                            results: function (data) {
+                                
+                                return { results: data };
+                            }
+                        },
+                        initSelection: function (element, callback) {
+
+                            var id = target.val();
+                          
+                            if (id !== null && id.length > 0) {
+                                $.ajax($('#workspace-portlet').data('getple') + '/' + id, {
+                                    dataType: "json"
+                                }).done(function (data) {
+                                    console.log(data);
+                                    callback(data[0]);
+                                });
+                            }
+                        },
+                        formatResult: s2FormatResult,
+                        formatSelection: s2FormatSelection
+
+
+                    }
+
+                ).on("select2-opening", function (e) {
+                    e.preventDefault();
+                    showPLSelectorForUniline();
+                }
+
+
+        ).on("select2-removed", function (e) {
+                $('#catalogple').empty();
+            })
+
+
+        ;
+        getCatalogPriceListElement(target.val());
+
+    }
+
+</script>

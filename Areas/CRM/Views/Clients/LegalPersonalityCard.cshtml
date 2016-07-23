@@ -1,0 +1,239 @@
+﻿@{
+    Layout = null;
+
+
+}
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.CRM.Clients
+@using livemenu.Kernel.Projects
+@using Microsoft.Practices.ServiceLocation
+@model livemenu.Common.Entities.Entities.ClientLegalPersonality
+
+@{
+    var statuses = ServiceLocator.Current.GetInstance<IClientRegistrationStatusService>().GetAll();
+
+    if (!Model.ClientRoleID.HasValue)
+    {
+        Model.ClientRoleID = 0;
+    }
+}
+
+@using (Ajax.BeginForm(MVC.CRM.Clients.LegalPersonalityCardSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "LegalPersonalityCard",
+    InsertionMode = InsertionMode.Replace,
+
+}))
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.ClientID)
+    @Html.HiddenFor(m => m.RegistrationDate)
+    @Html.HiddenFor(m => m.ClientRegistrationTypeID)
+    @Html.HiddenFor(m => m.ClientRegistrationMethodID)
+    @Html.HiddenFor(m => m.LegalPersonalityID)
+
+
+    <input type='text' style='display: none'>
+    <input type='password' style='display: none'>
+
+    <div class="row">
+        <div class="col-sm-5 p-t-20">
+
+            <p>Учетная запись</p>
+            <div class="form-group form-group-default">
+
+                <div class="checkbox check-success  ">
+                    @Html.BasicCheckBoxFor(x => x.IsActive)
+                    <label for="IsActive">Активность</label>
+                </div>
+            </div>
+
+            <div class="form-group form-group-default ">
+                <label>Логин</label>
+                @Html.TextBoxFor(x => x.Login, new { @class = "form-control", placeholder = "Введите логин", autocomplete = "off" })
+
+                @*<input type="text" class="form-control" required="">*@
+            </div>
+            @Html.ValidationMessageFor(model => model.Login)
+            <div class="form-group form-group-default ">
+                <label>Пароль</label>
+                @Html.PasswordFor(x => x.Password, new { @class = "form-control", placeholder = "Введите пароль", autocomplete = "off" })
+            </div>
+            @Html.ValidationMessageFor(model => model.Password)
+            <div class="form-group form-group-default  form-group-default-select2">
+                <label>Роли</label>
+                <div class="form-group WebUni-form-group WebUni-form-group-group">
+                    <div class="col-sm-12">
+                        <input type="hidden" class="select2-offscreen" id="ClientRoleIDsStringHDN" style="width: 100%" value="@Model.ClientRoleIDsString" />
+                        <input type="text" id="ClientRoleIDsString" class='tag-input full-width' name="ClientRoleIDsString" value="@Model.ClientRoleIDsString" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-7 p-t-20">
+            <p>Основные данные</p>
+            <div class="form-group form-group-default ">
+                <label>Полное название организации</label>
+                @Html.TextBoxFor(x => x.FullName, new {@class = "form-control"})
+            </div>
+            <div class="form-group form-group-default ">
+                <label>Краткое название организации</label>
+                @Html.TextBoxFor(x => x.ShortName, new { @class = "form-control" })
+            </div>
+            <div class="form-group form-group-default ">
+                <label>ОГРН</label>
+                @Html.TextBoxFor(x => x.OGRN, new { @class = "form-control" })
+            </div>
+            <div class="form-group form-group-default ">
+                <label>ИНН</label>
+                @Html.TextBoxFor(x => x.INN, new {@class = "form-control"})
+            </div>
+            <div class="form-group form-group-default ">
+                <label>КПП</label>
+                @Html.TextBoxFor(x => x.KPP, new {@class = "form-control"})
+            </div>
+            <div class="form-group form-group-default input-group ">
+                <label>Дата регистрации</label>
+                @Html.TextBoxFor(x => x.LegalPersonalityRegistrationDate, new
+           {
+               @class = "form-control formdatepicker",
+               @Value = Model.LegalPersonalityRegistrationDate.HasValue ? Model.LegalPersonalityRegistrationDate.Value.ToString("dd.MM.yyyy") : string.Empty
+           })
+                <span class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                </span>
+            </div>
+            <div class="form-group form-group-default ">
+                <label>Юридический адрес</label>
+                @Html.TextBoxFor(x => x.LegalAddress, new {@class = "form-control"})
+            </div>
+            <div class="form-group form-group-default ">
+                <label>Фактический адрес</label>
+                @Html.TextBoxFor(x => x.StreetAddress, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-5 p-t-20">
+
+            <p>Регистрационные данные</p>
+            <div class="form-group form-group-default disabled">
+
+                <label>Дата регистрации</label>
+                <div class="form-control form-control-text">@Model.RegistrationDate.Value.ToString()</div>
+            </div>
+
+            <div class="form-group form-group-default disabled">
+                <label>Дата активации</label>
+                @{
+                    var actDateText = Model.ActivationDate.HasValue ? Model.ActivationDate.Value.ToString() : "не активирован";
+                }
+
+                <div class="form-control form-control-text">@actDateText</div>
+            </div>
+
+            <div class="form-group form-group-default  form-group-default-select2">
+                <label>Статус регистрации</label>
+
+                @Html.DropDownListFor(x => x.ClientRegistrationStatusID, statuses.Select(x => new SelectListItem
+           {
+               Text = x.Name,
+               Value = x.ID.ToString()
+           }), new
+           {
+               @class = "full-width",
+               @data_placeholder = "Выбор метода",
+               @data_init_plugin = "select2"
+           })
+
+
+            </div>
+            <div class="form-group form-group-default ">
+                <label>Метод регистрации</label>
+                <div class="form-control form-control-text">@Helpers.GetClientRegistrationTypeName((ClientRegistrationMethodValue)Model.ClientRegistrationMethodID)</div>
+            </div>
+
+        </div>
+        <div class="col-sm-7 p-t-20">
+            <p>Контакты</p>
+            <div class="form-group form-group-default ">
+                <label>Телефон</label>
+                @Html.TextBoxFor(x => x.Phone, new { @class = "form-control" })
+            </div>
+
+            <div class="form-group form-group-default ">
+                <label>E-mail</label>
+                @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+                    }
+
+
+
+<script>
+
+    var old_widget_title;
+    $(document).ready(function () {
+
+        var clientroletarget = $("#ClientRoleIDsString");
+        clientroletarget.select2
+        (
+            {
+                placeholder: 'Выберите роли',
+                multiple: true,
+                allowClear: true,
+                ajax: {
+                    url: '@Url.Action(MVC.Projects.Users.SearchByClientRole())',
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = clientroletarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax('@Url.Action(MVC.Projects.Users.GetByClientRole())' + '?id=' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+
+        $('.formdatepicker').datepicker({
+            language: 'ru',
+            format: 'dd.mm.yyyy'
+        });
+
+        $('.field-validation-error').addClass('error');
+        $('.input-validation-error').closest('.form-group').addClass('has-error');
+
+        //$.Pages.initSwitcheryPlugin();
+        $.Pages.initSelect2Plugin();
+
+    });
+</script>

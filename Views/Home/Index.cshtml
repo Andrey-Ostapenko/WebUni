@@ -1,0 +1,136 @@
+﻿@using livemenu.DAL
+@using livemenu.Helpers
+@using livemenu.Kernel.Catalog
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+}
+
+<style>
+    a, a:focus, a:hover, a:active {
+        color: initial;
+    }
+
+    @@media (max-width: 767px) {
+        .jumbotron, .container-fluid {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+    }
+
+   
+</style>
+
+<div id="dash" class="panel-profile">
+
+    <div class="container-fluid ">
+        <div class="panel panel-transparent">
+            <div class="panel-body sortable">
+
+                <div class="row grid-stack">
+                    <div class="grid-stack-item "
+                         data-custom-id="grid-stack-item-acc"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Profile.Account())">
+                                <img src="/Admin/Content/Images/Panels/profile/profile-account-settings.png">
+                                <div class="WebUni-panel-name">Аккаунт</div>
+                                <div class="WebUni-panel-description">настройки аккаунта</div>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-catalog-pass"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="pass" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Profile.Password())">
+                                <img src="/Admin/Content/Images/Panels/profile/profile-change-password.png">
+                                <div class="WebUni-panel-name">Пароль</div>
+                                <div class="WebUni-panel-description">настройка пароля</div>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-catalog-safe"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="safe" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Profile.Security())">
+                                <img src="/Admin/Content/Images/Panels/profile/profile-account-security.png">
+                                <div class="WebUni-panel-name">Безопасность</div>
+                                <div class="WebUni-panel-description">защита аккаунта</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-WebUni-buy"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="4"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="WebUni-buy" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Profile.Purchases())">
+                                <img src="/Admin/Content/Images/Panels/profile/profile-purchases.png">
+                                <div class="WebUni-panel-name">Покупки</div>
+                                <div class="WebUni-panel-description">совершенные покупки</div>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-WebUni-lice"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="4"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="WebUni-lice" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Profile.License())" >
+                                <img src="/Admin/Content/Images/Panels/profile/profile-license.png">
+                                <div class="WebUni-panel-name">Лицензия</div>
+                                <div class="WebUni-panel-description">информация о лицензии</div>
+                            </a>
+                        </div>
+                    </div>
+					
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var options = {
+        min_width: 0,
+        cell_height: 40,
+        vertical_margin: 20,
+
+    };
+    var name = "WebUni-cms-panel";
+    $('.grid-stack').gridstack(options);
+
+    $('.grid-stack').on('dragstop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    $('.grid-stack').on('resizestop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    var saved = $.cookie(name);
+    if (saved) {
+        panelLoadGridData(jQuery.parseJSON(saved));
+    }
+
+</script>

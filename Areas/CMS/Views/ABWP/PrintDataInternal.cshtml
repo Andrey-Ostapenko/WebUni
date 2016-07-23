@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniPrint
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.PrintDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+
+
+    </div>
+
+}

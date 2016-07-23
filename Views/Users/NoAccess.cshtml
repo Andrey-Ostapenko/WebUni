@@ -1,0 +1,28 @@
+﻿@{
+   
+  
+    Layout = null; //Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+}
+@model livemenu.Common.Entities.Entities.User
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="user-edit">
+            <h3>Вы превысили допустимый лимит пользователей для Вашей лицензии</h3>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('.widget-back-btn').show();
+        $('.widget-back-btn').on("click", function (evt) {
+            userCardGoBack();
+            $('.widget-back-btn').hide();
+            $('.widget-save-btn').hide();
+        });
+    });
+</script>

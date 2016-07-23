@@ -1,0 +1,78 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniRightSideBar
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.RightSideBarDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+
+        <div class="form-group WebUni-form-group WebUni-form-group-group">
+            <label for="Height" class="col-sm-7 control-label">Отображение</label>
+            <div class="col-sm-5" style="float: right;">
+
+            </div>
+        </div>
+
+        <div class="form-group WebUni-form-group">
+            <div class="col-sm-7 ">
+                @Html.DropDownListFor(m => m.IsVertical, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Вертикальное" },
+                        new { Value = "false", Text = "Горизонтальное" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsVertical),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+            </div>
+
+            <div class="col-sm-5" style="float: right;">
+
+            </div>
+        </div>
+
+        <div class="form-group WebUni-form-group">
+            <div class="col-sm-7 ">
+                @Html.DropDownListFor(m => m.Mode, new SelectList(
+                    new[]
+                    {
+                        new { Value = 0, Text = "Сдвигать страницу" },
+                        new { Value = 1, Text = "Сжимать страницу" },
+                        new { Value = 2, Text = "Накладывать на страницу" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.Mode),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+            </div>
+
+            <div class="col-sm-5" style="float: right;">
+
+            </div>
+        </div>
+
+    </div>
+
+}

@@ -1,0 +1,292 @@
+﻿@{
+    Layout = null;
+
+ 
+}
+@using DevExpress.Data.Linq
+@using livemenu.Helpers
+@using livemenu.Kernel.CRM.Clients
+@using livemenu.Kernel.CRM.Orders
+@using livemenu.Kernel.Users
+@using Microsoft.Practices.ServiceLocation
+@model livemenu.Common.Entities.Entities.Order
+           
+@{
+    var statuses = ServiceLocator.Current.GetInstance<IOrderStatusService>().GetAll();
+    var users = ServiceLocator.Current.GetInstance<IUserService>().GetAll();
+}
+
+<script type="text/javascript">
+
+    var gridviewSortedColumnName;
+    var isf = true;
+    //Javascript
+    function GetSortedColumnIndex(s, e) {
+        isf = false;
+        gridviewSortedColumnName = e.column.fieldName;
+    }
+</script>
+<style>
+    table td:nth-child(9) {
+        display: none;
+    }
+    table td:nth-child(10) {
+        display: none;
+    }
+</style>
+
+@using (Ajax.BeginForm(MVC.CRM.Order.CardSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "OrderCard",
+    InsertionMode = InsertionMode.Replace,
+
+}))
+{
+    @Html.HiddenFor(m => m.ID)
+    
+    @Html.HiddenFor(m => m.CreationDate)
+    @Html.HiddenFor(m => m.Number)
+    <div class="row">
+        <div class="col-sm-6 p-t-20">
+            <div class="form-group form-group-default ">
+                <label>Номер</label>
+                <div class="form-control form-control-text">@Model.Number</div>
+            </div>
+
+            <div class="form-group form-group-default ">
+                <label>Поступил</label>
+                <div class="form-control form-control-text">@Model.CreationDate.Value.ToString("dd.MM.yyyy") в @Model.CreationDate.Value.ToString("HH:mm")</div>
+            </div>
+
+            <div class="form-group form-group-default input-group  " style="cursor: pointer">
+                <label onclick="showCLSelector()" >Клиент </label>
+                @Html.HiddenFor(x => x.ClientID)
+                <div class="form-control form-control-text"onclick="showCLSelector()">
+                    <span id="order-card-client-name">@Model.ClientName <i class="fa fa-caret-down"></i></span>
+                </div>
+                <span class="input-group-addon" onclick="orderCardClearClient()">
+                    <i class="fa fa-times"></i>
+                </span>
+            </div>
+
+            <div class="form-group form-group-default input-group  form-group-default-select2">
+                <label>Ответственный</label>
+                @{
+                    List<SelectListItem> items = new List<SelectListItem>()
+                    {
+                        new SelectListItem {Text = "Нет", Value = 0.ToString()}
+                    }; 
+                    
+                    items.AddRange(users.Select(x => new SelectListItem
+                    {
+                        Text = x.UserName,
+                        Value = x.ID.ToString()
+                    }));
+                }
+                @Html.DropDownListFor(x => x.InchargeUserID, items, new
+                {
+                    @class = "full-width",
+                    @data_init_plugin = "select2"
+                })
+                <span class="input-group-addon" onclick="orderCardClearIncharge()">
+                    <i class="fa fa-times"></i>
+                </span>
+
+            </div>
+            <div class="form-group  form-group-default ">
+                <label>Комментарий </label>
+
+                @Html.TextAreaFor(m => m.Comment, new { @class = "form-control", rows = 40 })
+            </div>
+        </div>
+
+
+        <div class="col-sm-6 p-t-20">
+            <div class="form-group form-group-default  form-group-default-select2">
+                <label>Статус</label>
+
+                @Html.DropDownListFor(x => x.OrderStatusID, statuses.Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.ID.ToString()
+                }), new
+                {
+                    @class = "full-width",
+                    @data_init_plugin = "select2"
+                })
+
+
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group form-group-default input-group ">
+                        <label>Принято дата</label>
+                        @Html.TextBoxFor(x => x.AcceptedDate, new
+                        {
+                            @class = "form-control formdatepicker",
+                            @Value = Model.AcceptedDate.HasValue ? Model.AcceptedDate.Value.ToString("dd.MM.yyyy") : string.Empty
+                        })
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group form-group-default input-group bootstrap-timepicker">
+                        <label>Принято время</label>
+                        @Html.TextBoxFor(x => x.AcceptedTime, new
+                        {
+                            @class = "form-control formtimepicker",
+
+                        })
+
+
+                        <span class="input-group-addon"><i class="pg-clock"></i></span>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group form-group-default input-group ">
+                        <label>Сдача дата</label>
+                        @Html.TextBoxFor(x => x.DeadlineDate, new
+                        {
+                            @class = "form-control formdatepicker",
+                            @Value = Model.DeadlineDate.HasValue ? Model.DeadlineDate.Value.ToString("dd.MM.yyyy") : string.Empty
+                        })
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group form-group-default input-group bootstrap-timepicker">
+                        <label>Сдача время</label>
+                        @Html.TextBoxFor(x => x.DeadlineTime, new
+                        {
+                            @class = "form-control formtimepicker",
+                        })
+
+
+                        <span class="input-group-addon"><i class="pg-clock"></i></span>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    if (!Model.IsNew)
+     {
+         <div class="row" style="margin-top: 20px">
+             <div class="col-sm-12 col-md-12">
+                 <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 20px">
+                     <div class="btn-group">
+                         <a class="btn btn-default" onclick=" OrderElementGridView.PerformCallback() "><i class="fa fa-refresh"></i> Обновить</a>
+
+
+
+                         <div class="btn-group  pull-left" style="margin-right: 20px">
+                             <button type="button" class="btn btn-default" onclick=" OrderElementGridView.CancelEdit() ">
+                                 <i class="fa fa-times"></i>
+                             </button>
+
+                             <a class="btn btn-success" id="" onclick=" OrderElementGridView.UpdateEdit() " style="display: block;">
+                                 <i class="fa fa-check"></i>
+                             </a>
+
+                         </div>
+
+                         <table style="font-size: 10pt;">
+                             <tr>
+                                 <td>Operation:</td>
+                                 <td id="Operation">&nbsp;</td>
+                             </tr>
+                             <tr>
+                                 <td>Time taken:</td>
+                                 <td style="color: red"><span id="Time">&nbsp;</span>&nbsp;мс</td>
+                             </tr>
+                         </table>
+                     </div>
+                 </div>
+                        
+                      
+             </div>
+         </div>
+
+         <div class="row">
+             @{ Html.RenderAction(MVC.CRM.Order.OrderElementGridViewPartial(Model.ID, null, null, null, null)); }
+         </div>
+     }
+}
+
+<script>
+
+    var old_widget_title;
+    $(document).ready(function () {
+
+
+        $('.field-validation-error').addClass('error');
+        $('.input-validation-error').closest('.form-group').addClass('has-error');
+
+        //$.Pages.initSwitcheryPlugin();
+        $.Pages.initSelect2Plugin();
+
+        $('.formdatepicker').datepicker({
+            language: 'ru',
+            format:'dd.mm.yyyy'
+        });
+        $('.formtimepicker').timepicker({
+            showMeridian: false,
+            defaultTime: false
+        }).on('show.timepicker', function (e) {
+            var widget = $('.bootstrap-timepicker-widget');
+            widget.find('.glyphicon-chevron-up').removeClass().addClass('pg-arrow_maximize');
+            widget.find('.glyphicon-chevron-down').removeClass().addClass('pg-arrow_minimize');
+        });
+
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript">
+
+    function gridView_BatchEditStartEditing(s, e) {
+        var articulColumn = s.GetColumnByField("Articul");
+        if (!e.rowValues.hasOwnProperty(articulColumn.index))
+            return;
+        var cellInfo = e.rowValues[articulColumn.index];
+        Articul.SetValue(cellInfo.value);
+        Articul.SetIsValid(true);
+
+        if (e.focusedColumn === articulColumn)
+            Articul.SetFocus();
+    }
+
+
+
+
+
+    var callbackInitDate;
+    var command;
+
+    function OnStartCallback(s, e) {
+        callbackInitDate = new Date();
+        command = e.command;
+    }
+    function OnEndCallback(s, e) {
+        var currentDate = new Date();
+        var time = currentDate - callbackInitDate;
+        document.getElementById("Operation").innerHTML = command;
+        document.getElementById("Time").innerHTML = time;
+    }
+</script>

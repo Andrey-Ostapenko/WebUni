@@ -1,0 +1,118 @@
+﻿@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.CMS.Controllers
+@using livemenu.Areas.CRM.Controllers
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP.Pages.WebCounters
+@using livemenu.Kernel.CRM.Clients
+@using livemenu.Kernel.CRM.PriceList
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    Layout = null;
+
+}
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+}
+
+
+@{
+
+    Layout = null;
+
+    var settings = (ViewContext.Controller as WebCountersController).GetWebCountersGridViewSettings();
+
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new { Area = MVC.CMS.Name, Controller = MVC.CMS.WebCounters.Name, Action = MVC.CMS.WebCounters.ActionNames.WebCountersGridViewPartial };
+
+
+    settings.SettingsBehavior.AllowDragDrop = false;
+
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 50;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100", "500", "1000" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFooter = true;
+
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+
+    settings.CellEditorInitialize = (s, e) =>
+    {
+        ASPxEdit editor = (ASPxEdit)e.Editor;
+        editor.ValidationSettings.Display = Display.None;
+    };
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(50, UnitType.Pixel);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var b = DataBinder.Eval(c.DataItem, "ID");
+
+            if (b != null)
+            {
+                var id = (long)b;
+
+                var url = Url.Action(MVC.CMS.WebCounters.WebCountersCard(id));
+                ViewContext.Writer.Write(Html.StartEditButton(string.Format("openWebCounterCard('{0}');", url)));
+            }
+
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton(string.Format("openWebCounterCard('{0}');", Url.Action(MVC.CMS.WebCounters.WebCountersCard())))));
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewSaveButton(name)));
+
+    });
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(50, UnitType.Pixel);
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewCancelEditButton(name)));
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = (Int32)(long)DataBinder.Eval(c.DataItem, "ID");
+            ViewContext.Writer.Write(Html.DeleteButton("jQuery('#delete-confirmation').data('url', '" + Url.Action(MVC.CMS.WebCounters.Delete(index)) + "');jQuery('#delete-confirmation').data('name', '" + name + "');jQuery('#delete-confirmation').modal('show', {backdrop: 'fade'});"));
+        });
+    });
+}
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+    e.QueryableSource = ServiceLocator.Current.GetInstance<IWebCounterService>().RawDataQueryable;
+}).GetHtml()
+

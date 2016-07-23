@@ -1,0 +1,222 @@
+﻿@{
+    ViewBag.Title = "Widget";
+    Layout = null;
+}
+
+@using livemenu.Common.Entities
+@using livemenu.Kernel.Configuration
+@model livemenu.Areas.BWP.Models.VerticalListModel
+@{
+    //bool isLinkEnabled = Model.Config.IsFieldConfigExists("Link");
+    //bool isImageUrlEnabled = Model.Config.IsFieldConfigExists("ImageUrl");
+    //bool isCaptionEnabled = Model.Config.IsFieldConfigExists("Caption");
+    //bool isDescriptionEnabled = Model.Config.IsFieldConfigExists("Description");
+}
+
+@*@using (Ajax.BeginForm(MVC.BeautifulLinksMicroModule.Save(),
+    new AjaxOptions
+        {
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = Model.ID,
+            OnSuccess = "ajaxComplete($('#" + Model.ID + "'))"
+        }))*@
+
+
+
+
+
+@{ var mainId = "sc-" + Model.ID; }
+
+
+<div id="@mainId">
+    <div class="table-responsive" style="padding-top: 34px;">
+        @*<div class="pull-right">
+                <div class="col-xs-12">
+                    <input type="text" id="search-table" class="form-control pull-right" placeholder="Поиск">
+                </div>
+            </div>*@
+
+        <table class="table" id="vl-table">
+            <thead>
+                <tr>
+                    @foreach (var h in Model.Headers)
+                    {
+                        <th>@h.LocalizedNames.GetStringForCurrentLocale()</th>
+                    }
+
+                    <th style="width: 1px; text-align: center; ">
+                        <a class="btn btn-info tl-edt-btn" data-url="@Url.Action(MVC.CMS.FieldListMicroModule.Edit())" data-uiid="@Model.ID" data-code="@Model.Kind" data-mmid="@Model.MMID" data-id="0">
+                            <i class="fa fa-plus"></i>
+                        </a>
+
+                    </th>
+                    <th style="width: 1px"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var el in Model.ElementGroups)
+                {
+                    <tr data-id="1" data-code="@Model.Code">
+                        @*<td class="handle "></td>*@
+
+                        @foreach (var h in Model.Headers)
+                        {
+                            var element = el.Element.Single(e => e.Code == h.Code);
+                            var dtype = (DataTypeValue)element.DataTypeID;
+
+                            @: <td>
+                                switch (dtype)
+                                {
+                                    case DataTypeValue.Switcher:
+                                        {
+                                            @element.ValueObject
+                                            break;
+                                        }
+                                        
+                                    case DataTypeValue.Spin:
+                                        {
+                                           <span>@element.IntValue</span>
+                                        }
+
+
+                                        break;
+                                        
+                                    case DataTypeValue.Date:
+                                        {
+                                            var dt = element.SimpleDateTime.ToString("dd.MM.yyyy");
+                                            <span>@dt</span>
+                                        }
+
+
+                                        break;
+
+
+                                    case DataTypeValue.Image:
+                                        {
+                                            @:<div style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center; ">
+
+
+
+
+
+
+
+
+                                            var imageUrlModel = "~/" + element.ValueObject;
+                                            var imageUrl = string.IsNullOrEmpty(imageUrlModel) ? string.Empty : Url.Content(imageUrlModel);
+
+                                            @:        <img style="max-height: 98px; max-width: 148px;  " alt="нет" src="@imageUrl" />
+                                            @:
+                                            @: </div>
+
+
+
+
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            <span>@element.ValueObject</span>
+                                            break;
+                                        }
+                                }
+
+                                @: </td>
+                        }
+
+                        <td>
+                            <a class="btn btn-complete  tl-edt-btn" data-url="@Url.Action(MVC.CMS.FieldListMicroModule.Edit())" data-uiid="@Model.ID" data-code="@Model.Kind" data-mmid="@Model.MMID" data-id="@el.ID">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+
+                        </td>
+                        <td>
+                            <a class="btn btn-danger tl-del-btn " data-url="@Url.Action(MVC.CMS.VerticalListMicroModule.Delete(el.ID))">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+
+
+   // $(document).ready(function () {
+
+        var table = $('#vl-table');
+
+        var settings = {
+            "sDom": "t",
+            "bSort" : false,
+            "sPaginationType": "bootstrap",
+            "destroy": true,
+            "paging": false,
+            "scrollCollapse": true,
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [0]
+            }],
+        };
+
+        table.dataTable(settings);
+        $('#search-table').keyup(function () {
+            table.fnFilter($(this).val());
+        });
+
+        //$('#vl-table').dataTable({
+        //    "autoWidth": false
+        //});
+        // return;
+        var mainIds = '#' + '@mainId';
+
+
+        $('.tl-edt-btn').on("click", function (evt) {
+            var target = $(this);
+            var mmID = target.data('mmid');
+            var uiID = target.data('uiid');
+            var code = target.data('code');
+            var id = target.data('id');
+
+            $.ajax({
+                type: '@WebRequestMethods.Http.Get',
+                url: '@Url.Action(MVC.CMS.VerticalListMicroModule.Edit())',
+                data:
+                {
+                    code: code,
+                    uiID: uiID,
+                    mmID: mmID,
+                    id: id
+                },
+                success: function (data) {
+                    $(mainIds).html(data);
+                    //ajaxComplete($(mainIds));
+                }
+            });
+
+        });
+
+
+        $('.tl-del-btn').click(function (event) {
+            event.preventDefault();
+            var item = $(this);
+
+            var url = item.data('url');
+            $.ajax({
+                type: '@WebRequestMethods.Http.Post',
+                url: url,
+
+                success: function (data) {
+                    var tr = item.closest('tr');
+                    tr.remove();
+                    item.removeClass('disabled');
+                }
+            });
+
+        });
+
+
+//    });
+</script>

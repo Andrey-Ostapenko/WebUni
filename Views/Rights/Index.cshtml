@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = null;
+    // Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+}
+
+@model long
+
+
+<div class="row" style="padding-top: 20px;">
+    <div class="col-md-3 ">
+        @Html.Action(MVC.Rights.RightsMenuGridViewPartial(Model))
+
+    </div>
+    <div class="col-md-9 ">
+        <div id="right-detail">
+            @*@Html.Action(MVC.Rights.RightsCatalog())*@
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+﻿@{
+    Layout = null;
+    var caption = Model.Type == CatalogItemTypeValue.Layouts ? "Выберите макеты из списка" : " Выберите элементы из списка";
+}
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@model livemenu.Areas.CMS.Models.CatalogItemSelector.CatalogItemTemplateModel
+
+
+    <div class="modal-content">
+        <div class="modal-header">
+           @caption
+        </div>
+        <div class="modal-body" style="height: 500px; overflow-y: auto">
+@using (Ajax.BeginForm(MVC.CMS.Catalog.InsertTemplates(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    OnBegin = "$('#template-modal').modal('hide')",
+    OnComplete = "reloadActiveTreeNode();"
+
+},
+new
+{
+    @class = "form-horizontal ",
+}))
+{
+    @Html.HiddenFor(x=>x.ID)
+    for (int i = 0; i < Model.Items.Count; i++)
+    {
+            @Html.HiddenFor(m => Model.Items[i].ID)
+            <div class="row">
+
+                <div class="form-group form-group-default" >
+
+                    <div class="checkbox check-success">
+                        @Html.BasicCheckBoxFor(m => Model.Items[i].IsSelected)
+                        <label for="Items_@(i)__IsSelected">@Model.Items[i].Name</label>
+
+                        
+                    </div>
+                </div>
+
+            </div>
+            }
+}
+        </div>
+        <div class="modal-footer">
+            <button class="btn right-menu-btn right-menu-btn-maket btn-block" onclick="$('#template-modal-content').find('form').submit()">выбрать</button>
+        </div>
+    </div>
+
+   
+
+   
+
+

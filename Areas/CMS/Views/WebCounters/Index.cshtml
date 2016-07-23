@@ -1,0 +1,16 @@
+﻿@{
+    Layout = MVC.Shared.Views._ResponsiveLayout;
+}
+
+<style>
+    .dxgvGroupPanel_Moderno {
+        border: none;
+    }
+</style>
+
+<div id="webcounters-list">
+            @{ Html.RenderAction(MVC.CMS.WebCounters.WebCountersGridViewPartial()); }
+</div>
+<div id="webcounter-content">
+
+</div>

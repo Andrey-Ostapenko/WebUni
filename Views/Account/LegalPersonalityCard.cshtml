@@ -1,0 +1,80 @@
+﻿@{ Layout = null;}
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@model livemenu.Kernel.Account.WebUniLegalPersonalityAccountModel
+    
+
+<div class="row">
+    <div class="col-sm-12 p-t-20">
+
+        <p>Основная информация</p>
+       
+        <div class="form-group form-group-default ">
+            <label>Ваш логин</label>
+            @Html.TextBoxFor(x => x.Login, new { @class = "form-control", placeholder = "Введите логин", autocomplete = "off" })
+        </div>
+        @Html.ValidationMessageFor(model => model.Login)
+
+
+
+    </div>
+    <div class="col-sm-12 p-t-20">
+        <p>Дополнительная информация</p>
+        <div class="form-group form-group-default ">
+            <label>Полное название организации</label>
+            @Html.TextBoxFor(x => x.FullName, new { @class = "form-control" })
+        </div>
+        <div class="form-group form-group-default ">
+            <label>Краткое название организации</label>
+            @Html.TextBoxFor(x => x.ShortName, new { @class = "form-control" })
+        </div>
+        <div class="form-group form-group-default ">
+            <label>ОГРН</label>
+            @Html.TextBoxFor(x => x.OGRN, new { @class = "form-control" })
+        </div>
+        <div class="form-group form-group-default ">
+            <label>ИНН</label>
+            @Html.TextBoxFor(x => x.INN, new { @class = "form-control" })
+        </div>
+        <div class="form-group form-group-default ">
+            <label>КПП</label>
+            @Html.TextBoxFor(x => x.KPP, new { @class = "form-control" })
+        </div>
+        <div class="form-group form-group-default input-group ">
+            <label>Дата регистрации</label>
+            @Html.TextBoxFor(x => x.LegalPersonalityRegistrationDate, new
+           {
+               @class = "form-control formdatepicker",
+               @Value = Model.LegalPersonalityRegistrationDate.HasValue ? Model.LegalPersonalityRegistrationDate.Value.ToString("dd.MM.yyyy") : string.Empty
+           })
+            <span class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+            </span>
+        </div>
+        <div class="form-group form-group-default ">
+            <label>Юридический адрес</label>
+            @Html.TextBoxFor(x => x.LegalAddress, new { @class = "form-control" })
+        </div>
+        <div class="form-group form-group-default ">
+            <label>Фактический адрес</label>
+            @Html.TextBoxFor(x => x.StreetAddress, new { @class = "form-control" })
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12 p-t-20">
+        <p>Контактная информация</p>
+        <div class="form-group form-group-default ">
+            <label>Телефон</label>
+            @Html.TextBoxFor(x => x.Phone, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group form-group-default ">
+            <label>E-mail</label>
+            @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+        </div>
+
+
+    </div>
+</div>

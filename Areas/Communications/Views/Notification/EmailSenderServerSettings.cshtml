@@ -1,0 +1,8 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Kernel.Settings.EmailSenderServerSettings
+
+<div id="smtpsettings-edit">
+    @{ Html.RenderPartial(MVC.Communications.Notification.Views.EmailSenderServerSettingsInternalEdit, Model); }
+</div>

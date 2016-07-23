@@ -1,0 +1,97 @@
+﻿@{
+  //  Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+}
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.BWP.Models.Attributes
+@using livemenu.Common.Entities.Entities
+@using Unit = System.Web.UI.WebControls.Unit
+@model AttributesEditModel
+
+@{
+    AttributesEditModel ModelWrapper = Model ?? new AttributesEditModel
+    {
+        Attributes = new List<BWPAttribute>(),
+        AttributesGroupCode = string.Empty
+    };
+}
+
+
+@Html.DevExpress().GridView(settings => {
+    settings.Width = new Unit(100, UnitType.Percentage);
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.Name = "attrEditGridView";
+    settings.CallbackRouteValues = new { Area = "CMS", Controller = "Attributes", Action = "EditPartial", agCode = ModelWrapper.AttributesGroupCode };
+    settings.SettingsEditing.AddNewRowRouteValues = new { Area = "CMS", Controller = "Attributes", Action = "EditAddNewPartial", agCode = ModelWrapper.AttributesGroupCode };
+    settings.SettingsEditing.UpdateRowRouteValues = new { Area = "CMS", Controller = "Attributes", Action = "EditUpdatePartial", agCode = ModelWrapper.AttributesGroupCode };
+    settings.SettingsEditing.DeleteRowRouteValues = new { Area = "CMS", Controller = "Attributes", Action = "EditDeletePartial", agCode = ModelWrapper.AttributesGroupCode };
+    settings.CustomJSProperties = (sender, e) =>
+    {
+        var gridView = (MVCxGridView)sender;
+        if (gridView.EditingRowVisibleIndex > -1)
+        {
+            e.Properties["cpAttributeGroupID"] = gridView.GetRowValues(gridView.EditingRowVisibleIndex, "AttributeGroupID");
+        }
+    };
+    settings.ClientSideEvents.BeginCallback = "OnDetailGridBeginCallback";
+    settings.ClientSideEvents.EndCallback = "OnDetailGridEndCallback";
+    
+                                            settings.Settings.ShowFilterRow = true;
+    settings.KeyFieldName = "ID";
+    
+    settings.Columns.Add("Name", "Название");
+    settings.Columns.Add("Code", "Код");
+    
+    settings.CommandButtonInitialize = (sender, args) =>
+    {
+        //if (args.ButtonType == ColumnCommandButtonType.Cancel || args.ButtonType == ColumnCommandButtonType.Update)
+        //    args.Visible = false;
+    };
+    //settings.CommandColumn.Index = 6;
+    settings.CommandColumn.Visible = false;
+    //settings.CommandColumn.ShowNewButton = true;
+    //settings.CommandColumn.ShowDeleteButton = true;
+    //settings.CommandColumn.ShowEditButton = true;
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var ind = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+            ViewContext.Writer.Write(string.Format(@"<button class='btn btn-gold btn-xs' onclick=""{0}""><i class='entypo-pencil'></i></button>", string.Format("aspxGVScheduleCommand('attrEditGridView',['StartEdit',{0}],1)", ind)));
+        });
+        column.SetHeaderCaptionTemplateContent(a =>
+        {
+            //TODO
+            ViewContext.Writer.Write(@"<button class='btn btn-primary btn-xs' onclick=""{0}""  >  <i class='entypo-plus'></i></button>", string.Format("aspxGVScheduleCommand('attrEditGridView',['AddNew'],1)"));
+        });
+        column.SetEditItemTemplateContent(c =>
+        {
+
+
+            ViewContext.Writer.Write(string.Format(@"<button class='btn btn-success btn-xs' onclick=""{0}""><i class='entypo-check'></i></button>", string.Format("aspxGVScheduleCommand('attrEditGridView',['UpdateEdit'],1)")));
+        });
+        /*EditItemTemplate*/
+
+    });
+    settings.Columns.Add(
+           column =>
+           {
+               column.Width = new Unit(1, UnitType.Percentage);
+               column.SetEditItemTemplateContent(c =>
+               {
+                   ViewContext.Writer.Write(@"<button class='btn btn-orange btn-xs' onclick=""{0}""  >  <i class='entypo-cancel'></i></button>", string.Format("aspxGVScheduleCommand('attrEditGridView',['CancelEdit'],1)"));
+               });
+               column.SetDataItemTemplateContent(c =>
+               {
+                   var ind = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+                   ViewContext.Writer.Write(@"<button class='btn btn-danger btn-xs' onclick=""{0}""  >  <i class='entypo-cancel'></i></button>", string.Format("aspxGVScheduleCommand('attrEditGridView',['Delete',{0}],1)", ind));
+               });
+           });
+ 
+
+}).Bind(ModelWrapper.Attributes).GetHtml()

@@ -1,0 +1,140 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniGraphics
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.GraphicsDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    OnComplete = "OnCatalogItemFormCompleted"
+},
+new
+{
+    @class = "form-horizontal ",
+}))
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.CatalogItemID)
+
+    <div class="form-group WebUni-form-group ">
+        <div class="col-sm-12 " style="padding-left: 15px;">
+            @Html.DropDownListFor(m => m.IsAdaptiveByHeight, new SelectList(
+        new[]
+        {
+            new { Value = "true", Text = "Адаптивность по высоте" },
+            new { Value = "false", Text = "Адаптивность по ширине" },
+        },
+        "Value",
+        "Text",
+        Model.IsAdaptiveByHeight),
+        new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+        )
+        </div>
+      
+    </div>
+
+
+
+    <div class="form-group WebUni-form-group WebUni-form-group-group">
+        <label for="Height" class="col-sm-7 control-label">Автопереключение</label>
+        <div class="col-sm-5" style="float: right;">
+            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                @Html.BasicCheckBoxFor(x => x.AutoplayEnabled, new {data_init_plugin = "switchery_internal"})
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group WebUni-form-group WebUni-form-group-group">
+        <label for="Height" class="col-sm-7 control-label">Стрeлки навигации</label>
+        <div class="col-sm-5" style="float: right;">
+            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                @Html.BasicCheckBoxFor(x => x.ArrowsEnabled, new {data_init_plugin = "switchery_internal"})
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group WebUni-form-group ">
+        <label for="Height" class="col-sm-7 control-label">Интервал</label>
+        <div class="col-sm-5" style="float: right;">
+            @Html.TextBoxFor(m => m.Interval, new
+           {
+               @class = "spin-fe_interval input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+        </div>
+    </div>
+
+}
+
+    <div class="" style="margin-top:20px" id="">
+   
+
+
+        <div class="table-responsive" style="">
+            @*<div class="pull-right">
+                <div class="col-xs-12">
+                    <input type="text" id="search-table" class="form-control pull-right" placeholder="Поиск">
+                </div>
+            </div>*@
+
+            <table class="table" id="vl-table">
+                <thead>
+                    <tr>
+                        <th style="padding-left: 0px;">Изображение</th>
+                        @*<th>Изображение при наведении</th>*@
+
+                        <th style="width: 1px; text-align: center; padding-left: 0px;">
+                            <a class="btn btn-info tl-edt-btn" data-url="@Url.Action(MVC.CMS.WebUni.GraphicsItemData(Model.ID, null))" data-id="0">
+                                <i class="fa fa-plus"></i>
+                            </a>
+
+                        </th>
+                        <th style="width: 1px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.UniGraphicsItem)
+                {
+                    <tr id="uniGraphicsItem-@item.ID">
+                        <td style="padding-left: 0px;">
+                            <div style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center; ">
+                                @{
+                                    var imageUrlModel = "~/" + item.BackgroundUrl;
+                                    var imageUrl = string.IsNullOrEmpty(imageUrlModel) ? string.Empty : Url.Content(imageUrlModel);
+                                    var imageAlt = string.IsNullOrEmpty(item.AlternativeText) ? "нет изображения" : item.AlternativeText;
+                                }
+                                <img style="max-height: 98px; max-width: 148px;" alt="@imageAlt" src="@imageUrl" />
+                            </div>
+
+                            
+
+                        </td>
+                   
+
+
+                        <td style="padding-left: 0px;">
+                            <a class="btn btn-complete  tl-edt-btn" data-url="@Url.Action(MVC.CMS.WebUni.GraphicsItemData(Model.ID, item.ID))" data-id="">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+
+                        </td>
+                        <td style="padding-left: 0px;">
+                            <a class="btn btn-danger tl-del-btn " onclick="uniGraphicsItemDeleteConfirmationModal(@item.ID)">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+               
+
+                </tbody>
+            </table>
+        </div>
+
+
+
+    </div>
+
+

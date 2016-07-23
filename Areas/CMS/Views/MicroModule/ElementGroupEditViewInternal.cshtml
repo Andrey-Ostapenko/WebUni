@@ -1,0 +1,260 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.Configuration
+@model livemenu.Areas.BWP.Models.ElementGroupEditModel
+
+
+@{
+    useIndexer = ((bool?) ViewBag.UseCustomIndexer ?? false);
+    if(useIndexer)
+    {
+        indexerArray = (List<int>) ViewBag.CustomIndexer;
+    }
+    
+}
+@functions
+{
+  
+    List<int> indexerArray;
+    bool useIndexer; 
+
+    int Indexer(int index)
+    {
+
+        return useIndexer ? indexerArray[index] : index;
+    }
+
+    int Count()
+    {
+        return useIndexer ? indexerArray.Count() : Model.Elements.Count;
+    }
+    
+
+}
+
+@for (int i = 0; i < Count(); i++)
+{
+
+    <div class="form-group">
+        <label class="">@Model.ElementGroupContainerConfig.ElementGroupConfig.GetElementLocalizedNameByCode(Model.Elements[Indexer(i)].Element.Code)</label>
+
+        <div class="">
+
+            @switch ((DataTypeValue)Model.Elements[Indexer(i)].Element.DataTypeID)
+            {
+
+                case DataTypeValue.Switcher:
+                    {
+                        @Html.BasicCheckBoxFor(m => m.Elements[Indexer(i)].Element.BoolValue, new { data_init_plugin = "switchery" })
+
+                        break;
+                    }
+                case DataTypeValue.RichText:
+                    {
+                        @Html.TextAreaFor(m => m.Elements[Indexer(i)].Html, new { @class = "ckeditor" })
+                        break;
+
+                    }
+                case DataTypeValue.Spin:
+                    {
+                        @Html.TextBoxFor(m => m.Elements[Indexer(i)].Element.IntValue, new
+                        {
+                            @class = "spin-fe"
+                        });
+
+
+                  break;
+                    }
+                case DataTypeValue.Date:
+                    {
+
+                        //   @Html.DevExpress().DateEditFor(m => m.Elements[Indexer(i)].Element.SimpleDateTime).GetHtml()
+
+                        break;
+                    }
+
+                case DataTypeValue.RadioGroup:
+                {
+                    var item = Model.Elements[Indexer(i)].Element;
+                    var config = Model.ElementGroupContainerConfig.ElementGroupConfig.Single(x => x.Code == item.Code);
+
+                 
+                    var radio = Model.ElementGroupContainerConfig.RadioGroupConfig.Single(x => x.Code == config.RadioGroupCode);
+
+
+                    var index = Indexer(i);
+                    var val = Model.Elements[index].Element.IntValue;
+                    <div class="radio radio-default">
+                        
+                        @for (int r = 0; r < radio.RadioGroupItemList.Count; r ++)
+                        {
+                            var radioItem = radio.RadioGroupItemList[r];
+
+
+                            var additional = new Dictionary<string, object>()
+                            {
+                                {"id", "radio" + radioItem.Code + item.Code },
+                            };
+
+                            if (val == r)
+                            {
+                                additional.Add("checked", "checked" );
+                            }
+                            
+                            @Html.RadioButtonFor(m => m.Elements[index].Element.IntValue, r, additional);
+                            @Html.Label("radio" + radioItem.Code + item.Code, radioItem.LocalizedNames.GetStringForCurrentLocale())
+                        }
+                    </div>
+         
+             
+                        break;
+                    }
+
+                case DataTypeValue.ColorEditor:
+                {
+                    var item = Model.Elements[Indexer(i)].Element;;
+                    if (string.IsNullOrEmpty(item.ValueObject))
+                    {
+                        item.ValueObject = "rgb(0, 0, 0)";
+                    }
+                      
+                        @Html.TextBoxFor(m => m.Elements[Indexer(i)].Element.ValueObject, new
+                        {
+                            @class = "color-picker-fe form-control"
+                        });
+
+                  break;
+                    }
+
+                case DataTypeValue.MultipleAG:
+                    {
+
+                        <div class="row" style="">
+                            <div class="col-sm-10">
+                                @{ string agr = Model.ElementGroupContainerConfig.ElementGroupConfig.GetElementConfigByCode(Model.Elements[Indexer(i)].Element.Code).AttributeGroupCode; }
+                                @Html.DevExpress().TokenBoxFor(model => Model.Elements[Indexer(i)].MultipleAttributesIDsString,
+                                   itemSettigns =>
+                                   {
+                                       itemSettigns.Width = new Unit(100, UnitType.Percentage);
+
+                                       itemSettigns.Properties.AllowCustomTokens = false;
+                                       itemSettigns.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+                                       itemSettigns.Properties.ShowDropDownOnFocus = ShowDropDownOnFocusMode.Always;
+                                       itemSettigns.Properties.TextField = "Name";
+                                       itemSettigns.Properties.ValueField = "ID";
+                                   }).BindList(Helpers.GetAttributes(agr)).GetHtml()
+
+                                @Html.HiddenFor(m => m.Elements[Indexer(i)].Element.AttributeGroupID)
+                            </div>
+                            <div class="col-sm-2">
+                               @Html.DevExpress().Button(settings =>
+                                {
+                                    settings.Name = "openBtn" + Model.Elements[Indexer(i)].Element.ID + Indexer(i);
+                                    settings.Text = "...";
+                                    //    settings.Attributes.Add("data-url", Url.Action(MVC.Attributes.EditPartial(agr)));
+                                    settings.ClientSideEvents.Click = string.Format("function(s, e) {{ OpenAttributeGroupEdit('{0}'); }}", agr);
+                                }).GetHtml()
+                            </div>
+                        </div>
+                                 break;
+                    }
+
+                case DataTypeValue.SingleAG:
+                    {
+
+                        <div class="row" style="">
+                            <div class="col-sm-10">
+                                @{ string agr = Model.ElementGroupContainerConfig.ElementGroupConfig.GetElementConfigByCode(Model.Elements[Indexer(i)].Element.Code).AttributeGroupCode; }
+                                @Html.DevExpress().ComboBoxFor(model => Model.Elements[Indexer(i)].SingleAttributeID,
+                                    settings =>
+                                    {
+                                        settings.Width = new Unit(100, UnitType.Percentage);
+                                        //    settings.SelectedIndex = 0;
+
+                                        settings.Properties.AllowUserInput = true;
+                                        // settings.Properties.AnimationType = AnimationType.Fade;
+                                        settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+                                        settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+                                        //  settings.CallbackRouteValues = new { Controller = "Attributes", Action = "ComboBoxAttributesSelector", uID = Model.uID, agCode = Model.AgCode, id = Model.Value };
+                                        //      settings.Properties.
+                                        settings.Properties.ValueType = typeof(long);
+                                        settings.Properties.TextField = "Name";
+                                        settings.Properties.ValueField = "ID";
+                                    }).BindList(Helpers.GetAttributes(agr)).GetHtml()
+
+                                @Html.HiddenFor(m => m.Elements[Indexer(i)].Element.AttributeGroupID)
+                            </div>
+                            <div class="col-sm-2">
+                                @Html.DevExpress().Button(settings =>
+                                {
+                                    settings.Name = "openBtn" + Model.Elements[Indexer(i)].Element.ID + Indexer(i);
+                                    settings.Text = "...";
+                                    //    settings.Attributes.Add("data-url", Url.Action(MVC.Attributes.EditPartial(agr)));
+                                    settings.ClientSideEvents.Click = string.Format("function(s, e) {{ OpenAttributeGroupEdit('{0}'); }}", agr);
+                                }).GetHtml()
+                            </div>
+                        </div>
+                                 break;
+                    }
+                case DataTypeValue.Image:
+                    {
+                        <div class="row image-selector-wrapper">
+                            <div class="col-sm-3 col-md-3" style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center; ">
+
+
+                                <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)">
+                                    @{
+                                        var imageUrlModel = Model.Elements[Indexer(i)].Element.ValueObject;
+                                        var imageUrl = string.IsNullOrEmpty(imageUrlModel) ? Url.Content("~/BWP/Resources/Images/empty_image.png") : Url.Content("~/" + imageUrlModel);
+                                    }
+                                    @Html.HiddenFor(m => m.Elements[Indexer(i)].Element.ValueObject, new { @class = "imgItem" })
+
+                                    <img style="max-height: 98px; max-width: 148px;  " alt="нет" src="@imageUrl" />
+                                </a>
+
+
+
+                            </div>
+
+                            <div class="col-sm-9 col-md-9">
+                                <div class="row">
+                                    <div class=" btn-group col-sm-9">
+                                        <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)" class="btn btn-default">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a onclick="imageEditDelete($(this))" class="btn btn-danger">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row sm-p-t-20">
+                                    <p class="bold image-wrapper-text">@Model.Elements[Indexer(i)].Element.ValueObject</p>
+                                </div>
+                            </div>
+                        </div>
+                        break;
+                    }
+                default:
+                    {
+
+                        @Html.TextBoxFor(m => m.Elements[Indexer(i)].Element.ValueObject, new
+                {
+                    @class = "form-control"
+                })
+                        break;
+                    }
+
+            }
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.Elements[Indexer(i)].Element.ID)
+    @Html.HiddenFor(m => m.Elements[Indexer(i)].Element.Code)
+    @Html.HiddenFor(m => m.Elements[Indexer(i)].Element.DataTypeID)
+    
+    
+    
+ 
+}

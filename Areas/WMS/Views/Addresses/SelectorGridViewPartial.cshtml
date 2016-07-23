@@ -1,0 +1,114 @@
+﻿@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.CRM.Controllers
+@using livemenu.Areas.WMS.Controllers
+@using livemenu.Helpers
+@using livemenu.Kernel.CRM.PriceList
+@using livemenu.Kernel.CRM.Storages
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    Layout = null;
+
+}
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+}
+
+
+@{
+
+    Layout = null;
+
+    var settings = (ViewContext.Controller as AddressesController).GetGridViewSettings();
+
+    settings.Name = "AddressesSelectorGridView";
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new {Area = MVC.WMS.Name, Controller = MVC.WMS.Addresses.Name, Action = MVC.WMS.Addresses.ActionNames.SelectorGridViewPartial};
+
+
+
+    settings.SettingsBehavior.AllowDragDrop = false;
+    settings.Height = new Unit(500, UnitType.Pixel);
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 10;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = false;
+    settings.SettingsPager.LastPageButton.Visible = false;
+    settings.SettingsPager.PageSizeItemSettings.Visible = false;
+    //settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFooter = true;
+
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+
+    //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
+    //settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
+
+    //settings.SettingsBehavior.AllowFocusedRow = false;
+    //settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    //settings.SettingsBehavior.AllowSelectByRowClick = false;
+    //settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+    //settings.SettingsBehavior.ConfirmDelete = true;
+
+    //settings.SettingsContextMenu.Enabled = true;
+
+    //settings.Styles.Row.CssClass = "draggable";
+    settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.AllPages;
+    settings.CommandColumn.Visible = true;
+    settings.CommandColumn.ShowSelectCheckbox = true;
+    
+    settings.ClientSideEvents.SelectionChanged = "AddressesSelectorSelectionChanged";
+
+}
+
+@*@{
+    var col = settings.Columns["Properties"];
+
+    var propCol = (MVCxGridViewColumn)col;
+    propCol.SetEditItemTemplateContent(a =>
+    {
+        var val = (long?)DataBinder.Eval(a.DataItem, "PropertyID");
+        var p = (string)DataBinder.Eval(a.DataItem, "Properties");
+        var d = (long?)DataBinder.Eval(a.DataItem, "DisplayIndex");
+        d = d ?? 0;
+        ViewContext.Writer.Write(string.Format("<input type='hidden' name='DisplayIndex' id='DisplayIndex' value='{0}'></input>", d));
+        ViewContext.Writer.Write(string.Format("<input type='hidden' name='PropertyID' id='PropertyID' value='{0}'></input>", val));
+        //ViewContext.Writer.Write("<div class='btn btn-default' onclick='showPLPropertiesSelector()'><i class='fa fa-pencil'></i></div>");
+
+        ViewContext.Writer.Write(string.Format("<a class='dxbButton_MetropolisBlue dxbButtonSys' style='width:100%' href='#' onclick='showPLPropertiesSelector()' >{0}</a>", string.IsNullOrEmpty(p) ? "выбрать" : p));
+    });
+}*@
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    e.QueryableSource = ServiceLocator.Current.GetInstance<IAddressService>().RawDataQueryable;
+}).GetHtml()
+

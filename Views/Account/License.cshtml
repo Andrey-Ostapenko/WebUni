@@ -1,0 +1,43 @@
+﻿@using livemenu.Helpers
+@model livemenu.Models.Account.AccountWebUniLicenseModel
+
+@{
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+
+}
+
+
+
+
+<div class="panel panel-transparent">
+    <div class="panel-body no-padding">
+        <div class="panel panel-default" style="overflow: auto; ">
+
+            <div class="panel-body">
+
+                <div class="row" style="margin-top: 20px">
+                    <div class="col-sm-12">
+                        <div class="pull-left">
+                            <div class="">Лицензия WebUni</div>
+                        </div>
+                    </div>
+
+                </div>
+                @if (!Model.HasLicense)
+                {
+                    <div class="row" style="margin-top: 20px">
+                        <div class="col-sm-12">
+                            <div class="pull-left">
+                                <div class="">нет лицензии</div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                
+               
+            </div>
+        </div>
+    </div>
+</div>
+

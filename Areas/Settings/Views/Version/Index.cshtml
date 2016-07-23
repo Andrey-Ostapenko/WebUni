@@ -1,0 +1,27 @@
+﻿@using livemenu.Helpers
+@model livemenu.Areas.Settings.Models.Version.VersionModel
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+    string version = "v" + Model.Version;
+}
+<div class="container-fluid container-fixed-lg">
+    <div class="row">
+        <div class="col-md-12">
+           
+            <div class="panel panel-transparent">
+                <div class="panel-body">
+                    <h1>WebUni @version</h1>
+                    <p></p>
+
+                    <h3>у вас установлена последняя версия системы</h3>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+
+

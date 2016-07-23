@@ -1,0 +1,21 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniProject
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniProjectDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.ProjectDesignInternal, Model); }
+        </div>
+
+    </div>
+</div>
+

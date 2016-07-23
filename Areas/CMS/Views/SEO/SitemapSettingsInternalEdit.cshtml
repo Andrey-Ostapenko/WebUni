@@ -1,0 +1,28 @@
+﻿@{ Layout = null;}
+@using livemenu.Helpers
+@model livemenu.Common.Kernel.Settings.SitemapSettings
+
+
+@using (Ajax.BeginForm(MVC.CMS.SEO.SaveSitemapSettings(), new AjaxOptions()
+{
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "sitemapsettings-edit"
+}))
+{
+    <div class="row">
+
+        <div class="form-group">
+            <label>Включить генерацию sitemap.xml  </label>
+
+            @Html.BasicCheckBoxFor(m => m.IsEnabled, new { data_init_plugin = "switchery" })
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function() {
+
+        $.Pages.initSwitcheryPlugin('switchery');
+    });
+</script>
+  

@@ -1,0 +1,147 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Utils
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Helpers
+@{
+    Layout = null;
+
+    var settings = new GridViewSettings();
+
+
+    settings.Name = "SiteGroupPriceListDetailGridView";
+
+
+    settings.Width = new Unit(100, UnitType.Percentage);
+
+    settings.KeyFieldName = "ID";
+
+    settings.ClientSideEvents.BeginCallback = "function(s, e) { if(s.cpCIID) e.customArgs['cpCIID'] = s.cpCIID; }";
+    settings.CustomJSProperties = (sender, e) =>
+    {
+
+        e.Properties["cpCIID"] = ViewBag.CIID;
+
+    };
+
+    //settings.Columns.Add(column =>
+    //        {
+    //            column.FieldName = "Priority";
+    //            column.Caption = "#";
+    //            column.ReadOnly = true;
+    //            //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+    //            //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    //        });
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Name";
+        column.Caption = "Наименование";
+        //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Details";
+        column.Caption = "Описание";
+        //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    });
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Price";
+        column.Caption = "Цена";
+        //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Properties";
+        column.Caption = "Свойства";
+        //    showPLPropertiesSelector
+        column.Settings.AllowAutoFilter = DefaultBoolean.False;
+        column.Settings.AllowSort = DefaultBoolean.False;
+        column.Settings.AllowGroup = DefaultBoolean.False;
+        //column.Settings.FilterMode = ColumnFilterMode.Value;
+        //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "ShowDetails";
+        column.Caption = "Показывать детали";
+
+        column.ColumnType = MVCxGridViewColumnType.CheckBox;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "ShowBuyButton";
+        column.Caption = "Показывать 'Купить'";
+
+        column.ColumnType = MVCxGridViewColumnType.CheckBox;
+    });
+    
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "ShowPrice";
+        column.Caption = "Показывать цену";
+
+        column.ColumnType = MVCxGridViewColumnType.CheckBox;
+    });
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+    settings.CallbackRouteValues = new { Controller = MVC.CMS.Catalog.Name, Action = MVC.CMS.Catalog.ActionNames.SiteGroupPriceListDetailGridViewPartial, id = ViewBag.CIID };
+
+
+
+    settings.SettingsPager.PageSize = 40;
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Hidden;
+
+    settings.Settings.ShowFooter = false;
+
+    settings.Settings.ShowFilterRow = false;
+    settings.SettingsBehavior.AllowFocusedRow = false;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = false;
+    settings.SettingsBehavior.AllowSort = false;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.SettingsContextMenu.Enabled = false;
+
+    settings.CommandColumn.Visible = false;
+
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var d = DataBinder.Eval(c.DataItem, "ID");
+            if (d != null)
+            {
+                var id = (long)DataBinder.Eval(c.DataItem, "ID");
+                ViewContext.Writer.Write(Html.StartEditButton(string.Format("showSiteGroupPriceListDataCard('{0}');", Url.Action(MVC.CMS.Catalog.SiteGroupPriceListDataCard(id)))));
+            }
+        });
+        column.SetHeaderCaptionTemplateContent(a => { });
+       
+
+    });
+
+}
+
+
+
+@Html.DevExpress().GridView(settings).Bind(Model).GetHtml()

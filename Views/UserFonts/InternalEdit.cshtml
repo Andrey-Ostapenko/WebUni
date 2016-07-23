@@ -1,0 +1,110 @@
+﻿@{
+    Layout = null;
+    var widget_title = Model.IsNew ? "Создание шрифта" : "Редактировать шрифт";
+}
+
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using livemenu.Helpers
+@using livemenu.Kernel.Positions
+@using Microsoft.Practices.ServiceLocation
+@model livemenu.Common.Entities.Entities.Font
+
+<style>
+    .dxflCaption_Moderno, .dxflCaptionCellSys {
+        -webkit-box-sizing: content-box !important;
+        -moz-box-sizing: content-box !important;
+        box-sizing: content-box !important;
+        min-width: 80px !important;
+    }
+</style>
+<div class="" style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+    <div class="btn-group  ">
+
+        <button type="button" class="btn btn-default widget-back-btn">
+            <i class="fa fa-reply"></i>
+        </button>
+
+        <a class="btn btn-success widget-save-btn" onclick="$('#font-edit').find('form').submit()">
+            <i class="fa fa-check"></i>
+        </a>
+
+    </div>
+</div>
+@using (Ajax.BeginForm(MVC.UserFonts.Save(), new AjaxOptions()
+    {
+        HttpMethod = "POST",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "font-edit",
+    },
+     new
+        {
+            @class = " ",
+
+        }))
+{
+    @Html.HiddenFor(m => m.ID)
+
+    <div class="row">
+        <div class="col-sm-7 p-t-20">
+            <p>Шрифт</p>
+            <div class="form-group form-group-default">
+                <div class="checkbox check-success  ">
+                    @Html.BasicCheckBoxFor(x => x.IsActive)
+                    <label for="IsActive">Активность</label>
+                </div>
+            </div>
+
+            <div class="form-group form-group-default">
+                <label>Название</label>
+                @Html.TextBoxFor(x => x.Name, new { @class = "form-control" })
+            </div>
+
+            <div class="form-group form-group-default">
+                <label>Ссылка</label>
+                @Html.TextBoxFor(x => x.FontUrl, new { @class = "form-control" })
+            </div>
+
+            <div class="form-group form-group-default">
+                <label>FontFamily</label>
+                @Html.TextBoxFor(x => x.FontFamily, new { @class = "form-control" })
+            </div>
+
+        </div>
+    </div>
+
+}
+
+
+<script>
+
+    var old_widget_title;
+    $(document).ready(function () {
+
+
+        $('.field-validation-error').addClass('error');
+        $('.input-validation-error').closest('.form-group').addClass('has-error');
+        // prevent form submission
+        
+      
+        $.Pages.initSwitcheryPlugin();
+        //$.Pages.initSelect2Plugin();
+        @*var widget_title = '@widget_title';
+        old_widget_title = $('.widget-title').text();
+
+        $('.widget-title').text(widget_title);
+
+
+        $('.widget-back-btn').show();
+        $('.widget-save-btn').show();*@
+
+        $('.widget-back-btn').on("click", function (evt) {
+            
+            fontCardGoBack();
+            //$('.widget-title').text(old_widget_title);
+            //$('.widget-back-btn').hide();
+            //$('.widget-save-btn').hide();
+
+        });
+    });
+</script>

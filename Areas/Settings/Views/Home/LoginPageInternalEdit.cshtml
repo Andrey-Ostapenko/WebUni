@@ -1,0 +1,145 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using livemenu.Helpers
+
+@{ Layout = null;}
+@model livemenu.Common.Kernel.Settings.ApplicationSettings
+
+
+@using (Ajax.BeginForm(MVC.Settings.Home.LoginPageSave(), new AjaxOptions()
+{
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "system-settings-edit",
+OnComplete = "initForm()"
+}))
+{
+    <div class="row">
+
+        <div class="form-group">
+            <label>Логотип</label>
+            <div class="row image-selector-wrapper">
+                <div class="col-sm-3 col-md-3" style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center; ">
+
+
+                    <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)">
+                        @{
+                            var imageUrlModel = Model.LoginLogo;
+                            var imageUrl = string.IsNullOrEmpty(imageUrlModel) ? Url.Content("~/BWP/Resources/Images/empty_image.png") : Url.Content("~/" + imageUrlModel);
+                        }
+                        @Html.HiddenFor(m => m.LoginLogo, new { @class = "imgItem" })
+
+                        <img style="max-height: 98px; max-width: 148px;  " alt="нет" src="@imageUrl" />
+                    </a>
+
+
+
+                </div>
+
+                <div class="col-sm-9 col-md-9">
+                    <div class="row">
+                        <div class=" btn-group col-sm-9">
+                            <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)" class="btn btn-default">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                            <a onclick="imageEditDelete($(this))" class="btn btn-danger">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row sm-p-t-20">
+                        <p class="bold image-wrapper-text">@Model.LoginLogo</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+
+
+   
+    </div>
+
+
+   <div class="row">
+
+        <div class="form-group">
+            <label>Фоновое изображение</label>
+            <div class="row image-selector-wrapper">
+                <div class="col-sm-3 col-md-3" style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center; ">
+
+
+                    <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)">
+                        @{
+                         imageUrlModel = Model.LoginImage;
+                         imageUrl = string.IsNullOrEmpty(imageUrlModel) ? Url.Content("~/BWP/Resources/Images/empty_image.png") : Url.Content("~/" + imageUrlModel);
+                        }
+                        @Html.HiddenFor(m => m.LoginImage, new { @class = "imgItem" })
+
+                        <img style="max-height: 98px; max-width: 148px;  " alt="нет" src="@imageUrl" />
+                    </a>
+
+
+
+                </div>
+
+                <div class="col-sm-9 col-md-9">
+                    <div class="row">
+                        <div class=" btn-group col-sm-9">
+                            <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)" class="btn btn-default">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                            <a onclick="imageEditDelete($(this))" class="btn btn-danger">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="row sm-p-t-20">
+                        <p class="bold image-wrapper-text">@Model.LoginImage</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+
+
+   
+    </div>
+
+<div class="row">
+
+        <div class="form-group">
+            <label>Текст</label>
+            @Html.TextAreaFor(m => m.Text, new { @class="ckeditor" })
+
+        </div>
+        
+
+
+   
+    </div>
+
+ 
+
+}
+
+
+
+
+<script>
+    function initForm() {
+        var editor = CKEDITOR.replaceAll('ckeditor');
+
+        for (var i in CKEDITOR.instances) {
+            CKEDITOR.instances[i].on('change', function () { CKEDITOR.instances[i].updateElement(); });
+        };
+    }
+    $(document).ready(function () {
+
+        initForm();
+
+    });
+
+
+</script>

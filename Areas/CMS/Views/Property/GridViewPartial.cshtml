@@ -1,0 +1,154 @@
+﻿@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.CMS.Controllers
+
+@using livemenu.Areas.CRM.Controllers
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@using livemenu.Kernel.CRM.PriceList
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    Layout = null;
+
+}
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+}
+
+
+@{
+
+    Layout = null;
+
+    var settings = (ViewContext.Controller as PropertyController).GetGridViewSettings();
+
+
+    string name = settings.Name = "PropertyGridView";
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Batch;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new { Area = MVC.CMS.Name, Controller = MVC.CMS.Property.Name, Action = MVC.CMS.Property.ActionNames.GridViewPartial };
+
+
+    settings.SettingsEditing.BatchUpdateRouteValues = new { Area = MVC.CMS.Name, Controller = MVC.CMS.Property.Name, Action = MVC.CMS.Property.ActionNames.GridViewBatchUpdatePartial };
+
+    settings.SettingsBehavior.AllowDragDrop = true;
+
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 50;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100", "500", "1000" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFooter = true;
+
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+
+    //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
+    //settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
+
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+    //settings.SettingsBehavior.ConfirmDelete = true;
+
+    //settings.SettingsContextMenu.Enabled = true;
+
+    settings.Styles.Row.CssClass = "draggable-property";
+
+
+
+    settings.HtmlRowPrepared = (s, e) =>
+    {
+        if (e.RowType == GridViewRowType.Data)
+        {
+            object displayIndex = e.GetValue("DisplayIndex");
+            if (displayIndex != null)
+                e.Row.Attributes.Add("displayIndex", displayIndex.ToString());
+        }
+    };
+
+    settings.BeforeGetCallbackResult = (s, e) =>
+    {
+        if (ViewBag.VisibleIndex == null)
+            return;
+        var gridView = (MVCxGridView)s;
+        gridView.FocusedRowIndex = ViewBag.VisibleIndex;
+    };
+
+    settings.ClientSideEvents.ColumnSorting = "GetSortedColumnIndex";
+
+
+    //settings.ClientSideEvents.BatchEditStartEditing = "gridView_BatchEditStartEditing";
+
+    //settings.CommandColumn.Visible = true;
+    //settings.CommandColumn.ShowDeleteButton = true;
+    //settings.CommandColumn.ShowNewButtonInHeader = true;
+
+
+    settings.CellEditorInitialize = (s, e) =>
+    {
+        ASPxEdit editor = (ASPxEdit)e.Editor;
+        editor.ValidationSettings.Display = Display.None;
+    };
+
+  
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.DeleteButton(string.Format("{0}.DeleteRow({1})", name, index)));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton(string.Format("{0}.AddNewRow()", name))));
+        column.SetEditItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+
+    });
+
+
+}
+
+
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    e.QueryableSource = ServiceLocator.Current.GetInstance<IPropertyService>().RawDataQueryable;
+}).GetHtml()
+

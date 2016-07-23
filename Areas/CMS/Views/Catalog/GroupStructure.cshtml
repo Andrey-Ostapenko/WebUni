@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+    int i = 0;
+}
+@using DocumentFormat.OpenXml.Spreadsheet
+@using livemenu.Helpers
+@using livemenu.Kernel.CMS
+@model livemenu.Kernel.CMS.GroupStructureModel
+<div class="group-structure-container">
+    @foreach (var item in Model.Items)
+    {
+
+        <div class="form-group WebUni-form-group WebUni-form-group-big">
+            <label for="Height" class="col-sm-7 control-label">@item.Name</label>
+            <div class="col-sm-5" style="float: right;">
+
+            </div>
+        </div>
+
+
+        <div class="form-group WebUni-form-group group-structure-item">
+            <label for="Height" class="col-sm-8 control-label">Показывать</label>
+            <div class="col-sm-4" style="float: right;">
+                <div class="checkbox WebUni-checkbox check-success checkbox-circle">
+                    @Html.BasicCheckBoxFor(x => x.Items[i].IsVisible,
+                   new
+                   {
+                       onchange = "onGroupStructureChanged($(this))",
+                       data_id = @item.ID,
+                       data_view_type = Model.Type,
+                       data_change_type = ChangeGroupStructureType.IsVisible,
+                       data_init_plugin = "switchery_internal"
+                   })
+                </div>
+            </div>
+        </div>
+        <div class="form-group WebUni-form-group group-structure-item">
+            <label for="Height" class="col-sm-8 control-label">Свернуть</label>
+            <div class="col-sm-4" style="float: right;">
+                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                    @Html.BasicCheckBoxFor(x => x.Items[i].IsCollapse,
+                    new
+                    {
+                        onchange = "onGroupStructureChanged($(this))",
+                        data_id = @item.ID,
+                        data_view_type = Model.Type,
+                        data_change_type = ChangeGroupStructureType.IsCollapsed,
+                        data_init_plugin = "switchery_internal"
+                    })
+                </div>
+            </div>
+        </div>
+
+        <div style="padding-left: 20px; margin-top: 10px;">
+            @{ Html.RenderAction(MVC.CMS.Catalog.Structure(item.CatalogItemID, Model.Type)); }
+        </div>
+
+
+                    i++;
+                }
+
+</div>

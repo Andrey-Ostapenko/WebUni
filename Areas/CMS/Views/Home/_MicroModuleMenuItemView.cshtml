@@ -1,0 +1,188 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.Configuration
+@model  livemenu.Kernel.Configuration.MenuPathConfig
+@{
+    var codes = Model.MMCodes.Select(x => x.Kind).ToArray();
+
+    var rv = new RouteValueDictionary();
+    for (int i = 0; i < codes.Length; ++i)
+    {
+        rv["kinds[" + i + "]"] = codes[i];
+        
+    }
+
+    rv["area"] = "BWP";
+
+}
+
+<li>
+    @if (Model.Code != null)
+    {
+        var hasChildren = !(Model.MMCodes != null && Model.MMCodes.Any()) && Model.MenuPathsConfig != null && Model.MenuPathsConfig != null && Model.MenuPathsConfig.Any();
+        var pjax = !hasChildren ? "data-pjax=#main-region" : string.Empty;
+
+        var link = hasChildren ? "javascript:;" : @Url.Action(MVC.CMS.MicroModule.ActionNames.Kind, MVC.CMS.MicroModule.Name, rv, null);
+        
+        
+        <a href="@link" @pjax>
+            <span class="title">@Model.LocalizedNames.GetStringForCurrentLocale()</span>
+            @if (hasChildren)
+            {
+                <span class="arrow"></span>
+            }
+        </a>
+         <span class="icon-thumbnail">
+                <i class="pg-form"></i>
+        </span>
+
+        if (hasChildren)
+        {
+            <ul class="sub-menu">
+                @foreach (var item in Model.MenuPathsConfig)
+                {
+                    { Html.RenderPartial(MVC.CMS.Home.Views._MicroModuleMenuItemView, item); }
+                }
+            </ul>
+        }
+    }
+    else
+    {
+        if (Model.MMCodes != null && Model.MMCodes.Any())
+        {
+            if (Model.MenuPathType == MenuPathType.Separate)
+            {
+                foreach (var mmCode in Model.MMCodes)
+                {
+                    var rvc = new RouteValueDictionary();
+
+                    rvc["codes[0]"] = mmCode.Code;
+                <li>
+                    <a href="@Url.Action(MVC.CMS.MicroModule.ActionNames.Index, MVC.CMS.MicroModule.Name, rvc, null)" data-pjax="#main-region">
+                        <span class="title">@mmCode.LocalizedNames.GetStringForCurrentLocale()</span>
+                    </a>
+                    @{
+                        var n = new String(mmCode.LocalizedNames.GetStringForCurrentLocale().Take(2).ToArray());
+                    }
+                     
+                    <span class="icon-thumbnail">@n</span>
+                </li>
+
+                }
+            }
+            else
+            {
+                var codes1 = Model.MMCodes.Select(x => x.Code).ToArray();
+
+                var rvc = new RouteValueDictionary();
+                for (int i = 0; i < codes1.Length; ++i)
+                {
+                    rvc["codes[" + i + "]"] = codes1[i];
+                }
+
+                <li>
+                    <a href="@Url.Action(MVC.CMS.MicroModule.ActionNames.Index, MVC.CMS.MicroModule.Name, rvc, null)" @*data-pjax="#main-region"*@>
+                        <span class="title">@Model.LocalizedNames.GetStringForCurrentLocale()</span>
+                    </a>
+                    <span class="icon-thumbnail">c</span>
+                </li>
+            }
+        }
+
+        if (Model.CatalogItemTypeMenuItems != null && Model.CatalogItemTypeMenuItems.Any())
+        {
+            foreach (var cItem in Model.CatalogItemTypeMenuItems)
+            {
+                //.Where(c => (cItem.MMCodes == null || !cItem.MMCodes.Any()) || cItem.MMCodes.Select(c=>c.)
+                var cis = Html.GetCatalogItemCodesByType(cItem.Type);
+                foreach (var ci in cis)
+                {
+                    <li>
+
+
+                        @{
+                    var mms = Html.GetAllMMByCatalogItemCode(ci.Code);
+
+                    if (mms.Any())
+                    {
+                        <a href="javascript:;">
+                            <span class="title">@ci.Name</span>
+                            <span class="arrow"></span>
+                        </a>
+                          <span class="icon-thumbnail">c</span>
+                         <ul class="sub-menu">
+                                @foreach (var mm in mms)
+                                {
+                                    var rvc = new RouteValueDictionary();
+
+                                    rvc["codes[0]"] = mm.MM.Code;
+
+                                    <li>
+                                        <a href="@Url.Action(MVC.CMS.MicroModule.ActionNames.Index, MVC.CMS.MicroModule.Name, rvc, null)" data-pjax="#main-region">
+                                            <span class="title">@mm.Title</span>
+                                        </a>
+                                        <span class="icon-thumbnail">c</span>
+                                    </li>
+                                }
+                            </ul>
+                    }
+                    else
+                    {
+                        
+                        
+                        <a href="@Url.Action(MVC.CMS.MicroModule.CatalogItem(ci.Code))" data-pjax="#main-region">
+                            <span class="title">@ci.Name</span>
+                        </a>
+                            
+                        
+                            var n = new String(ci.Name.Take(1).ToArray()).ToUpper();
+                        
+                            
+                        <span class="icon-thumbnail">@n</span>
+                    }
+                        }
+
+                        @*if (cItem.MMCodes != null && cItem.MMCodes.Any())
+                            {
+                                <ul>
+                                    @foreach (var item in cItem.MMCodes)
+                                    {
+                                        { Html.RenderPartial(MVC.Shared.Views._MicroModuleMenuItemView, item); }
+                                    }
+                                </ul>
+                            }*@
+                    </li>
+                }
+            }
+        }
+
+        //Ссылки на сам каталог
+        if (Model.CatalogMenusConfig != null && Model.CatalogMenusConfig.Any())
+        {
+            foreach (var cm in Model.CatalogMenusConfig)
+            {
+                <li>
+                    <a href="@Url.Action(MVC.CMS.Catalog.Index(cm.Code))" data-pjax="#main-region">
+                        <span class="title">@cm.LocalizedNames.GetStringForCurrentLocale()</span>
+                    </a>
+                    @{ var n = new String(cm.LocalizedNames.GetStringForCurrentLocale().Take(1).ToArray()).ToUpper(); }
+
+                    <span class="icon-thumbnail">@n</span>
+                </li>
+
+            }
+        }
+    }
+
+
+
+
+
+
+</li>
+
+
+
+

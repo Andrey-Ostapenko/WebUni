@@ -1,0 +1,12 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniBalanceCharge
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div  id='WebUniBalanceChargeData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.BalanceChargeDataInternal, Model); }
+        </div>
+    </div>
+</div>

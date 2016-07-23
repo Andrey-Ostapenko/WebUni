@@ -1,0 +1,109 @@
+﻿@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.CRM.Controllers
+@using livemenu.Helpers
+@using livemenu.Kernel.CRM.PriceList
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    Layout = null;
+
+}
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+}
+
+@model bool
+
+@{
+
+    Layout = null;
+
+    var settings = (ViewContext.Controller as PriceListController).GetGridViewSettings(true);
+
+    settings.Name = "PLSelectorGridView";
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new {Area = MVC.CRM.Name, Controller = MVC.CRM.PriceList.Name, Action = MVC.CRM.PriceList.ActionNames.SelectorGridViewPartial, isSingle = Model};
+
+
+
+    settings.SettingsBehavior.AllowDragDrop = true;
+    settings.Height = new Unit(500, UnitType.Pixel);
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 5;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = false;
+    settings.SettingsPager.LastPageButton.Visible = false;
+    settings.SettingsPager.PageSizeItemSettings.Visible = false;
+    //settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFooter = true;
+
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+
+    settings.CommandColumn.SelectAllCheckboxMode = !Model ? GridViewSelectAllCheckBoxMode.AllPages : GridViewSelectAllCheckBoxMode.None;
+    settings.CommandColumn.Visible = true;
+    settings.CommandColumn.ShowSelectCheckbox = true;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = Model; ;
+    settings.SettingsBehavior.AllowSelectByRowClick = true;
+    settings.HtmlRowPrepared = (s, e) =>
+    {
+        //if (e.RowType == GridViewRowType.Data)
+        //{
+        //    object displayIndex = e.GetValue("DisplayIndex");
+        //    if (displayIndex != null)
+        //        e.Row.Attributes.Add("displayIndex", displayIndex.ToString());
+        //}
+    };
+
+    settings.ClientSideEvents.SelectionChanged = "PLSelectorSelectionChanged";
+
+}
+
+@{
+//var col = settings.Columns["Properties"];
+
+//var propCol = (MVCxGridViewColumn)col;
+//propCol.SetEditItemTemplateContent(a =>
+//{
+
+//    var d = (long?)DataBinder.Eval(a.DataItem, "DisplayIndex");
+//    d = d ?? 0;
+//    ViewContext.Writer.Write(string.Format("<input type='hidden' name='DisplayIndex' id='DisplayIndex' value='{0}'></input>", d));
+
+//    ViewContext.Writer.Write(string.Format("<a class='dxbButton_MetropolisBlue dxbButtonSys' style='width:100%' href='#' onclick='showPLPropertiesSelector()' >{0}</a>", string.IsNullOrEmpty(p) ? "выбрать" : p));
+//});
+}
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    e.QueryableSource = ServiceLocator.Current.GetInstance<IPriceListElementService>().RawDataQueryable;
+}).GetHtml()
+

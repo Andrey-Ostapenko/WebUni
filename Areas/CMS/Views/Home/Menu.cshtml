@@ -1,0 +1,149 @@
+﻿@{
+    Layout = MVC.Shared.Views._MenuLayout;
+    var siteModels = ServiceLocator.Current.GetInstance<IUniSiteService>().GetMenuModels();
+}
+
+@using livemenu.Kernel.BWP.Site
+@using livemenu.Kernel.Executing
+@using Microsoft.Practices.ServiceLocation
+@model  livemenu.Models.Menu.MenuModel
+<div class="sidebar-menu" id="main-menu">
+    <ul class="menu-items">
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.CMS.Home.Index())"  class="">
+                <span class="title">Панель</span>
+            </a>
+            <span class="icon-thumbnail"><i class="fa fa-th-list"></i></span>
+        </li>
+
+		<li class="">
+            <a href="#"  class="">
+                <span class="title">Сайты</span>
+			    <span class="arrow"></span>
+            </a>
+            <span class="icon-thumbnail"><i class="fa fa-database"></i></span>
+		    <ul class="sub-menu" style="display: none; overflow: hidden;">
+		        @foreach (var site in siteModels)
+                {
+                    <li class="">
+                        <a href="@Url.Action(MVC.CMS.Catalog.Index("Site"))">@site.Name</a>
+                        <span class="icon-thumbnail"><i class="fa fa-link"></i></span>
+                    </li>
+                }
+		    </ul>
+       </li>
+
+	    <li class="">
+            <a href="#" >
+                <span class="title">Каталоги</span>
+                <span class="arrow"></span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-folder"></i></span>
+			<ul class="sub-menu" style="display: none; overflow: hidden;">
+                <li class="">
+                    <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-goods"))" >Товары и услуги</a>
+                    <span class="icon-thumbnail"><i class="fa fa-tag"></i></span>
+                </li>
+
+			    <li class="">
+			        <a href="@Url.Action(MVC.CMS.Tags.Index())" >Фильтры</a>
+			        <span class="icon-thumbnail"><i class="fa fa-filter"></i></span>
+			    </li>
+                @*<li class="">
+                    <a href="@Url.Action(MVC.CMS.Property.Index())" >Свойства</a>
+                    <span class="icon-thumbnail"><i class="fa fa-barcode"></i></span>
+                </li>
+			    <li class="">
+			        <a href="@Url.Action(MVC.CMS.Search.Index())"  class="">
+			            <span class="title">Расширенный поиск</span>
+			        </a>
+			        <span class="icon-thumbnail"><i class="fa fa-search-plus"></i></span>
+			    </li>*@
+                <li class="">
+                    <a href="@Url.Action(MVC.CMS.ShortLink.Index())"  class="">
+                        <span class="title">Короткие ссылки</span>
+                    </a>
+                    <span class="icon-thumbnail"><i class="fa fa-arrows-h"></i></span>
+                </li>
+                <li class="">
+                    <a href="@Url.Action(MVC.UserFonts.Index())"  class="">
+                        <span class="title">Шрифты</span>
+                    </a>
+                    <span class="icon-thumbnail"><i class="fa fa-font"></i></span>
+                </li>
+			</ul>
+        </li>
+
+        <li class="">
+            <a href="#" >
+                <span class="title">Шаблоны</span>
+                <span class="arrow"></span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-wrench"></i></span>
+            <ul class="sub-menu" style="display: none; overflow: hidden;">
+                <li class="">
+                    <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-solutions"))">Решения</a>
+                    <span class="icon-thumbnail"><i class="fa fa-magic"></i></span>
+                </li>
+                <li class="">
+                    <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-templates"))">Макеты</a>
+                    <span class="icon-thumbnail"><i class="fa fa-file"></i></span>
+                </li>
+                <li class="">
+                    <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-elements"))">Элементы</a>
+                    <span class="icon-thumbnail"><i class="fa fa-code"></i></span>
+                </li>
+            </ul>
+        </li>
+        <li class="">
+            <a href="#" class="">
+                <span class="title">SEO</span>
+                <span class="arrow"></span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-arrow-circle-up"></i></span>
+            <ul class="sub-menu" style="display: none; overflow: hidden;">
+                <li class="">
+                    <a href="@Url.Action(MVC.CMS.SEO.Meta())" >meta</a>
+                    <span class="icon-thumbnail">m</span>
+                </li>
+                <li class="">
+                    <a href="@Url.Action(MVC.CMS.SEO.Sitemap())" >sitemap</a>
+                    <span class="icon-thumbnail">s</span>
+                </li>
+                <li class="">
+                    <a href="@Url.Action(MVC.CMS.SEO.Robots())" >robots.txt</a>
+                    <span class="icon-thumbnail">r</span>
+                </li>
+
+            </ul>
+        </li>       
+		<li class="">
+            <a href="@Url.Action(MVC.CMS.Pages.Index())"  class="">
+                <span class="title">Скорость</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-area-chart"></i></span>
+        </li>
+        <li class="">
+            <a href="#" class="">
+                <span class="title">Статистика</span>
+                <span class="arrow"></span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-pie-chart"></i></span>
+            <ul class="sub-menu" style="display: none; overflow: hidden;">
+                <li class="">
+                    <a href="@Url.Action(MVC.CMS.WebCounters.Index())" >Счетчики</a>
+                    <span class="icon-thumbnail "><i class="fa fa-exchange"></i></span>
+                </li>
+            </ul>
+        </li>       
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.FileManager.Index(LMExecutingType.CMS))"  class="detailed">
+                <span class="title">Файлы</span>
+                <span class="details">Управление файлами</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-cloud"></i></span>
+        </li>
+    </ul>
+    <div class="clearfix"></div>
+</div>
+

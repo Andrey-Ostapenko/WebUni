@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Конфигуратор - Коды";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+}
+@using livemenu.Helpers
+@model livemenu.Kernel.Configurator.BWPConfigCodesModel
+
+@*@Scripts.Render(Links.bundles.scripts.codemirror)
+@Scripts.Render(Links.bundles.scripts.codemirrorMode)
+@Styles.Render(Links.bundles.styles.codemirror)
+@Styles.Render(Links.bundles.styles.codemirrorMode)*@
+
+
+<div class="panel panel-default" data-collapsed="0">
+
+    <!-- panel head -->
+    <div class="panel-heading">
+        <div class="panel-title">BWPConfig - C# коды</div>
+    </div>
+
+    <!-- panel body -->
+    <div class="panel-body" style="padding: 0px;">
+
+        <form>
+            @Html.TextAreaFor(m => m.Codes, new { id = "Code" })
+
+        </form>
+
+
+    </div>
+
+</div>
+<script>
+    //$(document).ready(function () {
+    //    var editor = CodeMirror.fromTextArea(document.getElementById("Code"), {
+    //        lineNumbers: true,
+    //        mode: "text/x-csharp",
+    //        matchBrackets: true,
+    //        foldGutter: true,
+    //        theme: "mbo",
+    //        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    //    });
+    //    editor.setSize(null, 1000);
+    //});
+
+</script>

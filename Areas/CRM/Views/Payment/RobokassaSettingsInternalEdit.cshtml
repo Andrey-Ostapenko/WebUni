@@ -1,0 +1,53 @@
+﻿@{ Layout = null;}
+@using livemenu.Helpers
+@model livemenu.Common.Kernel.Settings.RobokassaSettings
+
+
+@using (Ajax.BeginForm(MVC.CRM.Payment.SaveRobokassaSettings(), new AjaxOptions()
+{
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "robokassasettings-edit"
+}))
+{
+    <div class="row">
+
+        <div class="form-group">
+            <label>Тестовый режим </label>
+            @Html.BasicCheckBoxFor(m => m.IsTestMode, new { data_init_plugin = "switchery" })
+        </div>
+
+        <div class="form-group">
+            <label>Магазин </label>
+            @Html.TextBoxFor(m => m.ShopID, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            <label>Пароль 1 </label>
+            @Html.TextBoxFor(m => m.Password1, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            <label>Пароль 2 </label>
+            @Html.TextBoxFor(m => m.Password2, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            <label>Страница после успешной оплаты</label>
+            @Html.TextBoxFor(m => m.SuccessPageUrl, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            <label>Страница после неуспешной оплаты</label>
+            @Html.TextBoxFor(m => m.FailPageUrl, new { @class = "form-control" })
+        </div>
+
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $.Pages.initSwitcheryPlugin('switchery');
+    });
+</script>
+

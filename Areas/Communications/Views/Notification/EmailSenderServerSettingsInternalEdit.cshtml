@@ -1,0 +1,57 @@
+﻿@{ Layout = null;}
+@using livemenu.Helpers
+@model livemenu.Common.Kernel.Settings.EmailSenderServerSettings
+
+
+@using (Ajax.BeginForm(MVC.Communications.Notification.SaveEmailSenderServerSettings(), new AjaxOptions()
+{
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "smtpsettings-edit"
+}))
+{
+    <div class="row">
+        <div class="form-group">
+            <label>Адрес SMTP-Сервера </label>
+
+            @Html.TextBoxFor(m => m.HostAddress, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            <label>Порт SMTP-Сервера </label>
+
+            @Html.TextBoxFor(m => m.HostPort, new { @class = "form-control" })
+        </div>
+
+
+        <div class="form-group">
+            <label>Использовать SSL </label>
+
+            @Html.BasicCheckBoxFor(m => m.UseSSL, new {data_init_plugin = "switchery"})
+        </div>
+
+        <div class="form-group">
+            <label>Логин для e-mail ящика </label>
+
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+        </div>
+
+        <div class="form-group">
+            <label>Пароль для e-mail ящика </label>
+
+            @Html.TextBoxFor(m => m.UserPassword, new { @class = "form-control" })
+        </div>
+
+    </div>
+}
+<script>
+    $(document).ready(function() {
+        //var editor = CKEDITOR.replaceAll('ckeditor');
+
+        //for (var i in CKEDITOR.instances) {
+        //    CKEDITOR.instances[i].on('change', function () { CKEDITOR.instances[i].updateElement(); });
+        //};
+        $.Pages.initSwitcheryPlugin('switchery');
+    });
+</script>
+  

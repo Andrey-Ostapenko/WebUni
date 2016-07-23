@@ -1,0 +1,19 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniLists
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniListsData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.ListsDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    initUniListsCard($('#WebUniListsData-@Model.ID'), '@Model.ID');
+</script>

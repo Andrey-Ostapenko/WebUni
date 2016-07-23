@@ -1,0 +1,110 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using livemenu.Helpers
+
+@{ Layout = null;}
+@model livemenu.Kernel.Account.MyProfileModel
+
+
+<section class="profile-info-tabs">
+    @using (Ajax.BeginForm(MVC.Account.Save(), new AjaxOptions()
+            {
+                HttpMethod = "POST",
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = "my-profile-edit",
+
+            }))
+    {
+
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.Login)
+
+        <div class="row">
+            <div class="col-sm-5 p-t-20">
+
+                <p>Учетная запись</p>
+
+
+                <div class="form-group form-group-default ">
+                    <label>Пароль</label>
+                    @Html.PasswordFor(x => x.Password, new { @class = "form-control", placeholder = "" })
+                </div>
+                @Html.ValidationMessageFor(model => model.Password)
+
+
+            </div>
+            <div class="col-sm-7 p-t-20">
+                <p>Основные данные</p>
+                <div class="form-group form-group-default">
+                    <label>Фамилия</label>
+                    @Html.TextBoxFor(x => x.LastName, new { @class = "form-control" })
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group form-group-default required">
+                            <label>Имя</label>
+                            @Html.TextBoxFor(x => x.FirstName, new { @class = "form-control" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.FirstName)
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group form-group-default">
+                            <label>Отчество</label>
+                            @Html.TextBoxFor(x => x.FathersName, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-5 p-t-20">
+
+                <p>Реквизиты</p>
+
+
+                <div class="form-group form-group-default ">
+                    <label>ИНН</label>
+                    @Html.TextBoxFor(x => x.INN, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group form-group-default ">
+                    <label>ПФР</label>
+                    @Html.TextBoxFor(x => x.PFR, new { @class = "form-control" })
+                </div>
+
+
+
+            </div>
+            <div class="col-sm-7 p-t-20">
+                <p>Контакты</p>
+                <div class="form-group form-group-default ">
+                    <label>Телефон</label>
+                    @Html.TextBoxFor(x => x.Phone, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group form-group-default ">
+                    <label>E-mail</label>
+                    @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+
+
+    }
+</section>
+
+<script>
+    function getMyProfile() {
+        var url = '@Url.Action(MVC.Account.GetMyProfile())';
+        $.get(url, function (data) {
+            $('#my-profile-edit').html(data);
+        });
+    }
+</script>
+

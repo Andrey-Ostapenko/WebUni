@@ -1,0 +1,12 @@
+﻿@{
+    Layout = null;
+}
+
+@model long
+
+<div id="catalog-tab-data" class="catalog-tab-content">
+    @{ Html.RenderPartial(MVC.CMS.WebUni.Views.CatalogTabDataCommon, Model);}
+    <div id="catalog-tab-data-int" class="WebUni-reloadable" data-reload-id="@Url.Action(MVC.CMS.WebUni.GraphicsData(Model))" >
+        @{ Html.RenderAction(MVC.CMS.WebUni.GraphicsData(Model)); }
+    </div>
+</div>

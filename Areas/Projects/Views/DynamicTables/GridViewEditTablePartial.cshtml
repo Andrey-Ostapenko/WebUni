@@ -1,0 +1,270 @@
+﻿@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Data.Helpers
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.Projects.Controllers
+@using livemenu.Kernel.BWP.DynamicTables
+@using Microsoft.Practices.ServiceLocation
+@using livemenu.Helpers
+@using livemenu.Common.Entities.Entities
+@using livemenu.Common.Kernel.DynamicTables
+
+@model livemenu.Areas.Projects.Models.DynamicTableStructureGridViewModel
+
+@{
+    Layout = null;
+
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    long dynamicTableVersionID = 0;
+    long.TryParse(Request.Params.Get("DynamicTableVersionID") ?? "0", out dynamicTableVersionID);
+
+    var settings = (ViewContext.Controller as DynamicTablesController).GetGridViewEditTableSettings(Model.Table);
+
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Batch;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.DynamicTables.Name, Action = MVC.Projects.DynamicTables.ActionNames.GridViewPartial, appID = Model.ApplicationID, };
+
+
+    settings.SettingsEditing.BatchUpdateRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.DynamicTables.Name, Action = MVC.Projects.DynamicTables.ActionNames.GridViewEditTableBatchUpdatePartial, appID = Model.ApplicationID, };
+
+    settings.SettingsBehavior.AllowDragDrop = true;
+
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 50;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100", "500", "1000" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowGroupedColumns = true;
+    settings.Settings.ShowFooter = true;
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+
+    settings.SettingsBehavior.AllowFocusedRow = false;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.InitNewRow = (s, e) =>
+    {
+        var columns = ((DevExpress.Web.Mvc.MVCxGridView) s).AllColumns;
+        foreach (MVCxGridViewColumn c in columns)
+        {
+            if (c.ColumnType == MVCxGridViewColumnType.CheckBox)
+            {
+                e.NewValues[c.FieldName] = false;
+            }
+        }
+
+
+    };
+
+    foreach (MVCxGridViewColumn c in settings.Columns)
+    {
+        if (c.EditCellStyle.CssClass.Contains("type-7"))
+        {
+
+
+
+            c.SetEditItemTemplateContent(a =>
+            {
+                string url = (string)DataBinder.Eval(a.DataItem, c.FieldName);
+
+
+                var text = string.IsNullOrEmpty(url) ? "Нажмите для выбора файла" : url;
+                ViewContext.Writer.Write(
+                   !string.IsNullOrEmpty(url) ? "<div>" + url + "<div/>"
+                                               : Html.Raw("<div href='#' class='open-fm-file'>" + text + "</div>").ToHtmlString()
+               );
+                //  ViewContext.Writer.Write("<div>");
+            });
+        } else
+            if (c.EditCellStyle.CssClass.Contains("type-6"))
+        {
+
+
+
+            c.SetEditItemTemplateContent(a =>
+            {
+                string url = (string)DataBinder.Eval(a.DataItem, c.FieldName);
+
+
+                var text = string.IsNullOrEmpty(url) ? "Нажмите для выбора изображения" : url;
+                ViewContext.Writer.Write(
+                   !string.IsNullOrEmpty(url) ? "<div>" + url + "<div/>"
+                                               : Html.Raw("<div href='#' class='open-fm-file'>" + text + "</div>").ToHtmlString()
+               );
+                //  ViewContext.Writer.Write("<div>");
+            });
+        }
+    }
+
+
+    var propCol = (MVCxGridViewColumn)settings.Columns["ID"];
+    propCol.SetDataItemTemplateContent(a =>
+    {
+        var p = (long?)DataBinder.Eval(a.DataItem, "ID");
+        ViewContext.Writer.Write(p);
+    });
+
+    propCol.SetEditItemTemplateContent(a =>
+    {
+        var p = (long?)DataBinder.Eval(a.DataItem, "ID");
+        ViewContext.Writer.Write(p);
+    });
+
+    settings.CellEditorInitialize = (s, e) =>
+    {
+        ASPxEdit editor = (ASPxEdit)e.Editor;
+        editor.ValidationSettings.Display = Display.None;
+    };
+    settings.DataBound = (s, e) =>
+    {
+        if (Request.Params["resetfilters"] != null)
+            ((MVCxGridView)s).FilterExpression = null;
+    };
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new System.Web.UI.WebControls.Unit(0000.5, UnitType.Percentage);
+        column.Name = "control";
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+            var id = DataBinder.Eval(c.DataItem, "ID");
+
+            ViewContext.Writer.Write(Html.DeleteButton(string.Format("{0}.DeleteRow({1})", name, index)));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton(string.Format("{0}.AddNewRow()", name))));
+        column.SetEditItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+            var id = DataBinder.Eval(c.DataItem, "ID");
+
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+
+    });
+
+    settings.ClientSideEvents.ColumnSorting = "GetSortedColumnIndex";
+    //settings.Styles.Row.CssClass = "draggable-dynamicEntities";
+    // settings.ClientSideEvents.KeyPress = "function(s,e) {OnEditorKeyPress(s, e);}"
+    // settings.ClientSideEvents.BatchEditEndEditing
+    settings.HtmlDataCellPrepared = (s, e) =>
+    {
+        if (e.DataColumn.FieldName != "DisplayIndex" && !string.IsNullOrEmpty(e.DataColumn.FieldName))
+        {
+            e.Cell.Attributes.Add("onclick", "onCellClick(this," + e.VisibleIndex + ", " + e.KeyValue + ", '" + e.DataColumn.FieldName + "')");
+            var d = e.DataColumn.FieldName.ToString() + "---" + e.KeyValue;
+
+            e.Cell.CssClass += " " + d + " canbeselectedcell" ;
+
+            e.Cell.Attributes.Add("data-vi", e.VisibleIndex.ToString());
+            e.Cell.Attributes.Add("data-cfn", e.DataColumn.FieldName);
+        }
+    };
+    //    settings.ClientSideEvents.
+    settings.HtmlRowPrepared = (s, e) =>
+    {
+        if (e.RowType == GridViewRowType.Data)
+        {
+            object displayIndex = e.GetValue("DisplayIndex");
+            if (displayIndex != null)
+                e.Row.Attributes.Add("displayIndex", displayIndex.ToString());
+
+        }
+    };
+
+    settings.BeforeGetCallbackResult = (s, e) =>
+    {
+        if (ViewBag.VisibleIndex == null)
+            return;
+        var gridView = (MVCxGridView)s;
+        gridView.FocusedRowIndex = ViewBag.VisibleIndex;
+    };
+
+    settings.ClientSideEvents.ColumnSorting = "GetSortedColumnIndex";
+}
+
+
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    if(dynamicTableVersionID == 0)
+    {
+        e.QueryableSource = ServiceLocator.Current.GetInstance<IDynamicTablesService>().GetAllByTableID(Model.Table.ID);
+    }
+    else
+    {
+        e.QueryableSource = ServiceLocator.Current.GetInstance<IDynamicTablesService>().GetAllByTableIDVersionID(Model.Table.ID, dynamicTableVersionID);
+    }
+}).GetHtml()
+
+
+<script id="dxss_000" type="text/javascript">
+    dxo.callbackUrl = "@Url.Action(MVC.Projects.DynamicTables.ActionNames.GridViewPartial, new { dynamicTableID = Model.Table.ID })&dynamicTableVersionID=" + CurrentDynamicTableVersionID;
+    dxo.batchUpdateUrl = "@Url.Action(MVC.Projects.DynamicTables.ActionNames.GridViewEditTableBatchUpdatePartial, new { dynamicTableID = Model.Table.ID })&dynamicTableVersionID=" + CurrentDynamicTableVersionID;
+    $('#ToDinamicTablesBtn').show();
+    $('#ToStructureBtn').show();
+    $('#ToDataBtn').hide();
+    $('#formulamode').show();
+    $('#importExportBtnContainer').show();
+    $('#versionControlsContainer').show();
+    $('#main-portlet .panel-title').html('@Model.Table.DisplayName');
+
+    dxo.BatchEditStartEditing.AddHandler(function(s, e) {
+        if (e.focusedColumn.name == "control" || e.focusedColumn.name == "DisplayIndex") {
+            e.cancel = true;
+        }
+
+       
+    });
+
+    @{
+        if(Request.Params["focusedRowIndex"]!= null)
+        {
+            @Html.Raw(String.Format("DynamicTablesFocusedRow = {0};", Request.Params["focusedRowIndex"]));
+        }
+    }
+    DynamicTablesEditing = false;
+    EditingDynamicTableStructure = false;
+
+
+    $('.open-fm-file').click(function() 
+    {
+        OpenFM("@Url.Action(MVC.FileManager.Modal())", $(this), onDXFileSelected);
+    });
+
+    @*$('.open-fm-image').click(function () {
+        OpenFM("@Url.Action(MVC.FileManager.Modal())", $(this), onDXImageSelected);
+    });*@
+
+</script>

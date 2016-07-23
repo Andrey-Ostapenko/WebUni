@@ -1,0 +1,90 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniSearchFilterGroup
+
+
+<style>
+
+
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniSearchFilterGroupData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.SearchFilterGroupDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    initUniSearchFilterGroupCard($('#WebUniSearchFilterGroupData-@Model.ID'), @Model.ID);
+    var gro;
+
+    function initUniSearchFilterGroupCard(element, id) {
+        $('#SearchFilterGroupRelationsNestable').nestable().on('change', function(e){
+
+        });
+
+        $('#SearchFilterGroupRelationsNestable').find(".fa.fa-remove").on("click", function(){
+            $(this).closest('li').remove();
+        });
+
+        var searchFilterTarget = element.find("#SearchSearchFilter");
+        gro = searchFilterTarget.select2
+            (
+                {
+                    multiple: true,
+                    maximumSelectionSize: 1,
+                    //placeholder: 'введите название фильтра',
+
+                    allowClear: true,
+                    ajax: {
+                        url: $('#workspace-portlet').data('searchsearchfilter'),
+                        dataType: 'json',
+                        data: function (term, page) {
+                            return {
+                                id: term
+                            };
+                        },
+                        results: function (data) {
+                            var res = [];
+                            var inpArr = $('#SearchFilterGroupRelationsList input');
+                            for(var i = 0; i < data.length; i++)
+                            {
+                                var f = true;
+                                for(var j = 0; j < inpArr.length; j++)
+                                {
+                                    if(data[i].id == inpArr[j].value)f = false; 
+                                }
+                                if(f)res.push(data[i]);
+                            }
+                            return { results: res };
+                        }
+                    },
+                    initSelection: function (element, callback) {
+                        
+                    },
+                    formatResult: s2FormatResult,
+                    formatSelection: s2FormatSelection
+                }
+            );
+
+        searchFilterTarget.on("change", function (ev) {
+            if(ev.added != null)
+            {
+                var list = $('#SearchFilterGroupRelationsList');
+                var li = $('<li/>').addClass('dd-item').appendTo(list);
+                var inp = $('<input/>').attr('hidden','hidden').attr('name','searchFilterIds').val(ev.added.id).appendTo(li);
+                var div = $('<div/>').addClass('dd-handle').html(ev.added.text).appendTo(li);
+                $('<span/>').addClass('fa fa-remove dd-nodrag').css({cursor: "pointer", float: "right", paddingTop:"3px"}).on("click", function(){
+                    $(this).closest('li').remove();
+                }).appendTo(div);
+            }
+            searchFilterTarget.select2("val", "");
+        });
+    }
+</script>

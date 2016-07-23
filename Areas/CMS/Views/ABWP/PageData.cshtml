@@ -1,0 +1,355 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniPage
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div  id='WebUniPageData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.PageDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    var element = $('#WebUniPageData-@Model.ID');
+    initUniLineCard(element);
+
+
+    var clientroletarget = element.find("#ClientRoleIDsString");
+    clientroletarget.select2
+    (
+        {
+            placeholder: 'Выберите роли',
+            multiple: true,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchbyclientrole'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        pageLimit: 10,
+                        page: page
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data.items, more: more };
+                }
+            },
+            initSelection: function (element, callback) {
+
+                var id = clientroletarget.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('getbyclientrole') + '?id=' + id, {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+
+    var clientrolestatustarget = element.find("#ClientRoleStatusIDsString");
+    clientrolestatustarget.select2
+    (
+        {
+            placeholder: 'Выберите роли',
+            multiple: true,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchbyclientrolestatus'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        pageLimit: 10,
+                        page: page
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data.items, more: more };
+                }
+            },
+            initSelection: function (element, callback) {
+
+                var id = clientrolestatustarget.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('getbyclientrolestatus') + '?id=' + id, {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+    var headertarget = element.find("#HeaderID");
+    headertarget.select2
+    (
+        {
+            placeholder: 'Первая по умолчанию',
+            multiple: true,
+            maximumSelectionSize: 1,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchbytype'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        type: 'Header',
+                        pageLimit: 10,
+                        page: page
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data.items, more : more};
+                }
+            },
+            initSelection: function (element, callback) {
+
+                var id = headertarget.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('getbytype') + '?id=' + id + '&type=Header', {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data[0]);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+    var footertarget = element.find("#FooterID");
+    footertarget.select2
+    (
+        {
+            placeholder: 'Первая по умолчанию',
+            multiple: true,
+            maximumSelectionSize: 1,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchbytype'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        type: 'Footer',
+                        pageLimit: 10,
+                        page: page
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data.items, more : more};
+                }
+                
+            },
+            initSelection: function (element, callback) {
+
+                var id = footertarget.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('getbytype') + '?id=' + id + '&type=Footer', {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data[0]);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+    var lefttarget = element.find("#LeftSideBarID");
+    lefttarget.select2
+    (
+        {
+            placeholder: 'Первая по умолчанию',
+            multiple: true,
+            maximumSelectionSize: 1,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchbytype'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        type: 'LeftSideBar',
+                        pageLimit: 10,
+                        page: page
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data.items, more : more};
+                }
+                
+            },
+            initSelection: function (element, callback) {
+
+                var id = lefttarget.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('getbytype') + '?id=' + id + '&type=LeftSideBar', {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data[0]);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+    var righttarget = element.find("#RightSideBarID");
+    righttarget.select2
+    (
+        {
+            placeholder: 'Первая по умолчанию',
+            multiple: true,
+            maximumSelectionSize: 1,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchbytype'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        type: 'RightSideBar',
+                        pageLimit: 10,
+                        page: page
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data.items, more : more};
+                }
+                
+            },
+            initSelection: function (element, callback) {
+
+                var id = righttarget.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('getbytype') + '?id=' + id + '&type=RightSideBar', {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data[0]);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+    var redirecttarget = element.find("#RedirectPageCatalogItemID");
+    redirecttarget.select2
+    (
+        {
+            placeholder: 'иначе перенаправить на страницу',
+            multiple: true,
+            maximumSelectionSize: 1,
+            allowClear: true,
+            ajax: {
+                url: $('#workspace-portlet').data('searchpage'),
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        pageLimit: 10,
+                        page: page
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data.items, more: more };
+                }
+
+            },
+            initSelection: function (element, callback) {
+                var id = redirecttarget.val();
+                if (id !== null && id.length > 0) {
+                    $.ajax($('#workspace-portlet').data('getpage') + '/' + id, {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data[0]);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+    redirecttarget.on("change", function (ev) {
+        var values = ev.val;
+        redirecttarget.val(values);
+    });
+
+
+    var dynamicEntity = element.find("#DynamicEntityComplexIDsString");
+    dynamicEntity.select2
+            (
+                {
+                    multiple: true,
+                    placeholder: "Нажмите для выбора поставщика данных",
+                    allowClear: true,
+                    ajax: {
+                    },
+                    initSelection: function (element, callback) {
+                        //   var tableID = $('#DynamicTableID').val();
+                        var id = dynamicEntity.val();
+                        var splt = id.split('_');
+                        //  console.log('getdinamicentity' + $('#workspace-portlet').data('getdinamicentity'));
+                        console.log(id);
+                        if (id !== null && id.length > 0) {
+                            $.ajax({
+                                url: $('#workspace-portlet').data('getdinamicentity'),
+                                data: { ids: id },
+                                dataType: "json"
+                            }).done(function (data) {
+                                //if(data[0].text != "") 
+                                //    console.log(data);
+                                callback(data);
+                                getDynamicEntitiesOverview($('#DynamicEntityComplexIDsString').val());
+                                //  $('#dynamicEntityOverview').html(data.overview);
+                            });
+                        }
+                    },
+                    formatResult: s2FormatResult,
+                    formatSelection: s2FormatSelection
+                }
+
+            ).on("select2-opening", function (e) {
+                e.preventDefault();
+                SetDynamicEntity();
+            }
+
+
+    ).on("select2-removed", function (e) {
+        $('#dynamicEntityOverview').empty();
+        getDynamicEntitiesOverview($('#DynamicEntityComplexIDsString').val());
+    });
+</script>

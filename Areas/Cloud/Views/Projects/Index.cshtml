@@ -1,0 +1,55 @@
+﻿@using livemenu.Helpers
+
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+}
+
+
+<div class="panel panel-transparent" id="sites-panel">
+        <div class="panel-body no-padding">
+            <div class="panel panel-default" style="overflow: auto; min-height: 600px;">
+                <div class="panel-heading ">
+                    <div class="panel-title">
+                        Сайты
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row" style="margin-top: 0px">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="pull-left">
+
+                                <div class="btn-group">
+                                    <a class="btn btn-default" onclick="SitesGridView.PerformCallback() "><i class="fa fa-refresh"></i> Обновить</a>
+
+
+
+                                    <div class="btn-group  pull-left" style="margin-right: 20px">
+                                        <button type="button" class="btn btn-default" onclick="SitesGridView.CancelEdit()">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+
+                                        <a class="btn btn-success" id="" onclick="SitesGridView.UpdateEdit()" style="display: block;">
+                                            <i class="fa fa-check"></i>
+                                        </a>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                           
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 20px">
+                        <div class="col-sm-12 col-md-12">
+                            @{ Html.RenderAction(MVC.Cloud.Projects.GridViewPartial()); }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+

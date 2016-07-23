@@ -1,0 +1,411 @@
+﻿@{
+    Layout = null;
+    var widget_title = Model.IsNew ? "Создание пользователя" : "Редактировать пользователя";
+}
+
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using livemenu.Helpers
+@using livemenu.Kernel.Positions
+@using Microsoft.Practices.ServiceLocation
+@model livemenu.Common.Entities.Entities.User
+@{
+    var positions = ServiceLocator.Current.GetInstance<IPositionService>().GetAll();
+}
+<style>
+    .dxflCaption_Moderno, .dxflCaptionCellSys {
+        -webkit-box-sizing: content-box !important;
+        -moz-box-sizing: content-box !important;
+        box-sizing: content-box !important;
+        min-width: 80px !important;
+    }
+</style>
+<div class="" style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+    <div class="btn-group  ">
+
+        <button type="button" class="btn btn-default widget-back-btn"  >
+            <i class="fa fa-reply"></i>
+        </button>
+
+        <a class="btn btn-success widget-save-btn"  onclick="$('#user-edit').find('form').submit()">
+            <i class="fa fa-check"></i>
+        </a>
+
+    </div>
+</div>
+@using (Ajax.BeginForm(MVC.Users.Save(), new AjaxOptions()
+    {
+        HttpMethod = "POST",
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = "user-edit",
+    },
+     new
+        {
+            @class = " ",
+
+        }))
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.Login)
+    @Html.HiddenFor(m => m.RightSubjectID)
+
+    <div class="row">
+        <div class="col-sm-5 p-t-20">
+
+            <p>Учетная запись</p>
+            <div class="form-group form-group-default">
+
+                <div class="checkbox check-success  ">
+                    @Html.BasicCheckBoxFor(x=>x.IsActive)
+                    @*<input type="checkbox" checked="checked" value="1" id="IsActive">
+                    *@
+                    <label for="IsActive">Активность</label>
+                </div>
+            </div>
+
+            <div class="form-group form-group-default required">
+                <label>Логин</label>
+                @Html.TextBoxFor(x => x.NewLogin, new { @class = "form-control" })
+              
+                @*<input type="text" class="form-control" required="">*@
+            </div>
+            @Html.ValidationMessageFor(model => model.NewLogin)
+            <div class="form-group form-group-default ">
+                <label>Пароль</label>
+                @Html.PasswordFor(x => x.Password, new { @class = "form-control", placeholder="" })
+            </div>
+            @Html.ValidationMessageFor(model => model.Password)
+
+
+        </div>
+        <div class="col-sm-7 p-t-20">
+            <p>Основные данные</p>
+            <div class="form-group form-group-default">
+                <label>Фамилия</label>
+                @Html.TextBoxFor(x => x.LastName, new { @class = "form-control" })
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group form-group-default required">
+                        <label>Имя</label>
+                        @Html.TextBoxFor(x => x.FirstName, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.FirstName)
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group form-group-default">
+                        <label>Отчество</label>
+                        @Html.TextBoxFor(x => x.FathersName, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group form-group-default form-group-default-select2">
+                <label>Должность</label>
+                @Html.DropDownListFor(x => x.PositionID, positions.Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.ID.ToString()
+                }), new
+                {
+                    @class = "full-width",
+                    @data_placeholder = "Выбор должности",
+                    @data_init_plugin = "select2"
+                })
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        @*<div class="col-sm-5 p-t-20">
+
+            <p>Реквизиты</p>
+
+
+            <div class="form-group form-group-default ">
+                <label>ИНН</label>
+                @Html.TextBoxFor(x => x.INN, new { @class = "form-control" })
+            </div>
+
+            <div class="form-group form-group-default ">
+                <label>ПФР</label>
+                @Html.TextBoxFor(x => x.PFR, new { @class = "form-control" })
+            </div>
+
+
+
+        </div>*@
+        <div class="col-sm-5 p-t-20">
+            <p>Контакты</p>
+            <div class="form-group form-group-default ">
+                <label>Телефон</label>
+                @Html.TextBoxFor(x => x.Phone, new { @class = "form-control" })
+            </div>
+
+            <div class="form-group form-group-default ">
+                <label>E-mail</label>
+                @Html.TextBoxFor(x => x.Email, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+
+    @*<div class="row">
+
+            @Html.HiddenFor(m => m.ID)
+            @Html.HiddenFor(m => m.RightSubjectID)
+
+
+            @Html.DevExpress().FormLayout(settings =>
+            {
+                settings.Name = "userFormLayout";
+                settings.Width = new Unit(100, UnitType.Percentage);
+                settings.ColCount = 2;
+
+
+                var accountGroupItem = settings.Items.AddGroupItem(itemSettings =>
+                {
+                    itemSettings.ColCount = 1;
+                    itemSettings.ColSpan = 2;
+                    itemSettings.Caption = "Учетная запись";
+                    itemSettings.SettingsItemHelpTexts.Position = HelpTextPosition.Bottom;
+
+                    itemSettings.GroupBoxDecoration = GroupBoxDecoration.Box;
+                    itemSettings.ShowCaption = DefaultBoolean.True;
+                    itemSettings.SettingsItems.ShowCaption = DefaultBoolean.True;
+                    itemSettings.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Left;
+                    itemSettings.SettingsItemCaptions.HorizontalAlign = FormLayoutHorizontalAlign.Left;
+                    itemSettings.SettingsItemCaptions.VerticalAlign = FormLayoutVerticalAlign.Top;
+
+                });
+
+                accountGroupItem.Items.Add(m => m.IsActive, m =>
+                {
+                    m.Caption = "Активность";
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.CheckBox;
+                    m.ColSpan = 1;
+                    var s = (CheckBoxSettings)m.NestedExtensionSettings;
+                    s.ShowModelErrors = true;
+                    // DevExpressHelpers.SetValidationProperties(s.Properties.ValidationSettings);
+                });
+                accountGroupItem.Items.Add(itemSettings =>
+                {
+                    itemSettings.ShowCaption = DefaultBoolean.False;
+                    itemSettings.SetNestedContent(() => ViewContext.Writer.Write(Html.HiddenFor(m => m.Login)));
+                });
+                accountGroupItem.Items.Add(m => m.NewLogin, m =>
+                {
+                    m.Caption = "Логин";
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    m.ColSpan = 1;
+                    //  DevExpressHelpers.SetTextBoxSettings((TextBoxSettings)m.NestedExtensionSettings);
+                });
+
+                if (Model.IsNew)
+                {
+                    Model.IsPasswordChanged = true;
+                    accountGroupItem.Items.Add(itemSettings =>
+                    {
+                        itemSettings.ShowCaption = DefaultBoolean.False;
+                        itemSettings.SetNestedContent(() => ViewContext.Writer.Write(Html.HiddenFor(m => m.IsPasswordChanged)));
+                    });
+                }
+                else
+                {
+                    //accountGroupItem.Items.Add(m => m.IsPasswordChanged, m =>
+                    //{
+                    //    m.Caption = "Редактировать пароль";
+                    //    m.NestedExtensionType = FormLayoutNestedExtensionItemType.CheckBox;
+                    //    m.ColSpan = 1;
+                    //    var s = (CheckBoxSettings)m.NestedExtensionSettings;
+                    //    s.Properties.ClientSideEvents.CheckedChanged = "passwordCheckBoxValueChanged";
+                    //    s.ShowModelErrors = true;
+                    ////    DevExpressHelpers.SetValidationProperties(s.Properties.ValidationSettings);
+                    //});
+                }
+
+                //if (!Model.IsPasswordChanged)
+                //{
+                //    Model.Password = "*******";
+                //}
+
+                //accountGroupItem.Items.Add(m => m.Password, m =>
+                //{
+                //    m.Caption = "Пароль";
+                //    m.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                //    m.ColSpan = 1;
+                //    var s = (TextBoxSettings)m.NestedExtensionSettings;
+                //    s.ClientEnabled = Model.IsPasswordChanged;
+
+                ////    DevExpressHelpers.SetTextBoxSettings(s);
+                //});
+
+
+                var mainGroupItem = settings.Items.AddGroupItem(itemSettings =>
+                {
+                    itemSettings.Caption = "Основные данные";
+                    itemSettings.ColCount = 2;
+                    itemSettings.ColSpan = 2;
+                    itemSettings.SettingsItemHelpTexts.Position = HelpTextPosition.Bottom;
+                    itemSettings.Width = new Unit(100, UnitType.Percentage);
+                    itemSettings.GroupBoxDecoration = GroupBoxDecoration.Box;
+                    itemSettings.ShowCaption = DefaultBoolean.True;
+                    itemSettings.SettingsItems.ShowCaption = DefaultBoolean.True;
+                    itemSettings.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Left;
+                    itemSettings.SettingsItemCaptions.HorizontalAlign = FormLayoutHorizontalAlign.Left;
+                    itemSettings.SettingsItemCaptions.VerticalAlign = FormLayoutVerticalAlign.Top;
+
+                });
+
+                mainGroupItem.Items.Add(m => m.LastName, m =>
+                {
+                    m.Caption = "Фамилия";
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    m.ColSpan = 2;
+                    //    DevExpressHelpers.SetTextBoxSettings((TextBoxSettings)m.NestedExtensionSettings);
+                });
+
+                mainGroupItem.Items.Add(m => m.FirstName, m =>
+                {
+                    m.Caption = "Имя";
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    m.ColSpan = 1;
+                    //     DevExpressHelpers.SetTextBoxSettings((TextBoxSettings)m.NestedExtensionSettings);
+                });
+
+                mainGroupItem.Items.Add(m => m.FathersName, m =>
+                {
+                    m.Caption = "Отчество";
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    m.ColSpan = 1;
+                    //     DevExpressHelpers.SetTextBoxSettings((TextBoxSettings)m.NestedExtensionSettings);
+                });
+
+                mainGroupItem.Items.Add(m => m.NullablePositionID, m =>
+                {
+                    m.Caption = "Должность";
+                    m.ColSpan = 2;
+                    //  m.Width = new Unit(100, UnitType.Percentage);
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.ComboBox;
+                    var comboBoxSettings = (ComboBoxSettings)m.NestedExtensionSettings;
+                    comboBoxSettings.Width = new Unit(100, UnitType.Percentage);
+                    comboBoxSettings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+                    comboBoxSettings.Properties.DropDownStyle = DropDownStyle.DropDownList;
+                    comboBoxSettings.Properties.TextField = "Name";
+                    comboBoxSettings.Properties.ValueField = "ID";
+                    comboBoxSettings.Properties.ValueType = typeof(long);
+                    comboBoxSettings.ShowModelErrors = true;
+
+                    //     DevExpressHelpers.SetValidationProperties(comboBoxSettings.Properties.ValidationSettings);
+
+                    comboBoxSettings.Properties.DataSource = ServiceLocator.Current.GetInstance<IPositionService>().GetAll().ToList();
+                });
+
+
+                var privateGroupItem = settings.Items.AddGroupItem(itemSettings =>
+                {
+                    itemSettings.ColCount = 1;
+
+                    itemSettings.Caption = "Реквизиты";
+                    itemSettings.SettingsItemHelpTexts.Position = HelpTextPosition.Bottom;
+
+                    itemSettings.GroupBoxDecoration = GroupBoxDecoration.Box;
+                    itemSettings.ShowCaption = DefaultBoolean.True;
+                    itemSettings.SettingsItems.ShowCaption = DefaultBoolean.True;
+                    itemSettings.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Left;
+                    itemSettings.SettingsItemCaptions.HorizontalAlign = FormLayoutHorizontalAlign.Left;
+                    itemSettings.SettingsItemCaptions.VerticalAlign = FormLayoutVerticalAlign.Top;
+
+                });
+
+                privateGroupItem.Items.Add(m => m.INN, m =>
+                {
+                    m.Caption = "ИНН";
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+
+                    //   DevExpressHelpers.SetTextBoxSettings((TextBoxSettings)m.NestedExtensionSettings);
+                });
+
+                privateGroupItem.Items.Add(m => m.PFR, m =>
+                {
+                    m.Caption = "ПФР";
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+
+                    //   DevExpressHelpers.SetTextBoxSettings((TextBoxSettings)m.NestedExtensionSettings);
+                });
+
+                var contactsGroupItem = settings.Items.AddGroupItem(itemSettings =>
+                {
+
+                    itemSettings.ColCount = 1;
+
+                    itemSettings.Caption = "Контакты";
+                    itemSettings.SettingsItemHelpTexts.Position = HelpTextPosition.Bottom;
+
+                    itemSettings.GroupBoxDecoration = GroupBoxDecoration.Box;
+                    itemSettings.ShowCaption = DefaultBoolean.True;
+                    itemSettings.SettingsItems.ShowCaption = DefaultBoolean.True;
+                    itemSettings.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Left;
+                    itemSettings.SettingsItemCaptions.HorizontalAlign = FormLayoutHorizontalAlign.Left;
+                    itemSettings.SettingsItemCaptions.VerticalAlign = FormLayoutVerticalAlign.Top;
+
+                });
+
+                contactsGroupItem.Items.Add(m => m.Email, m =>
+                {
+                    m.Caption = "E-mail";
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+
+                    //     DevExpressHelpers.SetTextBoxSettings((TextBoxSettings)m.NestedExtensionSettings);
+                });
+
+                contactsGroupItem.Items.Add(m => m.Phone, m =>
+                {
+                    m.Caption = "Телефон";
+                    m.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+
+                    //   DevExpressHelpers.SetTextBoxSettings((TextBoxSettings)m.NestedExtensionSettings);
+                });
+
+
+
+
+            }).GetHtml()
+
+
+        </div>*@
+
+}
+
+
+<script>
+
+    var old_widget_title;
+    $(document).ready(function () {
+        $('.field-validation-error').addClass('error');
+        $('.input-validation-error').closest('.form-group').addClass('has-error');
+        // prevent form submission
+        
+      
+        $.Pages.initSwitcheryPlugin();
+        $.Pages.initSelect2Plugin();
+        @*var widget_title = '@widget_title';
+        old_widget_title = $('.widget-title').text();*@
+
+        //$('.widget-title').text(widget_title);
+
+
+        //$('.widget-back-btn').show();
+        //$('.widget-save-btn').show();
+
+        $('.widget-back-btn').on("click", function (evt) {
+            userCardGoBack();
+            //$('.widget-title').text(old_widget_title);
+            //$('.widget-back-btn').hide();
+            //$('.widget-save-btn').hide();
+
+        });
+    });
+</script>

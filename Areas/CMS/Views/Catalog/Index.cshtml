@@ -1,0 +1,374 @@
+﻿@using livemenu.Helpers
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+
+}
+
+@model livemenu.Areas.BWP.Models.Catalog.CatalogMainModel
+
+<div class="">
+    <div class="grid-stack">
+
+        <div class="grid-stack-item"
+             data-custom-id="grid-stack-item-ctree"
+             data-gs-x="3" data-gs-y="0"
+             data-gs-width="4" data-gs-height="12">
+            <div class="panel-title" id="workspace-title" style="display: none;"></div>
+            <div id="workspace-portlet" class="panel panel-default grid-stack-item-content" style="overflow: hidden;"
+                 data-pages="portlet"
+                 data-ciid="@Model.CatalogItemID"
+                 data-rootid="@Model.RootID"
+                 data-mode="e"
+                 data-catalogple="@Url.Action(MVC.CMS.Catalog.CatalogItemPriceListElement())"
+                 data-searchple="@Url.Action(MVC.CMS.Catalog.SearchPriceListElement())"
+                 data-getple="@Url.Action(MVC.CMS.Catalog.GetPriceListElement())"
+                 data-searchsection="@Url.Action(MVC.CMS.Catalog.SearchSection())"
+                 data-getsection="@Url.Action(MVC.CMS.Catalog.GetSection())"
+                 data-searchbytype="@Url.Action(MVC.CMS.Catalog.SearchByType())"
+                 data-getbytype="@Url.Action(MVC.CMS.Catalog.GetByType())"
+                 data-searchpage="@Url.Action(MVC.CMS.Catalog.SearchPage())"
+                 data-getpage="@Url.Action(MVC.CMS.Catalog.GetPage())"
+                 data-searchtag="@Url.Action(MVC.CMS.Tags.SearchTag())"
+                 data-gettag="@Url.Action(MVC.CMS.Tags.GetTag())"
+                 data-searchtaggroup="@Url.Action(MVC.CMS.TagsGroup.SearchTagGroup())"
+                 data-gettaggroup="@Url.Action(MVC.CMS.TagsGroup.GetTagGroup())"
+                 data-searchsocialnetwork="@Url.Action(MVC.CMS.SocialNetwork.SearchSocialNetwork())"
+                 data-getsocialnetwork="@Url.Action(MVC.CMS.SocialNetwork.GetSocialNetwork())"
+                 data-exporturl="@Url.Action(MVC.CMS.WebUni.Export())"
+                 data-viewurl="@Url.Action(MVC.CMS.Catalog.CatalogWorkspace())"
+                 data-editurl="@Url.Action(MVC.CMS.Catalog.CatalogItemCardEditing())"
+                 data-createurl="@Url.Action(MVC.CMS.Catalog.CatalogItemCardCreation())"
+                 data-webpagelinkurl="@Url.Action(MVC.CMS.Catalog.GetWebPageLink())"
+                 data-getfamilytree="@Url.Action(MVC.CMS.Catalog.GetFamilyTree())"
+                 data-change-structure="@Url.Action(MVC.CMS.Catalog.ChangeStructure())"
+                 data-change-collpased-state="@Url.Action(MVC.CMS.Catalog.ChangeCollapsedStateCatalogItem())"
+                 data-searchsearchfilter="@Url.Action(MVC.CMS.SearchFilter.SearchSearchFilter())"
+                 data-searchbyclientrole="@Url.Action(MVC.Projects.Users.SearchByClientRole())"
+                 data-getbyclientrole="@Url.Action(MVC.Projects.Users.GetByClientRole())"
+                 data-searchbyclientrolestatus="@Url.Action(MVC.Projects.Users.SearchByClientRoleStatus())"
+                 data-getbyclientrolestatus="@Url.Action(MVC.Projects.Users.GetByClientRoleStatus())"
+                 data-getdinamicentity="@Url.Action(MVC.Projects.DynamicTables.GetDynamicEntityDescription())"
+                 data-getdinamiccolumn="@Url.Action(MVC.Projects.DynamicTables.GetDynamicColumnDescription())"
+                 data-getdynamicentitywithcolumn="@Url.Action(MVC.Projects.DynamicTables.GetDynamicEntityWithColumnDescription())"
+                 data-getdynamicentityfull="@Url.Action(MVC.Projects.DynamicTables.GetDynamicEntityFullDescription())"
+
+                 
+
+                 data-searchfont="@Url.Action(MVC.CMS.Font.SearchFont())"
+                 data-getfont="@Url.Action(MVC.CMS.Font.GetFont())"
+                 data-getdynamicentityoverview="@Url.Action(MVC.Projects.DynamicTables.GetDynamicEntitiesOverview())"
+                 data-searchaddress="@Url.Action(MVC.WMS.Addresses.SearchAddress())"
+                 data-getaddress="@Url.Action(MVC.WMS.Addresses.GetAddress())"
+                 data-searchcountry="@Url.Action(MVC.WMS.Countries.SearchCountry())"
+                 data-getcountry="@Url.Action(MVC.WMS.Countries.GetCountry())"
+                 data-searchcity="@Url.Action(MVC.WMS.Cities.SearchCity())"
+                 data-getcity="@Url.Action(MVC.WMS.Cities.GetCity())"
+                 >
+
+
+                <div class="panel-heading" style=''>
+                    <div class="panel-title">
+                        Редактор
+                    </div>
+                    <div class="panel-controls">
+                        <ul>
+                            <li>
+                                <a href="#" class="portlet-collapse" data-toggle="collapse"><i class="pg-arrow_maximize"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="portlet-maximize" data-toggle="maximize"><i class="fa fa-arrows-alt pg-fullscreen"></i></a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="panel-heading" style='padding-top: 0px;'>
+                    <div class="panel-title" id="workspace-title-type" style="">
+                        <div class="btn-group  pull-left">
+                            <a class="btn btn-default" id="workspace-refresh-btn" style="display: none; overflow: hidden;">
+                                <i class="fa fa-refresh"></i>
+                            </a>
+
+                        </div>
+
+                        <div class="btn-group  pull-left">
+                            <a class="btn btn-success" id="workspace-save-btn" style="display: none; overflow: hidden;">
+                                <i class="fa fa-check"></i>
+                            </a>
+
+                        </div>
+
+                        <div class="catalogItemModifiedDateWraper"><span id="catalogItemModifiedDate"></span></div>
+                    </div>
+                </div>
+
+                <div class="panel-heading current-catalog-item">
+                    <div class="panel-title">
+                        <span id="ci-card-name"></span>
+                    </div>
+                </div>
+
+
+                <div class="panel-body" style="margin-bottom: 0px;   padding-top: 0px;">
+                    <div class="row">
+
+                    </div>
+                    <a data-toggle="workspace-mode-tab" id="edit-tab" style="display: none;" data-target="#workspace-tab-content" href="#">Редактировать</a>
+                    <div class="row full-height">
+                        <div class="full-height">
+                            <div class="tab-pane active full-height" id="workspace-tab-content" style="padding: 20px; padding-top: 0px !important;">
+                                <div class="" style="" id="c2Workspace"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                @*<div class="grid-stack-item-content">
+
+                    </div>*@
+                <!-- START PANEL -->
+                <!-- END PANEL -->
+            </div>
+        </div>
+        <div class="grid-stack-item"
+             data-custom-id="grid-stack-item-workspace"
+             data-gs-x="0" data-gs-y="0"
+             data-gs-width="3" data-gs-height="12">
+            <div id="ctree-portlet" class="panel panel-default grid-stack-item-content" data-pages="portlet" style="overflow: hidden;">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Проводник
+                    </div>
+                    <div class="panel-controls">
+                        <ul>
+                            <li>
+                                <div class="dropdown">
+                                    <a id="portlet-settings" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
+                                        <i class="portlet-icon portlet-icon-settings "></i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="portlet-settings">
+                                        <li>
+                                            <a href="#" onclick="expandAllTree()">Раскрыть все</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" onclick="collapseAllTree()">Свернуть все</a>
+                                        </li>
+
+                                        <li>
+                                            <a href="#" onclick="showCatalogMassOperationsModal()">Массовые операции</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Настройки</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#" class="portlet-collapse" data-toggle="collapse"><i class="pg-arrow_maximize"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="portlet-refresh" onclick="reloadTree()"><i style="font-size: 12px;" class="fa fa-refresh"></i></a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-heading" style='text-align: center; padding-top: 0px;  z-index: 0;'>
+                    <div class="btn-group">
+                        <button class="btn btn-default normal-font" id="ctree-create-btn" style="display: none; overflow: hidden;" onclick="cTreeCreate( currentCatalogItemID, currentCatalogItemTypeID ) ">создать</button>
+                        <button class="btn btn-default normal-font" id="ctree-copy-btn" style="display: none; overflow: hidden;" onclick="cTreeCopy(currentCatalogItemKey) ">копия</button>
+                        <button onclick="showCISelectorModal(currentCatalogItemID);" id="ctree-link-btn" style="display: none; overflow: hidden;" class="btn btn-default normal-font ">связь</button>
+                        <button class="btn btn-default normal-font" id="ctree-delete-btn" style="display: none; overflow: hidden;" onclick="cTreeDelete( currentCatalogItemKey , currentCatalogItemIsLink ) ">удалить</button>
+                    </div>
+                </div>
+                <div id="catalog-tree-panel" class="panel-body scrollable" style="margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px;">
+                    <div class="">
+                        @{ Html.RenderAction(MVC.CMS.Catalog.CatalogTree(Model)); }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-stack-item"
+             data-custom-id="grid-stack-item-view"
+             data-gs-x="7" data-gs-y="0" data-saved-height="13"
+             data-gs-width="5" data-gs-height="13">
+            <div class="panel panel-default grid-stack-item-content" id="grid-stack-item-view" data-pages="portlet" style="overflow: hidden;">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Просмотр
+                    </div>
+                    <div class="panel-controls">
+                        <ul>
+
+                            <li>
+                                <a href="#" class="portlet-collapse" data-toggle="collapse"><i class="pg-arrow_minimize"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="portlet-maximize" data-toggle="maximize"><i class="fa fa-arrows-alt pg-fullscreen"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="portlet-refresh" onclick="reloadCatalogView(true)"><i style="font-size: 12px;" class="fa fa-refresh"></i></a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-heading" style='padding-top: 0px;  z-index: 0;'>
+                    <div class="btn-group" style="float: left">
+                        <button class="btn btn-default normal-font catalogiframeview-btn" style="overflow: hidden;" onclick="changeCatalogViewIFrame($(this), 0) ">на телефоне</button>
+                        <button class="btn btn-default normal-font catalogiframeview-btn" style="overflow: hidden;" onclick="changeCatalogViewIFrame($(this), 1) ">на планшете</button>
+                        <button class="btn btn-default normal-font catalogiframeview-btn" style="overflow: hidden;" onclick="changeCatalogViewIFrame($(this), 2) ">на ноутбуке</button>
+                        <button class="btn btn-default normal-font catalogiframeview-btn active" style="overflow: hidden;" onclick="changeCatalogViewIFrame($(this), 3) ">на десктопе</button>
+                    </div>
+                    <div class="checkbox check-success" id="catalogiframeview-fit-wrapper">
+                        <input data-val="true" id="catalogiframeview-fit" onchange="onCatalogIFrameFitChanged()" name="catalogiframeview-fit" type="checkbox" value="false">
+                        <label for="catalogiframeview-fit">Реальный размер</label>
+                    </div>
+                </div>
+                <div id="catalog-page-view" class="panel-body" style="margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px;">
+                    <div class="">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="grid-stack-item"
+             data-custom-id="grid-stack-item-instruction-view"
+             data-gs-x="0" data-gs-y="12" data-saved-height="12"
+             data-gs-width="7" data-gs-height="1">
+            <div class="panel panel-default grid-stack-item-content panel-collapsed" id="grid-stack-item-instruction-view" data-pages="portlet" style="overflow: hidden;">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        Инструкция
+                    </div>
+                    <div class="panel-controls">
+                        <ul>
+
+                            <li>
+                                <a href="#" class="portlet-collapse" data-toggle="collapse"><i class="pg-arrow_minimize"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="portlet-maximize" data-toggle="maximize"><i class="fa fa-arrows-alt pg-fullscreen"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="portlet-refresh" onclick="reloadCatalogInstructionView(true)"><i style="font-size: 12px;" class="fa fa-refresh"></i></a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-heading" style='padding-top: 0px; z-index: 0;'>
+                    <div class="btn-group" style="float: left">
+                        <button class="btn btn-default normal-font catalogiframeinstructionview-btn" style="overflow: hidden;" onclick="changeCatalogInstructionViewIFrame($(this), 0) ">на телефоне</button>
+                        <button class="btn btn-default normal-font catalogiframeinstructionview-btn" style="overflow: hidden;" onclick="changeCatalogInstructionViewIFrame($(this), 1) ">на планшете</button>
+                        <button class="btn btn-default normal-font catalogiframeinstructionview-btn" style="overflow: hidden;" onclick="changeCatalogInstructionViewIFrame($(this), 2) ">на ноутбуке</button>
+                        <button class="btn btn-default normal-font catalogiframeinstructionview-btn active" style="overflow: hidden;" onclick="changeCatalogInstructionViewIFrame($(this), 3) ">на десктопе</button>
+                    </div>
+                    <div class="checkbox check-success" id="catalogiframeinstructionview-fit-wrapper">
+                        <input data-val="true" id="catalogiframeinstructionview-fit" onchange="onCatalogIFrameInstructionFitChanged()" name="catalogiframeinstructionview-fit" type="checkbox" value="false">
+                        <label for="catalogiframeinstructionview-fit">Реальный размер</label>
+                    </div>
+                </div>
+                <div id="catalog-instruction-view" class="panel-body" style="margin-bottom: 0px; padding-top: 0px; padding-bottom: 0px;">
+                    <div class="">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #ctree-portlet .panel-heading + .panel-body
+    {
+      padding-top: 0;
+      height: calc(100% - 100px);
+    }
+     #grid-stack-item-view .panel-heading + .panel-body
+    {
+      padding-top: 0;
+      height: calc(100% - 70px);
+    }
+
+      #grid-stack-item-instruction-view .panel-heading + .panel-body
+    {
+      padding-top: 0;
+      height: calc(100% - 70px);
+    }
+
+</style>
+
+<script>
+    var currentCatalogItemID = 0;
+    currentCatalogItemTypeID = 0;
+    var currentCatalogItemIsGrouped = 0;
+    var currentCatalogItemKey = 0;
+    var currentCatalogItemIsLink = 0;
+    var currentCatalogItemCode = '-1-1';
+
+
+    $(function () {
+        var options = {
+            cell_height: 48,
+            vertical_margin: 10,
+            handle: '.panel-heading',
+        };
+
+        $('.grid-stack').gridstack(options);
+
+        $('.grid-stack').on('dragstop', function (event, ui) {
+            catalogTreeSaveGridData("catalog-grid-data");
+        });
+
+        $('.grid-stack').on('resizestop', function (event, ui) {
+            fixCatalogItemCardContainerHeight();
+            catalogTreeSaveGridData("catalog-grid-data");
+
+            if (ui.element.data('custom-id') == "grid-stack-item-view") {
+                setTimeout(function () {reloadCatalogView(true);}, 500);
+            }
+
+            if (ui.element.data('custom-id') == "grid-stack-item-instruction-view") {
+                setTimeout(function () { reloadCatalogInstructionView(true); }, 500);
+            }
+
+        });
+
+        var saved = $.cookie("catalog-grid-data");
+        if (saved) {
+            catalogTreeLoadGridData(jQuery.parseJSON(saved));
+        }
+
+    });
+
+
+    $(document).ready(function () {
+        initWorkspace();
+        $.Pages.initScrollBarPlugin();
+
+    });
+    $('#workspace-portlet').portlet({
+        progress: 'circle',
+        onRefresh: function () {
+
+        }
+    });
+
+    $('#ctree-portlet').portlet({
+        progress: 'circle',
+        onRefresh: function () {
+
+        }
+    });
+</script>

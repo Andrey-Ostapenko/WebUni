@@ -1,0 +1,204 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniForgot
+@{
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var textsgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.ForgotDataText);
+    var textsVisible = textsgroup.IsVisible ? string.Empty : "hidden";
+    var textsDisabled = string.Empty;
+    var textscollapsed = textsgroup.IsCollapse ? "collapsed" : string.Empty;
+    var textscollapsein = !textsgroup.IsCollapse ? "in" : string.Empty;
+}
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.ForgotDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+        <div class="@textsVisible @textsDisabled vg-links vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.ForgotDataText">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.ID-link-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@textscollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.ForgotDataText]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.ID-link-acc" class="vg-acc-content collapse @textscollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле почтового адреса</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.EmailText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля ввода почты"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Кнопка продолжить</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.ContinueText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название кнопки продолжить"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Сообщение об отправленном коде</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.ForgotPasswordCodeIsSendingText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Сообщение об успешной отправке кода подтверждения смены пароля"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Кнопка кода подтверждения</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.ForgotPasswordCodeText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля ввода кода подтверждения смены пароля"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле нового пароля</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.PasswordText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля ввода нового пароля"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле подтверждения пароля</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.PasswordConfirmationText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название поля ввода подтверждения пароля"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Кнопка смены пароля</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.ChangeText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название кнопки смены пароля"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Сообщение о смене пароля</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.SuccessText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Сообщение об успешной смене пароля"
+                       })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+}

@@ -1,0 +1,27 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniSection
+
+
+<style>
+ 
+
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniSection-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.SectionInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    initUniSectionCard($('#WebUniSection-@Model.ID'));
+ 
+</script>

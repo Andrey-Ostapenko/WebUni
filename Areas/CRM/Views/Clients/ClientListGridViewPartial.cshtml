@@ -1,0 +1,135 @@
+﻿@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.CRM.Controllers
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.CRM.Clients
+@using livemenu.Kernel.CRM.PriceList
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    Layout = null;
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+
+    var settings = (ViewContext.Controller as ClientsController).GetClientListGridViewSettings();
+
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new { Area = MVC.CRM.Name, Controller = MVC.CRM.Clients.Name, Action = MVC.CRM.Clients.ActionNames.ClientListGridViewPartial };
+
+    settings.SettingsBehavior.AllowDragDrop = true;
+
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 50;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100", "500", "1000" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFooter = true;
+
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+    settings.CellEditorInitialize = (s, e) =>
+    {
+        ASPxEdit editor = (ASPxEdit)e.Editor;
+        editor.ValidationSettings.Display = Display.None;
+    };
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(50, UnitType.Pixel);
+        column.SetDataItemTemplateContent(c =>
+        {
+
+            var b = DataBinder.Eval(c.DataItem, "ID");
+
+            if (b != null)
+            {
+                var id = (long)b;
+                string url = string.Empty;
+                var a = DataBinder.Eval(c.DataItem, "ClientLegalTypeID");
+
+                if (a != null)
+                {
+                    var t = (ClientLegalTypeValue) (long) a;
+
+                    switch (t)
+                    {
+                        case ClientLegalTypeValue.LegalPersonality:
+                            {
+                                url = Url.Action(MVC.CRM.Clients.LegalPersonalityCard(id));
+                                break;
+                            }
+                        case ClientLegalTypeValue.NaturalPerson:
+                            {
+                                url = Url.Action(MVC.CRM.Clients.NaturalPersonCard(id));
+                                break;
+                            }
+                        case ClientLegalTypeValue.IndividualProprietor:
+                            {
+                                url = Url.Action(MVC.CRM.Clients.IndividualProprietorCard(id));
+                                break;
+                            }
+                    }
+                }
+                else
+                {
+                    url = Url.Action(MVC.CRM.Clients.WithoutTypeCard(id));
+                }
+
+
+                ViewContext.Writer.Write(Html.StartEditButton(string.Format("openClientCard('{0}');", url)));
+            }
+
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton(string.Format("showClientCardModal();"))));
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewSaveButton(name)));
+
+    });
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(50, UnitType.Pixel);
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewCancelEditButton(name)));
+        column.SetDataItemTemplateContent(c =>
+        {
+        });
+    });
+}
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+    e.QueryableSource = ServiceLocator.Current.GetInstance<IClientListService>().RawDataQueryable;
+}).GetHtml()
+

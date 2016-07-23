@@ -1,0 +1,448 @@
+﻿@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Utils
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.Projects.Controllers
+@using livemenu.Kernel.BWP.DynamicTables
+@using Microsoft.Practices.ServiceLocation
+@using livemenu.Helpers
+@using livemenu.Common.Kernel.DynamicTables
+@model livemenu.Areas.Projects.Models.DynamicColumnCodeGridViewModel
+@{
+    Layout = null;
+    var items = ServiceLocator.Current.GetInstance<IDynamicColumnService>().RawDataQueryable.Where(col => (!Model.ApplicationID.HasValue || col.DynamicTable.DynamicTableApplication.Select(x => x.ApplicationID).Distinct().Contains(Model.ApplicationID.Value)) && col.DynamicColumnCode.Count == 0).Select(col => new {text = col.DynamicTable.DisplayName + ": " + col.DisplayName + " - " + col.DynamicType.Name, value = col.ID}).ToList();
+    var colid = Model.ApplicationID.HasValue ? 2 : 3;
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    var standartCodes = new List<DynamicColumnCodeList>();
+    var i = 0;
+    //var StandartCodeDisplayIndex = 1;
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "price",
+        ApplicationID = 0,
+        ColumnDisplayName = "Цена",
+        ColumnTypeName = "Число с точкой",
+        Group = "Прайс-лист"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "total-count",
+        ApplicationID = 0,
+        ColumnDisplayName = "Количество",
+        ColumnTypeName = "Целое число",
+        Group = "Предварительный просмотр корзины"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "total-price",
+        ApplicationID = 0,
+        ColumnDisplayName = "Цена",
+        ColumnTypeName = "Целое число",
+        Group = "Предварительный просмотр корзины"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "profile-name",
+        ApplicationID = 0,
+        ColumnDisplayName = "Имя профиля",
+        ColumnTypeName = "текст",
+        Group = "Профиль"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "balancevalue",
+        ApplicationID = 0,
+        ColumnDisplayName = "Баланс",
+        ColumnTypeName = "число с точкой",
+        Group = "Предварительный просмотр баланса"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "day",
+        ApplicationID = 0,
+        ColumnDisplayName = "День",
+        ColumnTypeName = "текст",
+        Group = "Текст"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "month",
+        ApplicationID = 0,
+        ColumnDisplayName = "Месяц",
+        ColumnTypeName = "текст",
+        Group = "Текст"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "year",
+        ApplicationID = 0,
+        ColumnDisplayName = "Год",
+        ColumnTypeName = "текст",
+        Group = "Текст"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "dayofweek",
+        ApplicationID = 0,
+        ColumnDisplayName = "День недели",
+        ColumnTypeName = "текст",
+        Group = "Текст"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "hour",
+        ApplicationID = 0,
+        ColumnDisplayName = "Час",
+        ColumnTypeName = "текст",
+        Group = "Текст"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "minute",
+        ApplicationID = 0,
+        ColumnDisplayName = "Минуты",
+        ColumnTypeName = "текст",
+        Group = "Текст"
+    });
+    standartCodes.Add(new DynamicColumnCodeList
+    {
+        ID = --i,
+        DynamicColumnID = i,
+        DisplayIndex = i,
+        Code = "second",
+        ApplicationID = 0,
+        ColumnDisplayName = "Секунды",
+        ColumnTypeName = "текст",
+        Group = "Текст"
+    });
+}
+
+@using DevExpress.Data
+@{
+
+    Layout = null;
+
+    var settings = new GridViewSettings();
+
+    settings.Settings.ShowFooter = true;
+
+    settings.Name = "DynamicColumnCodeGridView";
+    settings.Width = new System.Web.UI.WebControls.Unit(100, UnitType.Percentage);
+    settings.Settings.ShowFilterRow = true;
+    settings.KeyFieldName = "ID";
+    //settings.SettingsBehavior.AllowGroup = true;
+    if (!Model.ApplicationID.HasValue)
+    {
+        settings.Columns.Add(column =>
+        {
+            column.Width = new System.Web.UI.WebControls.Unit(4, UnitType.Pixel);
+            column.Name = "DisplayIndex";
+            column.FieldName = "DisplayIndex";
+            column.Caption = "№";
+            column.SortIndex = 1;
+            column.SortOrder = ColumnSortOrder.Ascending;
+            column.ReadOnly = true;
+
+            column.SetDataItemTemplateContent(c =>
+            {
+                var codeDisplayIndex = DataBinder.Eval(c.DataItem, "DisplayIndex");
+                if (codeDisplayIndex != null)
+                {
+                    ViewContext.Writer.Write((long) codeDisplayIndex + standartCodes.Count());
+                }
+            });
+
+            column.CellStyle.CssClass = "draggable-dynamicColumnCode";
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.Name = "Applications";
+            column.FieldName = "Applications";
+            column.Caption = "Приложения";
+            column.ReadOnly = true;
+            column.CellStyle.BackColor = System.Drawing.Color.LightGray;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.SetDataItemTemplateContent(c =>
+            {
+                var tableName = DataBinder.Eval(c.DataItem, "Applications");
+                ViewContext.Writer.Write(tableName);
+            });
+            column.SetEditItemTemplateContent(c =>
+            {
+                var tableName = DataBinder.Eval(c.DataItem, "Applications");
+                ViewContext.Writer.Write(tableName);
+            });
+        });
+    }
+    else
+    {
+
+    }
+    settings.Columns.Add(column =>
+    {
+        column.Caption = "Группа";
+        column.ReadOnly = true;
+        column.CellStyle.BackColor = System.Drawing.Color.LightGray;
+        column.Width = new System.Web.UI.WebControls.Unit(15, UnitType.Percentage);
+
+        column.FieldName = "Group";
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+        column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.EditFormSettings.Visible = DefaultBoolean.False;
+        column.SetDataItemTemplateContent(c =>
+        {
+            var tableName = DataBinder.Eval(c.DataItem, "Group");
+            ViewContext.Writer.Write(tableName);
+        });
+        column.SetEditItemTemplateContent(c =>
+        {
+            var tableName = DataBinder.Eval(c.DataItem, "Group");
+            ViewContext.Writer.Write(tableName);
+        });
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "DynamicColumnID";
+        column.Caption = "Название";
+
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        //  column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.ColumnType = MVCxGridViewColumnType.ComboBox;
+        column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+        var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+        if (Model.ApplicationID.HasValue)
+        {
+            comboBoxProperties.DataSource = ServiceLocator.Current.GetInstance<IDynamicColumnService>().RawDataQueryable.Where(col => col.DynamicTable.DynamicTableApplication.Select(x => x.ApplicationID).Distinct().Contains(Model.ApplicationID.Value) && col.DynamicColumnCode.Count == 0).Select(col => new { ID = col.ID, DisplayName = col.DynamicTable.DisplayName + ": " + col.DisplayName + " - " + col.DynamicType.Name }).ToList();
+        }
+        else
+        {
+            comboBoxProperties.DataSource = ServiceLocator.Current.GetInstance<IDynamicColumnService>().RawDataQueryable.Where(col => col.DynamicColumnCode.Count == 0).Select(col => new { ID = col.ID, DisplayName = col.DynamicTable.DisplayName + ": " + col.DisplayName + " - " + col.DynamicType.Name }).ToList();
+        }
+
+        comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+        comboBoxProperties.AllowUserInput = true;
+        comboBoxProperties.DropDownStyle = DropDownStyle.DropDown;
+        comboBoxProperties.TextField = "DisplayName";
+        comboBoxProperties.ValueField = "ID";
+        comboBoxProperties.ValueType = typeof(long);
+
+        column.SetDataItemTemplateContent(c =>
+        {
+            var columnName = DataBinder.Eval(c.DataItem, "ColumnDisplayName");
+            var columnType = DataBinder.Eval(c.DataItem, "ColumnTypeName");
+
+            ViewContext.Writer.Write(string.IsNullOrEmpty((string)columnName) || string.IsNullOrEmpty((string)columnType) ? "" : columnName + " - " + columnType);
+        });
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Code";
+        column.Caption = "Код данных";
+    });
+
+    //settings = (ViewContext.Controller as DynamicColumnCodeController).GetGridViewSettings(settings);
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Batch;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.DynamicColumnCode.Name, Action = MVC.Projects.DynamicColumnCode.ActionNames.GridViewPartial, appID = Model.ApplicationID };
+
+
+    settings.SettingsEditing.BatchUpdateRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.DynamicColumnCode.Name, Action = MVC.Projects.DynamicColumnCode.ActionNames.GridViewBatchUpdatePartial, appID = Model.ApplicationID };
+
+    settings.SettingsBehavior.AllowDragDrop = true;
+
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 50;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100", "500", "1000" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowGroupedColumns = true;
+    settings.Settings.ShowFooter = true;
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+    settings.SettingsBehavior.ConfirmDelete = true;
+
+    //settings.SettingsContextMenu.Enabled = true;
+
+
+    settings.CellEditorInitialize = (s, e) =>
+    {
+        ASPxEdit editor = (ASPxEdit)e.Editor;
+        editor.ValidationSettings.Display = Display.None;
+    };
+
+    settings.Columns.Add(column =>
+    {
+        column.Name = "control";
+        column.Width = new System.Web.UI.WebControls.Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+            var id = DataBinder.Eval(c.DataItem, "ID");
+
+            if (id != null && (long)id >= 1)
+                ViewContext.Writer.Write(Html.DeleteButton(string.Format("{0}.DeleteRow({1})", name, index)));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton(string.Format("{0}.AddNewRow()", name))));
+    });
+
+
+    settings.ClientSideEvents.ColumnSorting = "GetSortedColumnIndex";
+
+    settings.HtmlRowPrepared = (s, e) =>
+    {
+        if (e.KeyValue != null && (long)e.KeyValue < 1)
+            e.Row.BackColor = System.Drawing.Color.LightGray;
+
+        if (e.RowType == GridViewRowType.Data)
+        {
+            if (!Model.ApplicationID.HasValue)
+            {
+                object displayIndex = e.GetValue("DisplayIndex");
+                if (displayIndex != null)
+                    e.Row.Attributes.Add("displayIndex", displayIndex.ToString());
+            }
+        }
+    };
+
+    settings.BeforeGetCallbackResult = (s, e) =>
+    {
+        if (ViewBag.VisibleIndex == null)
+            return;
+        var gridView = (MVCxGridView)s;
+        gridView.FocusedRowIndex = ViewBag.VisibleIndex;
+    };
+    }
+
+
+@using livemenu.Common.Entities.Entities
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    if (Model.ApplicationID.HasValue)
+    {
+        e.QueryableSource = ServiceLocator.Current.GetInstance<IDynamicColumnCodeService>().GetList().Where(x => x.ApplicationID == Model.ApplicationID.Value);
+    }
+    else
+    {
+        e.QueryableSource = standartCodes.Union(ServiceLocator.Current.GetInstance<IDynamicColumnCodeService>().GetList().GroupBy(x => x.ID).Select(x => x.FirstOrDefault())).AsQueryable();
+    }
+
+
+
+    //   e.QueryableSource = values.AsQueryable();
+
+}).GetHtml()
+
+
+@using System.Web.Script.Serialization
+<script id="dxss_000" type="text/javascript">
+    dxo.BatchEditStartEditing.AddHandler(function (s, e) {
+        if (e.focusedColumn.name == "control" || e.focusedColumn.name == "DisplayIndex")
+        {
+            e.cancel = true;
+        }
+    });
+
+    var items = @Html.Raw((new JavaScriptSerializer()).Serialize(items));
+    
+    var editingDynamicColumnID = false;
+    
+    dxo.BatchEditStartEditing.AddHandler(function (s, e) {
+        if (e.rowValues[@colid].value != null && e.rowValues[@colid].value < 1) { // если стандартные коды (серые)
+            e.cancel = true;
+        }
+        else if (e.focusedColumn.fieldName == "DynamicColumnID")
+        {
+            var editor = s.GetEditor(e.focusedColumn.fieldName);
+            editor.GetListBoxControl().ClearItems();
+            editor.ResetDropDownSizeCache();
+            if(e.rowValues[@colid].value != null)items.push({text:e.rowValues[@colid].text, value:e.rowValues[@colid].value});
+            items.forEach(function(item, i, arr) {
+                editor.AddItem(item.text, item.value);
+            });
+            editingDynamicColumnID = true;
+        }
+    });
+    
+    dxo.BatchEditEndEditing.AddHandler(function (s, e) {
+            var editor = s.GetEditor("DynamicColumnID");
+            var i = 0;
+            for(i = 0, len = items.length; i < len; i++) {
+                if (items[i].value === e.rowValues[@colid].value) {
+                    break;
+                }
+            }
+            items.splice(i,1);
+            editingDynamicColumnID = false;
+        }
+    );
+</script>

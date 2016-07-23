@@ -1,0 +1,59 @@
+﻿@using livemenu.Helpers
+@{
+    Layout = null;
+}
+
+@model livemenu.Areas.CMS.Models.PagesModel
+
+<div class="row" id="pages-settings">
+    <div class="col-sm-12 col-md-12">
+        <div class="form-group">
+            <label>Очищать кэш страниц при сохранении </label>
+            @Html.BasicCheckBoxFor(m => m.ClearCacheOnSave, new { data_init_plugin = "switchery", onchange = "onPagesClearCacheOnSaveChanged($(this))" })
+        </div>
+    </div>
+</div>
+
+<div class="row" id="pages-container"
+     data-clearcacheonsave-url="@Url.Action(MVC.CMS.Pages.ClearCacheOnSaveChanged())"
+     data-clearallcache-url="@Url.Action(MVC.CMS.Pages.ClearAllCache())"
+     data-clearpagecache-url="@Url.Action(MVC.CMS.Pages.ClearPageCache())"
+     data-regenerateabsent-url="@Url.Action(MVC.CMS.Pages.RegenerateAbsent())"
+     data-regenerateall-url="@Url.Action(MVC.CMS.Pages.RegenerateAll())"
+     data-regeneratepage-url="@Url.Action(MVC.CMS.Pages.RegeneratePage())">
+
+    <div class="col-sm-4 col-md-4">
+        <div class="form-group">
+            <input id="page-code" class="form-control right-menu-btn  btn-block" style="color: initial; font-size: 11px" type="text" placeholder="код страницы" />
+        </div>
+
+    </div>
+        <div class="col-sm-4 col-md-4">
+            <button class='btn right-menu-btn right-menu-btn-pages btn-block' style="width: 100%" onclick="RegeneratePage(0, $('#page-code').val())">Перегенерировать</button>
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <button class='btn right-menu-btn right-menu-btn-pages btn-block' style="width: 100%" onclick="ClearPageCache(0, $('#page-code').val())">Сбросить кэш</button>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px">
+        <div class="col-sm-12 col-md-4">
+            <button class='btn right-menu-btn right-menu-btn-pages btn-block' onclick="RegenerateAll()">Перегенерировать все страницы</button>
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <button class='btn right-menu-btn right-menu-btn-pages btn-block ' onclick="RegenerateAbsent()">Сгенерировать недостающие страницы</button>
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <button class='btn right-menu-btn right-menu-btn-pages btn-block ' onclick="ClearAllCache()">Сбросить кэш всех страниц</button>
+        </div>
+    </div>
+   
+    <div class="row" style="margin-top: 20px">
+        <div class="col-sm-12 col-md-12">
+            @{ Html.RenderAction(MVC.CMS.Pages.PagesCachingGridViewPartial()); }
+        </div>
+    </div>
+
+<script>
+    $.Pages.initSwitcheryPluginInElement('switchery', $('#pages-settings'));
+</script>
+

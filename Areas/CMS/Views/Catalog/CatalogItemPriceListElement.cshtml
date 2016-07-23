@@ -1,0 +1,81 @@
+﻿@{
+    Layout = null;
+}
+
+@model livemenu.Common.Entities.Entities.PriceListElement
+@functions
+{
+
+    string Format(string val)
+    {
+        return string.IsNullOrEmpty(val) ? "не указано" : val;
+    }
+ string Format(decimal? val)
+    {
+        return !val.HasValue ? "не указано" : val.Value.ToString("N2");
+    }
+
+}
+
+<style>
+    
+</style>
+
+@if (Model != null)
+{
+
+    <div class="form-group WebUni-form-group WebUni-form-group-ple-info">
+
+        <div class="col-sm-12 ">
+            <label ><span class="WebUni-form-group-ple-info-name">Бренд: </span><span class="WebUni-form-group-ple-info-value">@Format(Model.Brand)</span></label>
+        </div>
+    </div>
+    <div class="form-group WebUni-form-group WebUni-form-group-ple-info">
+
+        <div class="col-sm-12 ">
+            <label><span class="WebUni-form-group-ple-info-name">Группа: </span><span class="WebUni-form-group-ple-info-value">@Format(Model.Group)</span></label>
+        </div>
+    </div>
+
+    <div class="form-group WebUni-form-group WebUni-form-group-ple-info">
+
+        <div class="col-sm-12 ">
+            <label><span class="WebUni-form-group-ple-info-name">Артикул: </span><span class="WebUni-form-group-ple-info-value">@Format(Model.Articul)</span></label>
+        </div>
+    </div>
+
+    <div class="form-group WebUni-form-group WebUni-form-group-ple-info">
+
+        <div class="col-sm-12 ">
+            <label><span class="WebUni-form-group-ple-info-name">Наименование: </span><span class="WebUni-form-group-ple-info-value">@Format(Model.Name)</span></label>
+        </div>
+    </div>
+
+    <div class="form-group WebUni-form-group WebUni-form-group-ple-info">
+
+        <div class="col-sm-12 ">
+            <label><span class="WebUni-form-group-ple-info-name">Описание: </span><span class="WebUni-form-group-ple-info-value">@Format(Model.Details)</span></label>
+        </div>
+    </div>
+
+    <div class="form-group WebUni-form-group WebUni-form-group-ple-info">
+
+        <div class="col-sm-12 ">
+            <label><span class="WebUni-form-group-ple-info-name">Упаковка: </span><span class="WebUni-form-group-ple-info-value">@Format(Model.Package)</span></label>
+        </div>
+    </div>
+
+    <div class="form-group WebUni-form-group WebUni-form-group-ple-info">
+
+        <div class="col-sm-12 ">
+            <label><span class="WebUni-form-group-ple-info-name">Цена за единицу: </span><span class="WebUni-form-group-ple-info-value">@Format(Model.UnitPrice)</span></label>
+        </div>
+    </div>
+
+    <div class="form-group WebUni-form-group WebUni-form-group-ple-info">
+
+        <div class="col-sm-12 ">
+            <label><span class="WebUni-form-group-ple-info-name">Стоимость: </span><span class="WebUni-form-group-ple-info-value">@Format(Model.Price)</span></label>
+        </div>
+    </div>
+}

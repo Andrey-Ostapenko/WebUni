@@ -1,0 +1,44 @@
+﻿@{ Layout = null;}
+@using livemenu.Common
+@model livemenu.Common.IWidgetModel
+@{
+    var id1 = Guid.NewGuid();
+}
+@{
+    var backBtn = Model.Settings.AvailableMenuItems.Contains(StandartWidgetMenuItem.Back) ? string.Empty : "display: none";
+    var saveBtn = Model.Settings.AvailableMenuItems.Contains(StandartWidgetMenuItem.Save) ? string.Empty : "display: none";
+}
+<div class="panel panel-default"> 
+    <div class="panel-heading">
+        <div class="panel-title widget-title">
+            @Model.Title
+        </div>
+        @*<div class="pull-right">
+                <div class="col-xs-12">
+                    <input type="text" id="search-table" class="form-control pull-right" placeholder="Search">
+                </div>
+            </div>*@
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div id="@id1" class="widget-container">
+            <div class="" style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                <div class="btn-group  ">
+
+                    <button type="button" class="btn btn-default widget-back-btn " style="@backBtn">
+
+                        <i class="fa fa-reply"></i>
+                    </button>
+
+                    <a class="btn btn-success widget-save-btn" id="workspace-save-btn" style="@saveBtn" onclick="$('#' + '@id1').find('form').submit()">
+                        <i class="fa fa-check"></i>
+                    </a>
+
+                </div>
+            </div>
+            @{Html.RenderAction(Model.Url);}
+        </div>
+    </div>
+</div>
+
+        

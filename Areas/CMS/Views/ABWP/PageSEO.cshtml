@@ -1,0 +1,19 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniPage
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniPageSEO-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.PageSEOInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var element = $('#WebUniPageSEO-@Model.ID');
+    initUniPageCard(element);
+</script>

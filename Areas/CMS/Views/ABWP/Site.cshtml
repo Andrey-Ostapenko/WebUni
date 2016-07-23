@@ -1,0 +1,11 @@
+﻿@{
+    Layout = null;
+}
+
+@model long
+
+<div class="catalog-tab-content" id="catalog-tab-data">  @{ Html.RenderPartial(MVC.CMS.WebUni.Views.CatalogTabDataCommon, Model);}
+    @{ Html.RenderAction(MVC.CMS.WebUni.SiteData(Model)); }
+</div>
+
+

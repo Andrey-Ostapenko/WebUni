@@ -1,0 +1,195 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniInput
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div id='WebUniInputData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.InputDataInternal, Model); }
+        </div>
+    </div>
+</div>
+<script>
+    initUniTextCard($('#WebUniInputData-@Model.ID'), '@Model.ID');
+    initUniInputSelectCard($('#WebUniInputData-@Model.ID'), '@Model.ID');
+
+
+    function initUniInputSelectCard(element) {
+        $.Pages.initSelectFxPluginInElement(element);
+        
+        onInputModeChanged(element.find('#Mode'), "WebUniInputData-" + @Model.ID);
+       
+        var dynamicEntity = element.find("#DynamicEntityComplexIDsString");
+        dynamicEntity.select2
+                (
+                    {
+                        maximumSelectionSize: 1,
+                        multiple: true,
+                        placeholder: "Нажмите для выбора поставщика данных",
+                        allowClear: true,
+                        ajax: {
+                        },
+                        initSelection: function (element, callback) {
+                               var colID = $('#DynamicColumnID').val();
+                            var id = dynamicEntity.val();
+                            var splt = id.split('_');
+                            //  console.log('getdinamicentity' + $('#workspace-portlet').data('getdinamicentity'));
+                            
+                            if (id !== null && id.length > 0 ) {
+                                $.ajax({
+                                    url: $('#workspace-portlet').data('getdynamicentitywithcolumn'),
+                                    data: {ids: id, columnID : colID},
+                                    dataType: "json"
+                                }).done(function (data) {
+                                    //if(data[0].text != "")
+                                    //    console.log(data);
+                                    callback(data);
+                               
+                                    //  $('#dynamicEntityOverview').html(data.overview);
+                                });
+                            }
+                        },
+                        formatResult: s2FormatResult,
+                        formatSelection: s2FormatSelection
+                    }
+
+                ).on("select2-opening", function (e) {
+                    e.preventDefault();
+                    SetDynamicEntity('cell');
+                }
+
+
+        ).on("select2-removed", function (e) {
+           
+        });
+        
+        
+        
+        var maptarget = element.find("#MapCatalogItemID");
+        maptarget.select2
+        (
+            {
+                placeholder: 'Выберите карту',
+                multiple: true,
+                maximumSelectionSize: 1,
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchbytype'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            type: 'Map',
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = maptarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getbytype') + '?id=' + id + '&type=Map', {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data[0]);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+        var inputtarget = element.find("#RouteInputID");
+        inputtarget.select2
+        (
+            {
+                placeholder: 'Выберите поле ввода',
+                multiple: true,
+                maximumSelectionSize: 1,
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchbytype'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            type: 'Input',
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = inputtarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getbytype') + '?id=' + id + '&type=Input', {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data[0]);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+
+
+
+        var dynamicDynamicColumnID = element.find("#DynamicColumnID");
+        dynamicDynamicColumnID.select2
+                (
+                    {
+                        multiple: true,
+                        placeholder: "Нажмите для выбора поставщика данных",
+                        allowClear: true,
+                        ajax: {
+                        },
+                        initSelection: function (element, callback) {
+                            //   var tableID = $('#DynamicTableID').val();
+                            var id = dynamicDynamicColumnID.val();
+                        
+                            //  console.log('getdinamicentity' + $('#workspace-portlet').data('getdinamicentity'));
+                          
+                            if (id !== null && id.length > 0) {
+                                $.ajax({
+                                    url: $('#workspace-portlet').data('getdinamiccolumn'),
+                                    data: { ids: id },
+                                    dataType: "json"
+                                }).done(function (data) {
+                                    //if(data[0].text != "")
+                                    //    console.log(data);
+                                    callback(data);
+                               //     getDynamicEntitiesOverview($('#DynamicEntityComplexIDsString').val());
+                                    //  $('#dynamicEntityOverview').html(data.overview);
+                                });
+                            }
+                        },
+                        formatResult: s2FormatResult,
+                        formatSelection: s2FormatSelection
+                    }
+
+                ).on("select2-opening", function (e) {
+                    e.preventDefault();
+                    SetDynamicEntity('column');
+                }
+
+
+        ).on("select2-removed", function (e) {
+            
+        });
+    };
+</script>

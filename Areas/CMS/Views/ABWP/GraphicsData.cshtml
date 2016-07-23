@@ -1,0 +1,98 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniGraphics
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniGraphicsData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.GraphicsDataInternal, Model); }
+        </div>
+        <div id="WebUniGraphicsData-@Model.ID-item" class="WebUniGraphicsDataItemContainer">
+            
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    initUniGraphicsCard($('#WebUniGraphicsData-@Model.ID'), $('#WebUniGraphicsData-@Model.ID-item'));
+
+    function recheckAlign() {
+
+    }
+
+    function initUniGraphicsCard(element, item) {
+
+        $.Pages.initSwitcheryPluginInElement('switchery_internal', element);
+        $.Pages.initSelectFxPluginInElement(element);
+
+
+
+        element.find(".spin-fe_interval").TouchSpin({
+            min: 0,
+            max: 1000000000,
+            step: 1,
+            decimals: 0,
+            boostat: 5,
+            maxboostedstep: 10
+            //  postfix: '%'
+        });
+
+
+
+        var table = element.find('#vl-table');
+
+        var settings = {
+            "sDom": "t",
+            "bSort": false,
+            "sPaginationType": "bootstrap",
+            "destroy": true,
+            "paging": false,
+            "scrollCollapse": true,
+            "aoColumnDefs": [{
+                'bSortable': false,
+                'aTargets': [0]
+            }],
+        };
+
+        table.dataTable(settings);
+
+
+
+        element.find('.tl-edt-btn').on("click", function (evt) {
+            var target = $(this);
+            var url = target.data('url');
+            //var uiID = target.data('uiid');
+            //var code = target.data('code');
+            //var id = target.data('id');
+
+            $.ajax({
+                type: '@WebRequestMethods.Http.Get',
+                url: url,
+                success: function (data) {
+                    element.hide();
+                    item.html(data);
+                    initUniGraphicsItemCard(item);
+                  
+                    onGraphicsItemSourceTypeChanged(item.find('#BackgroundSourceType'),  @Model.ID + "-gritemdata-before");
+                    onGraphicsItemSourceTypeChanged(item.find('#BackgroundHoverSourceType'),  @Model.ID + "-gritemdata-after");
+                    onGraphicsItemSourceTypeChanged(item.find('#BackgroundActiveSourceType'),  @Model.ID + "-gritemdata-active");
+                }
+            });
+
+        });
+
+
+
+
+    }
+</script>

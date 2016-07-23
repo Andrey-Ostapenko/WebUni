@@ -1,0 +1,25 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniCart
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniCartData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.CartDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    initUniTextCard($('#WebUniCartData-@Model.ID'), '@Model.ID');
+</script>

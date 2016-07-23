@@ -1,0 +1,152 @@
+﻿@{
+    Layout = null;
+
+}
+
+@using livemenu.Helpers
+@model livemenu.Areas.BWP.Models.Catalog.CatalogMainModel
+
+<style>
+    .fancytree-node span {
+        vertical-align: middle !important;
+    }
+
+    .fancytree-active .fancytree-btn {
+        display: inline-block;
+    }
+
+    .fancytree-btn {
+        display: none;
+        margin-left: 8px;
+        color: black;
+        cursor: pointer;
+    }
+
+    .fancytree-container {
+        overflow: auto;
+    }
+</style>
+
+<div class="row">
+    <div id="pl-properties-tree" data-url="@Url.Action(MVC.CMS.Catalog.GetFamilyTree())" class="ztree catalog-tree-panel col-md-6" style="padding-left: 0"></div>
+    <div id="pl-properties-selected" class="col-md-6"></div>
+</div>
+
+
+<script type="text/javascript">
+    var cpref = '@Model.CatalogItemCode-';
+    $(document).ready(function () {
+        $("#pl-properties-tree").fancytree({
+            @*source: $.ajax({
+                url: '@Url.Action(MVC.CMS.Catalog.GetCatalogTreeItemRoot(Model.CatalogItemID))',
+                cache: false,
+                dataType: "json"
+            }),*@
+            autoScroll: true,
+            source: {
+                url: '@Url.Action(MVC.CMS.Catalog.GetCatalogTreeItemRoot(Model.CatalogItemID))',
+                cache: false
+            },
+            lazyLoad: function (event, data) {
+                var node = data.node;
+                data.result = {
+                    url: '@Url.Action(MVC.CMS.Catalog.GetCatalogTreeItemModels(Model.CatalogItemID))',
+                    data: { id: node.data.ID },
+                    cache: false
+                };
+            },
+            extensions: ["persist"],
+            wide: {
+
+            },
+            checkbox: false,
+            selectMode: 3,
+            loadChildren: function (event, ctx) {
+                ctx.node.fixSelection3AfterClick();
+
+                ctx.node.visit(function (subNode) {
+                    if (subNode.isUndefined() && subNode.isExpanded()) {
+                        subNode.load();
+                    }
+                });
+            },
+
+            persist: {
+                cookieDelimiter: "~",
+                cookiePrefix: 'crm-prop-selector',
+                cookie: {
+                    raw: false,
+                    expires: "",
+                    path: "/",
+                    domain: "",
+                    secure: false
+                },
+                expandLazy: true,
+                overrideSource: true,
+                store: "cookie",
+                types: "active expanded focus selected"
+            },
+
+            restore: function (event, data) {
+                OnTreeRestoredCallback();
+            },
+            renderNode: function (event, data) {
+                var node = data.node;
+
+                var $span = $(node.span);
+
+
+                var typeName = node.data.typeName;
+                var titleText = typeName != '' ? '(' + typeName + ') ' + node.data.ItemName : node.data.ItemName;
+                node.setTitle(titleText);
+
+                var title = $span.find("> span.fancytree-title");
+
+                if (node.data.isLink) {
+                    title.css({
+                        color: "#66cd00"
+                    });
+                }
+
+
+                if (!node.data.isActive) {
+                    title.css({
+                        opacity: "0.5"
+                    });
+                }
+            },
+            //click: function (event, data) {
+            //    if (data.targetType != 'checkbox' && data.targetType != 'expander') {
+            //        var node = data.node;
+            //        ciWorkspaceLoad(node.key);
+            //    }
+
+            //},
+
+
+            select: function (event, data) {
+               
+            },
+
+            activate: function (event, data) {
+                var node = data.node;
+
+                
+                $('#pl-properties-selected').empty();
+                if (node.data.typeCode == "PriceListElementProperty") {
+                    $('#pl-prop-ok-btn').removeClass("disabled");
+                   
+                    $('#pl-properties-selected').append('<div id="pl-properties-' + node.data.ID + '" class="row" ></div>');
+                    getGetFamilyTreeArray(node.data.ID);
+                } else {
+
+                    $('#pl-prop-ok-btn').addClass('disabled');
+                }
+                
+
+            },
+        });
+
+
+    });
+</script>

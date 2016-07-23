@@ -1,0 +1,172 @@
+﻿@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.IUniBlockWithSocialLink
+
+@{ 
+    var socialNetworkID = Model.SocialLink != null ? Model.SocialLink.SocialNetworkID.ToString() : "";
+}
+
+<div class="form-group WebUni-form-group WebUni-form-group-big">
+    <label for="Height" class="col-sm-7 control-label">Выбрать источник</label>
+    <div class="col-sm-5" style="float: right;">
+    </div>
+</div>
+
+<div class="form-group WebUni-form-group WebUni-form-group-group WebUni-form-group-input">
+    <div class="">
+        <input type="hidden" class="select2-offscreen" id="SocialLink_SocialNetworkIDHDN" style="width: 100%" value="@socialNetworkID" />
+        <input type="text" id="SocialLink_SocialNetworkID" class='tag-input full-width' name="SocialLink.SocialNetworkID" value="@socialNetworkID" />
+    </div>
+</div>
+
+<div class="form-group WebUni-form-group WebUni-form-group-big">
+    <label for="Height" class="col-sm-7 control-label">Пользовательские настройки публикации</label>
+    <div class="col-sm-5" style="float: right;">
+        <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+            @Html.BasicCheckBoxFor(x => x.SocialLink.CustomSettings, new { data_init_plugin = "switchery_internal" })
+        </div>
+    </div>
+</div>
+
+<div class="form-group WebUni-form-group">
+    <label for="Height" class="col-sm-7 control-label">Ссылка</label>
+    <div class="col-sm-5" style="float: right;">
+        <div class="checkbox WebUni-checkbox check-success ">
+            @{
+                var l = "CustomUrlEnabled";
+            }
+            @Html.BasicCheckBoxFor(x => x.SocialLink.CustomUrlEnabled, new { id = l })
+            <label for="@l"></label>
+        </div>
+    </div>
+</div>
+
+<div class="form-group WebUni-form-group" id="socialLinkTitleEnabled">
+    <label for="Height" class="col-sm-7 control-label">Заголовок</label>
+    <div class="col-sm-5" style="float: right;">
+        <div class="checkbox WebUni-checkbox check-success ">
+            @{
+                l = "CustomTittleEnabled";
+            }
+            @Html.BasicCheckBoxFor(x => x.SocialLink.CustomTittleEnabled, new { id = l })
+            <label for="@l"></label>
+        </div>
+    </div>
+</div>
+
+<div class="form-group WebUni-form-group" id="socialLinkDescriptionEnabled">
+    <label for="Height" class="col-sm-7 control-label">Описание</label>
+    <div class="col-sm-5" style="float: right;">
+        <div class="checkbox WebUni-checkbox check-success ">
+            @{
+                l = "CustomDescriptionEnabled";
+            }
+            @Html.BasicCheckBoxFor(x => x.SocialLink.CustomDescriptionEnabled, new { id = l })
+            <label for="@l"></label>
+        </div>
+    </div>
+</div>
+
+<div class="form-group WebUni-form-group" id="socialLinkImageEnabled">
+    <label for="Height" class="col-sm-7 control-label">Изображение</label>
+    <div class="col-sm-5" style="float: right;">
+        <div class="checkbox WebUni-checkbox check-success ">
+            @{
+                l = "CustomImageUrlEnabled";
+            }
+            @Html.BasicCheckBoxFor(x => x.SocialLink.CustomImageUrlEnabled, new { id = l })
+            <label for="@l"></label>
+        </div>
+    </div>
+</div>
+
+<div class="form-group WebUni-form-group WebUni-form-group-big">
+    <label for="Height" class="col-sm-7 control-label">Ссылка</label>
+    <div class="col-sm-5" style="float: right;">
+    </div>
+</div>
+<div>
+    @Html.TextBoxFor(m => m.SocialLink.CustomUrl, new
+{
+    @class = "input-sm form-control WebUni-form-element",
+    placeholder = "введите адрес публикуемой страницы в формате http://www.WebUni.ru/"
+})
+</div>
+
+<div id="socialLinkTitle">
+    <div class="form-group WebUni-form-group WebUni-form-group-big">
+        <label for="Height" class="col-sm-7 control-label">Заголовок</label>
+        <div class="col-sm-5" style="float: right;">
+        </div>
+    </div>
+    <div>
+        @Html.TextBoxFor(m => m.SocialLink.CustomTittle, new
+{
+    @class = "input-sm form-control WebUni-form-element",
+    placeholder = "введите заголовок публикации"
+})
+    </div>
+</div>
+
+<div id="socialLinkDescription">
+    <div class="form-group WebUni-form-group WebUni-form-group-big">
+        <label for="Height" class="col-sm-7 control-label">Описание</label>
+        <div class="col-sm-5" style="float: right;">
+        </div>
+    </div>
+    <div>
+        @Html.TextBoxFor(m => m.SocialLink.CustomDescription, new
+{
+    @class = "input-sm form-control WebUni-form-element",
+    placeholder = "введите описание публикации"
+})
+    </div>
+</div>
+
+<div id="socialLinkImage">
+    <div class="form-group WebUni-form-group WebUni-form-group-big">
+        <label for="Height" class="col-sm-7 control-label">Картинка</label>
+        <div class="col-sm-5" style="float: right;">
+        </div>
+    </div>
+
+    <div class="form-group WebUni-form-group WebUni-form-group-big">
+        <div class="row image-selector-wrapper">
+            <div class="col-sm-6 col-md-6" style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center;">
+                <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)">
+                    @{
+                        var imageUrlModel = string.Empty;
+                        if (Model.SocialLink != null)
+                        {
+                            imageUrlModel = Model.SocialLink.CustomImageUrl;
+                        }
+                        var imageUrl = string.IsNullOrEmpty(imageUrlModel) ? Url.Content("~/BWP/Resources/Images/empty_image.png") : Url.Content("~/" + imageUrlModel);
+                    }
+                    @Html.HiddenFor(m => m.SocialLink.CustomImageUrl, new { @class = "imgItem" })
+
+                    <img style="max-height: 98px; max-width: 148px;" alt="нет" src="@imageUrl" />
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-6">
+                <div class="row">
+                    <div class=" btn-group col-sm-9">
+                        <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)" class="btn btn-default">
+                            <i class="fa fa-pencil"></i>
+                        </a>
+                        <a onclick="imageEditDelete($(this))" class="btn btn-danger">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="row sm-p-t-20">
+                    <p class="bold image-wrapper-text">
+                        @if (Model.SocialLink != null)
+                        {
+                            @Model.SocialLink.CustomImageUrl
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

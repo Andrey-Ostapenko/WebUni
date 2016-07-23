@@ -1,0 +1,19 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniButtons
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniButtonsDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.ButtonsDesignInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    initUniLineCard($('#WebUniButtonsDesign-@Model.ID'), true);
+</script>

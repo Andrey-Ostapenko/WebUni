@@ -1,0 +1,140 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.Projects.Controllers
+@using livemenu.Helpers
+@using livemenu.Kernel.Projects
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    Layout = null;
+   
+}
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+}
+
+
+@{
+
+    Layout = null;
+
+    var settings = (ViewContext.Controller as UsersController).GetStatusesGridViewSettings();
+
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Batch;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.Users.Name, Action = MVC.Projects.Users.ActionNames.StatusesGridViewPartial };
+
+    settings.SettingsEditing.BatchUpdateRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.Users.Name, Action = MVC.Projects.Users.ActionNames.StatusesGridViewBatchUpdatePartial };
+
+   // settings.SettingsBehavior.AllowDragDrop = true;
+
+    //settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = false;
+    //settings.SettingsDetail.ShowDetailRow = true;
+
+
+    //settings.SetDetailRowTemplateContent(c =>
+    //{
+    //    ViewContext.Writer.Write(
+    //        "Поиск" + "<br />" +
+    //        "<br />"
+    //    );
+    //    Html.RenderAction(MVC.CRM.PriceList.PriceListElementSearchGridViewPartial( (long)DataBinder.Eval(c.DataItem, "ID")) );
+    //});
+
+    settings.SettingsSearchPanel.Visible = true;
+    settings.SettingsSearchPanel.ShowApplyButton = true;
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 50;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100", "500", "1000" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFooter = true;
+
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+
+ 
+
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = false;
+    
+  
+  
+
+
+    //settings.ClientSideEvents.BatchEditStartEditing = "gridView_BatchEditStartEditing";
+
+    //settings.CommandColumn.Visible = true;
+    //settings.CommandColumn.ShowDeleteButton = true;
+    //settings.CommandColumn.ShowNewButtonInHeader = true;
+
+
+    settings.CellEditorInitialize = (s, e) =>
+    {
+        ASPxEdit editor = (ASPxEdit)e.Editor;
+        editor.ValidationSettings.Display = Display.None;
+    };
+
+
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "ID");
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.DeleteButton(string.Format("{0}.DeleteRow({1})", name, index)));
+        });
+       
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton(string.Format("{0}.AddNewRow()", name))));
+        
+        column.SetEditItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+
+    });
+
+
+    
+}
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+    e.QueryableSource = ServiceLocator.Current.GetInstance<IClientRoleStatusService>().RawDataQueryable;
+}).GetHtml()
+
+

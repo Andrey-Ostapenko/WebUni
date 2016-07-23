@@ -1,0 +1,210 @@
+﻿
+@using System.Data.Entity
+@using System.Linq
+@using System.Web.UI.WebControls
+@using DevExpress.Utils
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CRM.Storages
+@using Microsoft.Practices.ServiceLocation
+
+@model long
+@{
+    Layout = null;
+
+    var settings = new GridViewSettings();
+
+
+    settings.Name = "StoragePriceListElementGridView" + ViewBag.SID;
+
+
+    settings.Width = new Unit(100, UnitType.Percentage);
+
+    settings.KeyFieldName = "ID";
+
+    settings.ClientSideEvents.BeginCallback = "function(s, e) { if(s.cpSID) e.customArgs['cpSID'] = s.cpSID; }";
+    settings.CustomJSProperties = (sender, e) =>
+    {
+
+        e.Properties["cpSID"] = ViewBag.SID;
+
+    };
+
+   
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Brand";
+        column.Caption = "Бренд";
+        column.ReadOnly = true;
+        column.SetEditItemTemplateContent(c =>
+        {
+            var data = DataBinder.Eval(c.DataItem, "PriceListElement.Brand");
+            ViewContext.Writer.Write(data);
+        });
+    });
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Group";
+        column.Caption = "Группа";
+        column.ReadOnly = true;
+        column.SetEditItemTemplateContent(c =>
+        {
+            var data = DataBinder.Eval(c.DataItem, "PriceListElement.Group");
+            ViewContext.Writer.Write(data);
+        });
+        
+    });
+
+    settings.Columns.Add(column =>
+    {
+
+        column.FieldName = "PriceListElement.Articul";
+        column.Caption = "Артикул";
+        //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Name";
+        column.Caption = "Наименование";
+        column.ReadOnly = true;
+        column.SetEditItemTemplateContent(c =>
+        {
+            var data = DataBinder.Eval(c.DataItem, "PriceListElement.Name");
+            ViewContext.Writer.Write(data);
+        });
+
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElement.Details";
+        column.Caption = "Описание";
+        column.ReadOnly = true;
+        column.SetEditItemTemplateContent(c =>
+        {
+            var data = DataBinder.Eval(c.DataItem, "PriceListElement.Details");
+            ViewContext.Writer.Write(data);
+          
+        });
+    });
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Count";
+        column.Caption = "Количество";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PriceListElementID";
+        column.Caption = "ID";
+        column.ReadOnly = true;
+        column.SetEditItemTemplateContent(c =>
+        {
+            var data = DataBinder.Eval(c.DataItem, "PriceListElementID");
+            ViewContext.Writer.Write(data);
+            ViewContext.Writer.Write(Html.Hidden("PriceListElementID", data));
+        });
+
+    });
+
+   // settings.ClientSideEvents.EndCallback = "function(s, e) {SiteGroupPriceListDetailGridView.PerformCallback();}";
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+    settings.CallbackRouteValues = new { Controller = MVC.WMS.Storages.Name, Action = MVC.WMS.Storages.ActionNames.StoragePriceListElementGridViewPartial, id = ViewBag.SID };
+
+    settings.SettingsEditing.UpdateRowRouteValues = new { Controller = MVC.WMS.Storages.Name, Action = MVC.WMS.Storages.ActionNames.StoragePriceListElementGridViewUpdatePartial };
+    settings.SettingsEditing.DeleteRowRouteValues = new { Controller = MVC.WMS.Storages.Name, Action = MVC.WMS.Storages.ActionNames.StoragePriceListElementGridViewDeletePartial };
+
+    
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+    settings.SettingsPager.PageSize = 40;
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Hidden;
+
+    settings.Settings.ShowFooter = false;
+
+    settings.Settings.ShowFilterRow = true;
+    settings.SettingsBehavior.AllowFocusedRow = false;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = false;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.SettingsContextMenu.Enabled = false;
+
+    settings.CommandColumn.Visible = false;
+
+
+
+    var i = "showPLSelectorForStorage(" + ViewBag.SID + ")";
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(50, UnitType.Pixel);
+        column.SetDataItemTemplateContent(c =>
+        {
+
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.GridViewStartEditButton(name, index));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(EditButtonHelpers.CreateButton(i)));
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewSaveButton(name)));
+
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(1, UnitType.Percentage);
+
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewCancelEditButton(name)));
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+    });
+    
+
+ 
+    //settings.Columns.Add(column =>
+    //{
+    //    column.Width = new Unit(0000.5, UnitType.Percentage);
+    //    column.SetDataItemTemplateContent(c =>
+    //    {
+    //        var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+    //        ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+    //    });
+    //    column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(EditButtonHelpers.CreateButton(i)));
+    //    column.SetEditItemTemplateContent(c =>
+    //    {
+    //        var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+    //        ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+    //    });
+
+    //});
+
+}
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+    e.QueryableSource = ServiceLocator.Current.GetInstance<IStoragePriceListElementService>().RawDataQueryable.Include(x => x.Storage).Where(x => x.StorageID == Model);
+}).GetHtml()

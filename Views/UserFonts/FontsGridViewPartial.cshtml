@@ -1,0 +1,147 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.Positions
+@using Microsoft.Practices.ServiceLocation
+@{
+    Layout = null;
+
+    var settings = new GridViewSettings();
+
+
+    settings.Name = "FontsGridView";
+    settings.Width = new Unit(100, UnitType.Percentage);
+
+    settings.KeyFieldName = "ID";
+    settings.Settings.ShowFooter = true;
+    settings.Settings.ShowFilterRow = true;
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Name";
+        column.Caption = "Название";
+        column.Width = new Unit(10, UnitType.Percentage);
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "FontFamily";
+        column.Caption = "FontFamily";
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    });
+
+    //settings.Columns.Add(column =>
+    //{
+    //    column.Caption = "View";
+    //    column.Caption = "Просмотр";
+    //    column.UnboundType = DevExpress.Data.UnboundColumnType.Object;
+    //    column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    //    column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+
+
+
+    //});
+
+    //settings.Columns.Add(column =>
+    //{
+    //    column.FieldName = "FontUrl";
+    //    column.Caption = "Ссылка";
+    //    column.Width = new Unit(10, UnitType.Percentage);
+    //    column.ColumnType = MVCxGridViewColumnType.TextBox;
+    //    column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    //    column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+    //    column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    //});
+
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "IsActive";
+        column.Caption = "Активность";
+        column.Width = new Unit(1, UnitType.Percentage);
+        column.ColumnType = MVCxGridViewColumnType.CheckBox;
+
+    });
+
+    //settings.CustomUnboundColumnData = (s, e) =>
+    //{
+    //    if (e.Column.FieldName == "View")
+    //    {
+    //        var tasks = e.GetListSourceFieldValue("UniText") as ICollection<UniText>;
+
+    //        e.Value = Html.Raw("<")//В чащах юга жил бы цитрус? Да, но фальшивый экземпляр!
+    //    }
+    //}
+
+
+    string name = settings.Name;
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+
+    settings.SettingsPopup.EditForm.AllowResize = true;
+    settings.SettingsPopup.EditForm.HorizontalAlign = PopupHorizontalAlign.Center;
+    settings.SettingsPopup.EditForm.VerticalAlign = PopupVerticalAlign.Middle;
+    settings.SettingsPopup.EditForm.Modal = true;
+
+
+    settings.CallbackRouteValues = new { Controller = MVC.UserFonts.Name, Action = MVC.UserFonts.ActionNames.FontsGridViewPartial };
+    settings.SettingsEditing.DeleteRowRouteValues = new { Controller = MVC.UserFonts.Name, Action = MVC.UserFonts.ActionNames.Delete };
+
+
+    settings.SettingsPager.PageSize = 40;
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = true;
+    settings.Settings.ShowGroupPanel = true;
+
+
+
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = true;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.SettingsContextMenu.Enabled = false;
+
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var id = (long)DataBinder.Eval(c.DataItem, "ID");
+            ViewContext.Writer.Write(Html.StartEditButton(string.Format("openFontCard('{0}');", Url.Action(MVC.UserFonts.Edit(id)))));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton(string.Format("openFontCard('{0}');", Url.Action(MVC.UserFonts.Create())))));
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewSaveButton(name)));
+
+    });
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(1, UnitType.Percentage);
+
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewCancelEditButton(name)));
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+    });
+
+    }
+
+
+        @Html.DevExpress().GridView(settings).Bind(Model).GetHtml()

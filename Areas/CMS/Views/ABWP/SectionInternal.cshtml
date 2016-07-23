@@ -1,0 +1,60 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniSection
+@{
+    
+}
+@using (Ajax.BeginForm(MVC.CMS.WebUni.SectionSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniSection",
+    //InsertionMode = InsertionMode.Replace,
+
+//    OnComplete = "initUniSectionCard()"
+},
+
+    new
+    {
+        @class = "form-horizontal ",
+
+    }))
+
+{
+
+@Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.CatalogItemID)
+
+    @Html.HiddenFor(x=>x.SectionCount)
+    @Html.HiddenFor(x => x.Section1Width)
+    @Html.HiddenFor(x => x.Section2Width)
+    @Html.HiddenFor(x => x.Section3Width)
+    @Html.HiddenFor(x => x.Section4Width)
+    @Html.HiddenFor(x => x.Section5Width)
+    @Html.HiddenFor(x => x.Section6Width)
+    @Html.HiddenFor(x => x.Section7Width)
+    @Html.HiddenFor(x => x.Section8Width)
+    @Html.HiddenFor(x => x.Section9Width)
+    @Html.HiddenFor(x => x.Section10Width)
+    @Html.HiddenFor(x => x.Section11Width)
+    @Html.HiddenFor(x => x.Section12Width)
+
+    <div class="catalog-tab-content" id="catalog-tab-data">  @{ Html.RenderPartial(MVC.CMS.WebUni.Views.CatalogTabDataCommon, Model);}
+        <div class="column-count-slider-wrapper">
+            <div class="column-count-slider"></div>
+        </div>
+        <div class="column-count-width-slider-wrapper">
+            <div class="column-count-width-slider"></div>
+        </div>
+    </div>
+
+    <div class="catalog-tab-content" id="catalog-tab-design">
+        <div class="column-count-slider-wrapper">
+            <div class="column-count-slider"></div>
+        </div>
+        <div class="column-count-width-slider-wrapper">
+            <div class="column-count-width-slider"></div>
+        </div> 
+    </div>
+        }

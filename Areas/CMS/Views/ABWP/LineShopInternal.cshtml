@@ -1,0 +1,120 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniLine
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.LineShopSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    OnComplete = "OnCatalogItemFormCompleted"
+},
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+        @Html.HiddenFor(m => m.IsShopModeInherits)
+       
+
+
+        @if (!Model.IsShopModeInherits)
+        {
+            <div class="form-group WebUni-form-group WebUni-form-group-big-first">
+                <label for="IsShopModeEnabled" class="col-sm-7 control-label">Режим магазина</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                        @Html.BasicCheckBoxFor(x => x.IsShopModeEnabled, new {data_init_plugin = "switchery_internal"})
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group WebUni-form-group-group">
+
+                <div class="col-sm-12">
+
+                    <input type="hidden" class="select2-offscreen" id="CatalogItemTargetIDH" style="width: 100%" value="@Model.PriceListElementID"/>
+                    <input type="text" id="PriceListElementID" class='tag-input full-width' name="PriceListElementID" value="@Model.PriceListElementID"/>
+
+
+                </div>
+            </div>
+
+            
+
+
+            <div id="catalogple">
+                @if (Model.PriceListElementID.HasValue)
+                {
+                    <div>"Загрузка описания..."</div>
+                }
+            </div>
+
+            if (!Model.IsShopModeEnabled)
+            {
+                <div class="form-group WebUni-form-group WebUni-form-group-big" style="margin-top: 0;">
+                    <label for="IsCheckoutButtonModeEnabled" class="col-sm-7 control-label">Кнопка оформить заказ</label>
+                    <div class="col-sm-5" style="float: right;">
+                        <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                            @Html.BasicCheckBoxFor(x => x.IsCheckoutButtonModeEnabled, new { data_init_plugin = "switchery_internal" })
+                        </div>
+                    </div>
+                </div>
+
+            }
+
+        }
+        else if (Model.IsBuyButtonModeEnabled || !Model.CatalogItem.ShopMode.BuyButtonModeCatalogItemID.HasValue)
+        {
+            <div class="form-group WebUni-form-group WebUni-form-group-big-first">
+                <label for="IsBuyButtonModeEnabled" class="col-sm-7 control-label">Кнопка "Положить в корзину"</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                        @Html.BasicCheckBoxFor(x => x.IsBuyButtonModeEnabled, new {data_init_plugin = "switchery_internal"})
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group WebUni-form-group-big-first">
+                <label for="IsShopModeEnabled" class="col-sm-7 control-label">Ссылка на страницу после включения</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                        @Html.BasicCheckBoxFor(x => x.IsBuyButtonRedirectEnabled, new { data_init_plugin = "switchery_internal" })
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Перейти сразу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            var idr = "c" + Model.CatalogItemID + "IsBuyButtonRedirectImmediatetlyEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.IsBuyButtonRedirectImmediatetlyEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group WebUni-form-group-group WebUni-form-group-input">
+                <div class="">
+                    <input type="hidden" class="select2-offscreen" id="BuyButtonRedirectPageCatalogItemIDHDN" style="width: 100%" value="@Model.BuyButtonRedirectPageCatalogItemID" />
+                    <input type="text" id="BuyButtonRedirectPageCatalogItemID" class='tag-input full-width' name="BuyButtonRedirectPageCatalogItemID" value="@Model.BuyButtonRedirectPageCatalogItemID" />
+                </div>
+            </div>
+        }
+
+
+
+    </div>
+
+}

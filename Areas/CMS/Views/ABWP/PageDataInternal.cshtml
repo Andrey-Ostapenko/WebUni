@@ -1,0 +1,295 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniPage
+@{
+    if (Model.BackgroundHoverViewTypeID == 0)
+    {
+        Model.BackgroundHoverViewTypeID = 1;
+    }
+    if (Model.BackgroundViewTypeID == 0)
+    {
+        Model.BackgroundViewTypeID = 1;
+    }
+
+
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var pageviewgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.PageDataView);
+    var pageviewVisible = pageviewgroup.IsVisible ? string.Empty : "hidden";
+    var pageviewcollapsed = pageviewgroup.IsCollapse ? "collapsed" : string.Empty;
+    var pageviewcollapsein = !pageviewgroup.IsCollapse ? "in" : string.Empty;
+
+    var pagepanelsgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.PageDataPanels);
+    var pagepanelsVisible = pagepanelsgroup.IsVisible ? string.Empty : "hidden";
+    var pagepanelscollapsed = pagepanelsgroup.IsCollapse ? "collapsed" : string.Empty;
+    var pagepanelscollapsein = !pagepanelsgroup.IsCollapse ? "in" : string.Empty;
+
+    var dynamicentitygroup = groups.GetConfigurationSafe(CatalogItemViewGroup.PageDataDynamicEntity);
+    var dynamicEntityVisible = dynamicentitygroup.IsVisible ? string.Empty : "hidden";
+    var dynamicEntityDisabled = !Model.DynamicEntityEnabled ? "vg-disabled" : string.Empty;
+    var dynamicentitycollapsed = dynamicentitygroup.IsCollapse ? "collapsed" : string.Empty;
+    var dynamicentitycollapsein = !dynamicentitygroup.IsCollapse ? "in" : string.Empty;
+}
+
+
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.PageDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    OnComplete = "OnCatalogItemFormCompleted"
+},
+new
+{
+    @class = "form-horizontal ",
+
+}))
+{
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+        <div class="@dynamicEntityVisible @dynamicEntityDisabled vg-add vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.PageDataDynamicEntity">
+
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.ID-dynamicentity-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@dynamicentitycollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.PageDataDynamicEntity]
+                        </a>
+                    </h4>
+                </div>
+
+                <div id="vg-@Model.ID-dynamicentity-acc" class="vg-acc-content collapse @dynamicentitycollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+                        <div class="form-group WebUni-form-group WebUni-form-group-big">
+                            <label for="Height" class="col-sm-7 control-label">Подключить базы данных</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.DynamicEntityEnabled, new { data_init_plugin = "switchery_internal", onchange = "onVGElementsEnabledChanged($(this))", })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group WebUni-form-group-input">
+                            <div class="">
+                                <input type="hidden" class="select2-offscreen" id="DynamicEntityComplexIDsStringH" style="width: 100%" value="@Model.DynamicEntityComplexIDsString" />
+                                <input type="text" id="DynamicEntityComplexIDsString" class='tag-input full-width' name="DynamicEntityComplexIDsString" value="@Model.DynamicEntityComplexIDsString" />
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-big">
+                            <label for="Height" class="col-sm-7 control-label">Заблокировать при копировании</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success">
+                                    @{
+                                        var isImplWhenCopying = "c" + Model.IsImplWhenCopying + "IsImplWhenCopying";
+                                    }
+                                    @Html.BasicCheckBoxFor(x => x.IsImplWhenCopying, new {id = isImplWhenCopying})
+                                    <label for="@isImplWhenCopying"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="dynamicEntityOverview">
+                            @if (Model.DynamicEntityComplexIDs != null && Model.DynamicEntityComplexIDs.Any())
+                            {
+                                <div>"Загрузка описания..."</div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="@pageviewVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.PageDataView">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-seo-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@pageviewcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.PageDataView]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-seo-acc" class="vg-acc-content collapse @pageviewcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+                        <div class="form-group WebUni-form-group WebUni-form-group-big">
+                            <label for="Height" class="col-sm-7 control-label">Настройка отображения</label>
+                            <div class="col-sm-5" style="float: right;">
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group">
+                            <div class="col-sm-7 ">
+
+                                @Html.DropDownListFor(m => m.AuthorizationShowingType, new SelectList(
+                    new[]
+                    {
+                        new { Value = 0, Text = "Для всех" },
+                        new { Value = 1, Text = "Только для авторизованных пользователей" },
+                        new { Value = 2, Text = "Только для неавторизованных пользователей" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.AuthorizationShowingType),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                            </div>
+                            <div class="col-sm-5" style="float: right;">
+
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" class="select2-offscreen" id="RedirectPageCatalogItemIDHDN" style="width: 100%" value="@Model.RedirectPageCatalogItemID" />
+                                <input type="text" id="RedirectPageCatalogItemID" class='tag-input full-width' name="RedirectPageCatalogItemID" value="@Model.RedirectPageCatalogItemID" />
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-big">
+                            <label for="Height" class="col-sm-7 control-label">Настройка доступа</label>
+                            <div class="col-sm-5" style="float: right;">
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-big">
+                            <label for="Height" class="col-sm-7 control-label">ОГРАНИЧИТЬ ДОСТУП​</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.ViewRestrictionEnabled, new { data_init_plugin = "switchery_internal" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Доступно пользователям</label>
+                            <div class="col-sm-5" style="float: right;">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" class="select2-offscreen" id="ClientRoleIDsStringHDN" style="width: 100%" value="@Model.ClientRoleIDsString" />
+                                <input type="text" id="ClientRoleIDsString" class='tag-input full-width' name="ClientRoleIDsString" value="@Model.ClientRoleIDsString" />
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Доступно статусам</label>
+                            <div class="col-sm-5" style="float: right;">
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" class="select2-offscreen" id="ClientRoleStatusIDsStringHDN" style="width: 100%" value="@Model.ClientRoleStatusIDsString" />
+                                <input type="text" id="ClientRoleStatusIDsString" class='tag-input full-width' name="ClientRoleStatusIDsString" value="@Model.ClientRoleStatusIDsString" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="@pagepanelsVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.PageDataPanels">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-panels-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@pagepanelscollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.PageDataPanels]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-panels-acc" class="vg-acc-content collapse @pagepanelscollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-big">
+                            <label for="Height" class="col-sm-7 control-label">Настройка панелей</label>
+                            <div class="col-sm-5" style="float: right;">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Верхняя панель</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.HeaderEnabled, new {data_init_plugin = "switchery_internal"})
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" class="select2-offscreen" id="HeaderIDHDN" style="width: 100%" value="@Model.HeaderID"/>
+                                <input type="text" id="HeaderID" class='tag-input full-width' name="HeaderID" value="@Model.HeaderID"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Нижняя панель</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.FooterEnabled, new {data_init_plugin = "switchery_internal"})
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" class="select2-offscreen" id="FooterIDHDN" style="width: 100%" value="@Model.FooterID"/>
+                                <input type="text" id="FooterID" class='tag-input full-width' name="FooterID" value="@Model.FooterID"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Левая панель</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.LeftSideBarEnabled, new {data_init_plugin = "switchery_internal"})
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" class="select2-offscreen" id="LeftSideBarIDHDN" style="width: 100%" value="@Model.LeftSideBarID"/>
+                                <input type="text" id="LeftSideBarID" class='tag-input full-width' name="LeftSideBarID" value="@Model.LeftSideBarID"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Правая панель</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.RightSideBarEnabled, new {data_init_plugin = "switchery_internal"})
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" class="select2-offscreen" id="RightSideBarIDHDN" style="width: 100%" value="@Model.RightSideBarID"/>
+                                <input type="text" id="RightSideBarID" class='tag-input full-width' name="RightSideBarID" value="@Model.RightSideBarID"/>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+}

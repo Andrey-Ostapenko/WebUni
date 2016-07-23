@@ -1,0 +1,12 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniSitePanel
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniSitePanelData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.SitePanelDataInternal, Model); }
+        </div>
+    </div>
+</div>

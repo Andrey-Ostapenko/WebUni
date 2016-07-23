@@ -1,0 +1,476 @@
+﻿@{
+    Layout = MVC.Shared.Views._ResponsiveLayout;
+    string dxo_batchUpdateUrl;
+    if (Model.ApplicationID.HasValue)
+    {
+        dxo_batchUpdateUrl = Url.Action(MVC.Projects.DynamicTables.GridViewBatchUpdatePartial()) + "?AppID=" + @Model.ApplicationID;
+    }
+    else
+    {
+        dxo_batchUpdateUrl = @Url.Action(MVC.Projects.DynamicTables.GridViewBatchUpdatePartial());
+    }
+
+
+
+}
+
+@model livemenu.Areas.Projects.Models.DynamicTableResponsiveLayoutModel
+@using livemenu.Helpers
+
+
+<style>
+    .dxgvGroupPanel_Moderno {
+        border: none;
+    }
+</style>
+
+<div class="progress" id="progress-bar" style="display:none; margin-left:5px; margin-right:5px;">
+    <div class="progress-bar progress-bar-success" style="width:0%"></div>
+</div>
+
+@using (Html.BeginForm(MVC.Projects.DynamicTables.ExportTo(), FormMethod.Post, new { data_name = "exportToForm" }))
+{
+    <div id="exportToFormPlaceHolder">
+    </div>
+
+    <div class="row" style="margin-top: 0px">
+        @*<div class="row">*@
+        @*<div class="col-xs-12 col-sm-12 col-md-6">*@
+        <div @*class="row"*@ style="float: left; margin-bottom: 20px; margin-right: 20px;">
+            <div class="btn-group pull-left">
+                <a id="ToDinamicTablesBtn" class="btn btn-default" onclick="ToDinamicTables()" style="display: none;"><i class="fa fa-arrow-left"></i> Назад</a>
+                <a class="btn btn-default" onclick="DynamicTablesGridView.PerformCallback()"><i class="fa fa-refresh"></i> Обновить</a>
+                <button type="button" class="btn btn-default" onclick="DynamicTablesGridView.CancelEdit()">
+                    <i class="fa fa-times"></i>
+                </button>
+                <a class="btn btn-success" id="" onclick="DynamicTablesGridView.UpdateEdit()" style="display: block;">
+                    <i class="fa fa-check"></i>
+                </a>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;" id="dynamicTablesImportExportCtrlContainer">
+            <div class="btn-group">
+
+             
+                <a id="ToStructureBtn" class="btn btn-default" onclick="ToStructureOrToData(EditingDynamicTableID, true)" style="display: none;"><i class="fa fa-pencil"></i> Структура</a>
+                <a id="ToDataBtn" class="btn btn-default" onclick="ToStructureOrToData(EditingDynamicTableID)" style="display: none;"><i class="fa fa-table"></i> Данные</a>
+
+                <div id="importExportBtnContainer" class="btn-group" style="display: none;">
+
+                    <a class="btn btn-default" data-url="@Url.Action(MVC.Projects.DynamicTables.Import())" onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onDEExcelSelected)"><i class="fa fa-save"></i> Импорт</a>
+
+                    <a class="btn btn-default" onclick="submitExportTo('@GridViewExportType.Xlsx.ToString()') "><i class="fa fa-save"></i> Выгрузить</a>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Xlsx.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Xlsx].Title</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Xls.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Xls].Title</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Pdf.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Pdf].Title</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Rtf.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Rtf].Title</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="submitExportTo('@GridViewExportType.Csv.ToString()') ">@GridViewHelpers.ExportTypes[GridViewExportType.Csv].Title</a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+        <div @*class="row"*@ style="float: left;" id="dynamicTablesVersionCtrlContainer">
+            <div id="versionControlsContainer" class="pull-left" style="display: none">
+                <div class="input-group pull-left" style="margin-right: 20px; width: 240px; margin-bottom: 20px;">
+                    <input type="hidden" class="select2-offscreen" id="PriceListVersionIDHDN" style="width: 100%" value="0"/>
+                    <input type="text" id="DynamicTableVersionID" class='tag-input full-width' name="DynamicTableVersionID" value="0"/>
+                    <span class="input-group-btn">
+                        <button type="button" id="deleteVersionBtn" class="btn btn-default" onclick="DeleteDynamicTableVersion()" style="display: none">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </span>
+                </div>
+                <div class="input-group pull-left" style="margin-right: 20px; width: 240px; margin-bottom: 20px;">
+                    <input type="text" id="newDynamicTableVersionName" class='form-control' name="newDynamicTableVersionName" placeholder="название новой версии"/>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" onclick="CreateNewDynamicTableVersion()">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row" style="display: none;" id="formulamode">
+        <div class="col-sm-12 col-md-12" style="height: 20px;">
+            <div style="cursor: pointer;" id="disable-cell-mode" onclick="$('#formula-block').removeClass('formula-mode'); $('#disable-cell-mode').hide();">отключить режим выбора ячеек</div>
+        </div>
+        <div class="">
+            <textarea class="form-control" id="formula-block" placeholder=""></textarea>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px">
+        <div class="col-sm-12 col-md-12" id="dd">
+            @{ Html.RenderAction(MVC.Projects.DynamicTables.GridViewPartial(Model.ApplicationID)); }
+        </div>
+    </div>
+                }
+
+
+<script>
+    $(function () {
+        $('#formula-block').bind('blur', function (e) {
+            if ( $('#formula-block').hasClass('formula-mode')) {
+                e.preventDefault();
+                $(this).focus();
+            }
+        });
+        $("#formula-block").bind("click", function () {
+            var stopCharacters = [' ', '\n', '\r', '\t', '[', ']'];
+            var text = $(this).val();
+            var start = $(this)[0].selectionStart;
+            var end = $(this)[0].selectionEnd;
+            while (start > 0) {
+                if (stopCharacters.indexOf(text[start]) == -1) {
+                    --start;
+                } else {
+                    break;
+                }
+            };
+            ++start;
+            while (end < text.length) {
+                if (stopCharacters.indexOf(text[end]) == -1) {
+                    ++end;
+                } else {
+                    break;
+                }
+            }
+            $('.canbeselectedcell').removeClass('selected-cell');
+            var currentWord = text.substr(start, end - start);
+            if (currentWord.indexOf('#') > -1) {
+                $('.' + currentWord.replace('#', '---')).addClass('selected-cell');
+            }
+          
+            
+          
+        });
+        $('#formula-block').keyup(function (e) {
+            checkFormulaMode();
+            updateCellFromField();
+
+
+            
+               
+
+
+        });
+    
+    });
+    function updateCellFromField() {
+        var fb = $('#formula-block');
+        var cedc = fb.data('cell');
+        if (cedc) {
+            DynamicTablesGridView.batchEditApi.SetCellValue(currentEditCell.visibleIndex, currentEditCell.fieldName, fb.val());
+        }
+    }
+    function checkFormulaMode() {
+        if ($('#formula-block').val().charAt(0) == '=') {
+            $('#formula-block').addClass('formula-mode');
+            $('#disable-cell-mode').show();
+           
+        } else {
+            $('#formula-block').removeClass('formula-mode');
+            $('#disable-cell-mode').hide();
+        }
+    }
+
+    var preventEdit = false;
+    var isFormula = false;
+    function onCellClick(cell, visibleIndex, rowIndex, fieldName) {
+
+        var isf = cell.classList.contains("formula-cell");
+        preventEdit = isf;
+        isFormula = isf;
+        var val = "[" + fieldName + "#" + rowIndex + "]";
+        var i = $('#formula-block');
+        if (i.is(":focus"))
+            {
+        var text = i.val();
+        var cursorPos = i.prop('selectionStart');
+
+        var textBefore = text.substring(0, cursorPos);
+        var textAfter = text.substring(cursorPos, text.length);
+        i.val(textBefore + val + textAfter);
+        updateCellFromField();
+        }
+
+
+        
+        
+      
+
+        //var cursorPos = i.prop('selectionStart');
+       
+        //var textBefore = text.substring(0, cursorPos);
+        //var textAfter = text.substring(cursorPos, v.length);
+        //i.val(textBefore + text + textAfter);
+    }
+    function ToDinamicTables() {
+        ToDynamicTablesAction = true;
+        CurrentDynamicTableVersionID = 0;
+        dxo.callbackUrl = "@Url.Action(MVC.Projects.DynamicTables.ActionNames.GridViewPartial)";
+        dxo.batchUpdateUrl = "@Url.Action(MVC.Projects.DynamicTables.ActionNames.GridViewBatchUpdatePartial)";
+        DynamicTablesGridView.PerformCallback({ focusedRowIndex: DynamicTablesFocusedRow, resetfilters: true });
+        $('#ToDinamicTablesBtn').hide();
+        $('#ToStructureBtn').hide();
+        $('#ToDataBtn').hide();
+        $('#formulamode').hide();
+        $('#importExportBtnContainer').hide();
+        $('#main-portlet .panel-title').html("БАЗА ДАННЫХ");
+        $('#versionControlsContainer').hide();
+        
+        doNotPerformCallback = true;
+        dynamicTableVersion.select2("val", '0');
+        $('#deleteVersionBtn').hide();
+        doNotPerformCallback = false;
+    }
+
+    function ToStructureOrToData(dynamicTableID, editstructure) {
+        EditingDynamicTableID = dynamicTableID;
+        dxo.callbackUrl = "@Url.Action(MVC.Projects.DynamicTables.GridViewPartial(Model.ApplicationID))";
+        setTimeout(function () {
+            if (editstructure == true) {
+                DynamicTablesGridView.PerformCallback({ dynamicTableID: dynamicTableID, editstructure: true, focusedRowIndex: DynamicTablesFocusedRow, resetfilters: true });
+                CurrentDynamicTableVersionID = 0;
+
+                doNotPerformCallback = true;
+                dynamicTableVersion.select2("val", '0');
+                $('#deleteVersionBtn').hide();
+                doNotPerformCallback = false;
+            }
+            else {
+                DynamicTablesGridView.PerformCallback({ dynamicTableID: dynamicTableID, focusedRowIndex: DynamicTablesFocusedRow, resetfilters: true, dynamicTableVersionID: CurrentDynamicTableVersionID });
+            }
+        }, 50);
+    }
+
+    function isFormulaMode() {
+        return $('#formulamode').hasClass('active');
+    }
+
+
+    // export
+    function submitExportTo(typeName) {
+        $('#exportToFormPlaceHolder').html("<input type='hidden' name=" + typeName + " value='' /><input type='hidden' name='EditingDynamicTableID' value='" + EditingDynamicTableID + "' />");
+        $("[data-name='exportToForm']").submit();
+    }
+
+
+    // grag and drop
+    var command;
+    var gridviewSortedColumnName;
+    var isf = true;
+    function GetSortedColumnIndex(s, e) {
+        isf = false;
+        gridviewSortedColumnName = e.column.fieldName;
+    }
+
+    MVCxClientGlobalEvents.AddControlsInitializedEventHandler(InitalizeDraggableFunctions);
+    function InitalizeDraggableFunctions() {
+
+
+        $('.draggable-dynamicTables').draggable({
+            helper: function (event) {
+                var helper = $('<div/>').html($(this).parent().html());
+                var columnsCount = $(this).parent().find('td').length;
+                $(this).parent().find('td').each(function (index, value) {
+                    var td = helper.find('td').eq(index);
+                    td.width(value.offsetWidth);
+                    if (index == columnsCount - 1) td.html("");
+                });
+                helper.find('td').height($(this).parent().height());
+                return helper;
+            },//'clone',
+            start: function (ev, ui) {
+                var $draggingElement = $(ui.helper);
+                $draggingElement.width(DynamicTablesGridView.GetWidth());
+            }
+        });
+        $('.draggable-dynamicTables').parent().droppable({
+            drop: function (event, ui) {
+                var draggingSortIndex = ui.draggable.parent().attr("displayIndex");
+                var targetSortIndex = $(this).attr("displayIndex");
+                DynamicTablesGridView.PerformCallback(
+                {
+                    draggingIndex: draggingSortIndex,
+                    targetIndex: targetSortIndex,
+                    command: "DRAGROW"
+                });
+            }
+        });
+
+        $('.draggable-dynamicColumns').draggable({
+            helper: function (event) {
+                var helper = $('<div/>').html($(this).parent().html());
+                var columnsCount = $(this).parent().find('td').length;
+                $(this).parent().find('td').each(function (index, value) {
+                    var td = helper.find('td').eq(index);
+                    td.width(value.offsetWidth);
+                    if (index == columnsCount - 1) td.html("");
+                });
+                helper.find('td').height($(this).parent().height());
+                return helper;
+            },//'clone',
+            start: function (ev, ui) {
+                var $draggingElement = $(ui.helper);
+                $draggingElement.width(DynamicTablesGridView.GetWidth());
+            }
+        });
+        $('.draggable-dynamicColumns').parent().droppable({
+            drop: function (event, ui) {
+                var draggingSortIndex = ui.draggable.parent().attr("displayIndex");
+                var targetSortIndex = $(this).attr("displayIndex");
+                DynamicTablesGridView.PerformCallback(
+                {
+                    dynamicTableID: EditingDynamicTableID,
+                    draggingIndex: draggingSortIndex,
+                    targetIndex: targetSortIndex,
+                    command: "DRAGROW",
+                    editstructure: true
+                });
+            }
+        });
+
+        $('.draggable-dynamicEntities').draggable({
+            helper: function (event) {
+                var helper = $('<div/>').html($(this).parent().html());
+                var columnsCount = $(this).parent().find('td').length;
+                $(this).parent().find('td').each(function (index, value) {
+                    var td = helper.find('td').eq(index);
+                    td.width(value.offsetWidth);
+                    if (index == columnsCount - 1) td.html("");
+                });
+                helper.find('td').height($(this).parent().height());
+                return helper;
+            },//'clone',
+            start: function (ev, ui) {
+                var $draggingElement = $(ui.helper);
+                $draggingElement.width(DynamicTablesGridView.GetWidth());
+            }
+        });
+        $('.draggable-dynamicEntities').parent().droppable({
+            drop: function (event, ui) {
+                var draggingSortIndex = ui.draggable.parent().attr("displayIndex");
+                var targetSortIndex = $(this).attr("displayIndex");
+                DynamicTablesGridView.PerformCallback(
+                {
+                    dynamicTableID: EditingDynamicTableID,
+                    draggingIndex: draggingSortIndex,
+                    targetIndex: targetSortIndex,
+                    command: "DRAGROW",
+                });
+            }
+        });
+    }
+
+    // versions
+    var dynamicTableVersion = $("#DynamicTableVersionID");
+    dynamicTableVersion.select2
+    (
+        {
+            multiple: false,
+            placeholder: 'выберите версию',
+            allowClear: false,
+            ajax: {
+                url: '@Url.Action(MVC.Projects.DynamicTables.GetDynamicTableVersions())',
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        id: term,
+                        pageLimit: 10,
+                        page: page,
+                        tableID: EditingDynamicTableID
+                    };
+                },
+                results: function (data, page) {
+                    var more = (page * 10) < data.count;
+                    return { results: data.items, more: more };
+                }
+            },
+
+            initSelection: function (element, callback) {
+                var id = dynamicTableVersion.val();
+                // EditingDynamicTableID
+
+                if (id !== null && id.length > 0) {
+                    $.ajax('@Url.Action(MVC.Projects.DynamicTables.GetDynamicTableVersion())' + '/' + id, {
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data[0]);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+    );
+
+    var batchUpdateUrl = dxo.batchUpdateUrl;
+    var dxoCallbackUrl = dxo.callbackUrl;
+
+    dynamicTableVersion.on("change", function (ev) {
+        onDynamicTableVersionChange(ev.val);
+    });
+
+    function onDynamicTableVersionChange(values) {
+        dynamicTableVersion.val(values);
+        CurrentDynamicTableVersionID = values;
+
+        if (!doNotPerformCallback)
+        {
+            ToStructureOrToData(EditingDynamicTableID);
+        }
+
+        if (values == '0') {
+            $('#deleteVersionBtn').hide();
+        }
+        else {
+            $('#deleteVersionBtn').show();
+        }
+    }
+
+    function CreateNewDynamicTableVersion() {
+        var fieldName = $('#newDynamicTableVersionName');
+        $.get(
+            '@Url.Action(MVC.Projects.DynamicTables.CreateDynamicTableVersion())',
+            {
+                name: fieldName.val(),
+                tableID: EditingDynamicTableID
+            },
+            function (data) {
+                var newVerId = data;
+                if (newVerId != null) {
+                    $("#DynamicTableVersionID").select2("val", newVerId);
+                    onDynamicTableVersionChange(newVerId);
+                }
+            }
+        );
+        fieldName.val('');
+    }
+
+    function DeleteDynamicTableVersion() {
+        var verId = $("#DynamicTableVersionID").val();
+        $.get('@Url.Action(MVC.Projects.DynamicTables.DeleteDynamicTableVersion())', { id: verId });
+        $("#DynamicTableVersionID").select2("val", "0");
+        onDynamicTableVersionChange(0);
+    }
+</script>

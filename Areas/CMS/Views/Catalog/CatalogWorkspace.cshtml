@@ -1,0 +1,162 @@
+﻿@{
+    Layout = null;
+}
+
+@using livemenu.Kernel.Configuration
+@model livemenu.Kernel.Catalog.CatalogItemWorkspaceModel
+
+<style>
+
+    .list {
+        width: 100%;
+        overflow: hidden;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    }
+
+    .list__item {
+        width: 25%;
+        float: left;
+        padding: 0.625rem; /* 10 */
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+    }
+
+    .list__item__inner {
+        width: 100%;
+        color: #474d51;
+        background-color: #fff;
+        overflow: hidden;
+        -webkit-box-shadow: 0 0.125rem 0.313rem rgba( 0, 0, 0, .2 ); /* 2 5 */
+        box-shadow: 0 0.125rem 0.313rem rgba( 0, 0, 0, .2 ); /* 2 5 */
+    }
+
+    .list__item__inner:hover {
+        background-color: #fafafa;
+        border-color: rgba(98, 98, 98, 0.27);
+        color: #1a1a1a;
+        cursor: pointer;
+    }
+    .item i {
+        text-align: center;
+        width: 100%;
+        display: block;
+    }
+    .item img {
+        width: 100%;
+        display: block;
+    }
+
+    .item figcaption {
+        padding: 1.25rem; /* 20 */
+    }
+
+    .item {
+        width: 120px;
+        margin: 10px;
+        float: left;
+    }
+    .link-item {
+        background-color: rgba(187, 255, 164, 0.15);
+    }
+
+    .ci-creation-container, .ci-container {
+        position: relative;
+        margin: 0 auto;
+    }
+
+    .isotope:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+   
+</style>
+
+    @if (Model.CatalogItem != null)
+    {
+        <div style="width: 100%">
+        @if (Model.CanHaveChildren)
+         {
+             <div class="ci-creation-container">
+                 <div class="item">
+                     <figure class="list__item__inner " onclick=" showCatalogCreationModal('@Model.CatalogItem.ID') " >
+                         <div style="padding: 1.25rem;">
+                             <span></span>
+
+                         </div>
+                         <i class="fa fa-plus fa-3x"></i>
+                         <figcaption>
+                             <strong>Создать</strong>
+
+                         </figcaption>
+                     </figure>
+                 </div>
+       
+             </div>
+         }
+        <div class="ci-container" style="">
+            @{
+                var _linkStyle = "link-item";
+
+            }
+            @foreach (var ci in Model.CatalogItemChildren)
+            {
+                var linkStyle = ci.IsLink ? _linkStyle : string.Empty;
+
+
+                <div class="item">
+                    <figure class="list__item__inner @linkStyle" onclick=" ciWorkspaceLoad('@ci.Key') ">
+                        <div style="padding: 1.25rem;">
+                            <span>@ci.TypeName</span>
+
+                        </div>
+                        <i class="fa fa-th fa-3x"></i>
+                        <figcaption>
+                            <strong>@ci.Name</strong>
+
+                        </figcaption>
+                    </figure>
+                </div>
+
+            }
+        </div>
+</div>
+
+    <script>
+
+
+    $(document).ready(function () {
+        var typeName = '@Model.CatalogItem.TypeName';
+        var name =  '@Model.CatalogItem.Name';
+        var id = '@Model.CatalogItem.ID';
+        var parentid = '@Model.CatalogItem.ParentID';
+        workspaceItemChanged(typeName, name, id, parentid);
+
+        $('.ci-creation-container').isotope({
+            // options
+            layoutMode: 'fitRows',
+            itemSelector: '.item',
+            //   isFitWidth: true
+
+        });
+        $('.ci-container').isotope({
+            // options
+            layoutMode: 'fitRows',
+            itemSelector: '.item',
+            //   isFitWidth: true
+
+        });
+
+
+    });
+
+    </script>
+
+    }
+

@@ -1,0 +1,296 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniCartList
+@{
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var textsgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.CartListDataText);
+    var textsVisible = textsgroup.IsVisible ? string.Empty : "hidden";
+    var textsDisabled = string.Empty;
+    var textscollapsed = textsgroup.IsCollapse ? "collapsed" : string.Empty;
+    var textscollapsein = !textsgroup.IsCollapse ? "in" : string.Empty;
+}
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.CartListDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+     
+        <div class="@textsVisible @textsDisabled vg-links vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.CartListDataText">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.ID-link-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@textscollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.CartListDataText]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.ID-link-acc" class="vg-acc-content collapse @textscollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Заголовок корзины</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.CartText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Заголовок корзины"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Кнопка очистки корзины</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.ClearCartText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Текст кнопки очистки корзины"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Колонка номера позиции</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.NumberColumnText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название колонки номера позиции в заказе"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Колонка наименования товара</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.NameColumnText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название колонки наименования товара"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Колонка описание товара</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.DescriptionColumnText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название колонки описания товара"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Колонка цена товара</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.PriceColumnText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название колонки цены товара"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Колонка количество товара</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.CountColumnText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название колонки количества товара"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Колонка стоимость товара</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.ResultPriceColumnText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название колонки стоимость товара"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Кнопка удаления товара</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.DeleteProductText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Название кнопки удаления товара"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Диалог удаления товара</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.DeleteProductDialogText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Текст диалога подтверждения удаления товара"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле Итого</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.InTotalPriceText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Текст поля Итого"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Сообщение о пустой корзине</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.IsEmptyText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Текст сообщения о пустой корзине"
+                       })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Сообщение о принятом заказе</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.OrderIsAcceptedText, new
+                       {
+                           @class = "input-sm form-control WebUni-form-element",
+                           placeholder = "Текст сообщения о принятом заказе"
+                       })
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+}

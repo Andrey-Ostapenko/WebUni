@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = Model.IsPartial ? null : Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+}
+
+
+@using livemenu.Helpers
+@model  livemenu.Models.Widgets.WidgetsViewModel
+
+
+
+@if (Model.Widgets.Count() > 1)
+{
+    int i = 0;
+    foreach (var widget in Model.Widgets)
+    {
+        var layout = MVC.Shared.Views.ViewNames._Widget;
+        if (widget.Settings.IsPartial)
+        {
+            layout = MVC.CMS.Catalog.Views._MicroModuleCatalogLayout;
+        }
+        <div class="row">
+            <div class="col-md-12">
+                @{ Html.RenderPartial(layout, widget); }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="row">
+        <div class="col-md-12">
+            @{
+                var widget = Model.Widgets.First();
+                widget.Settings.Height = 0;
+                var layout = MVC.Shared.Views.ViewNames._Widget;
+                if (widget.Settings.IsPartial)
+                {
+                    layout = MVC.CMS.Catalog.Views._MicroModuleCatalogLayout;
+                }
+                
+   
+            }
+            @{ Html.RenderPartial(layout, widget); }
+        </div>
+    </div>
+}

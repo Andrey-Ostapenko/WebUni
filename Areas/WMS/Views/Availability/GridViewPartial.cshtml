@@ -1,0 +1,102 @@
+﻿
+@using System.Data.Entity
+@using System.Linq
+@using System.Web.UI.WebControls
+@using DevExpress.Utils
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.WMS.Controllers
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CRM.Storages
+@using Microsoft.Practices.ServiceLocation
+
+@model long?
+@{
+    Layout = null;
+
+    var settings = (ViewContext.Controller as AvailabilityController).GetGridViewSettings();
+
+
+
+
+
+    settings.Width = new Unit(100, UnitType.Percentage);
+
+    settings.KeyFieldName = "ID";
+
+    //settings.ClientSideEvents.BeginCallback = string.Format(@"function(s, e) {{ e.customArgs['StorageID'] = {0}; }}", //Model);
+    //settings.CustomJSProperties = (sender, e) =>
+    //{
+
+    //    e.Properties["cpSID"] = ViewBag.SID;
+
+    //};
+
+
+    // settings.ClientSideEvents.EndCallback = "function(s, e) {SiteGroupPriceListDetailGridView.PerformCallback();}";
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Batch;
+
+    settings.CallbackRouteValues = new { Controller = MVC.WMS.Availability.Name, Action = MVC.WMS.Availability.ActionNames.GridViewPartial };
+
+    settings.SettingsEditing.BatchUpdateRouteValues = new { Area = MVC.WMS.Name, Controller = MVC.WMS.Availability.Name, Action = MVC.WMS.Availability.ActionNames.GridViewBatchUpdatePartial };
+
+
+
+    settings.SettingsPager.PageSize = 40;
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Visible;
+
+    settings.Settings.ShowFooter = false;
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFooter = true;
+
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowFocusedRow = false;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = false;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.SettingsContextMenu.Enabled = false;
+
+    settings.CommandColumn.Visible = false;
+
+
+
+    var i = "showPLSelectorForStorage(" + Model + ")";
+
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(1, UnitType.Percentage);
+
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.DeleteButton(string.Format("{0}.DeleteRow({1})", name, index)));
+        });
+    });
+
+}
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+    e.QueryableSource = ServiceLocator.Current.GetInstance<IStorageAvailabilityService>().RawDataQueryable;
+}).GetHtml()

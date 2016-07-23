@@ -1,0 +1,105 @@
+﻿@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.Projects.Controllers
+@using livemenu.Kernel.BWP.DynamicTables
+@using Microsoft.Practices.ServiceLocation
+@using livemenu.Helpers
+@using livemenu.Common.Entities.Entities
+@using livemenu.Common.Kernel.DynamicTables
+
+@{
+    Layout = null;
+    var isSingle = (bool)ViewBag.IsSingle;
+}
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    long dynamicTableVersionID = 0;
+    long.TryParse(Request.Params.Get("dynamicTableVersionID") ?? "0", out dynamicTableVersionID);
+}
+
+@model DynamicTable
+
+@{
+
+    Layout = null;
+
+    var settings = (ViewContext.Controller as DynamicTablesController).GetGridViewEditTableSettings(Model);
+
+    settings.Name = "DESelectorGridView";
+    string name = settings.Name;
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new {Area = MVC.Projects.Name, Controller = MVC.Projects.DynamicTables.Name, Action = MVC.Projects.DynamicTables.ActionNames.DynamicEntitySelectorGridViewPartial, dynamicTableID = Model.ID, isSingle = isSingle };
+
+
+
+    settings.SettingsBehavior.AllowDragDrop = true;
+    settings.Height = new System.Web.UI.WebControls.Unit(500, UnitType.Pixel);
+    if (true)
+    {
+        settings.SettingsPager.Mode = GridViewPagerMode.EndlessPaging;
+        settings.Settings.VerticalScrollBarMode = ScrollBarMode.Visible;
+        settings.Settings.VerticalScrollableHeight = 400;
+    }
+    else
+    {
+        settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.PageSize = 5;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = false;
+        settings.SettingsPager.LastPageButton.Visible = false;
+        settings.SettingsPager.PageSizeItemSettings.Visible = false;
+        settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100" };
+    }
+
+
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFooter = true;
+
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+
+    settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.None;
+    settings.CommandColumn.Visible = true;
+    settings.CommandColumn.ShowSelectCheckbox = true;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = isSingle;
+    settings.SettingsBehavior.AllowSelectByRowClick = true;
+
+    settings.ClientSideEvents.SelectionChanged = "DESelectorSelectionChanged";
+}
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    if(dynamicTableVersionID == 0)
+    {
+        e.QueryableSource = ServiceLocator.Current.GetInstance<IDynamicTablesService>().GetAllByTableID(Model.ID);
+    }
+    else
+    {
+        e.QueryableSource = ServiceLocator.Current.GetInstance<IDynamicTablesService>().GetAllByTableIDVersionID(Model.ID, dynamicTableVersionID, false);
+    }
+}).GetHtml()

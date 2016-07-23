@@ -1,0 +1,21 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniMenu
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div id='WebUniMenuData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.MenuDataInternal, Model); }
+        </div>
+    </div>
+</div>
+
+<script>
+    initUniMenuCard($('#WebUniMenuData-@Model.ID'), @Model.ID);
+
+    function initUniMenuCard(element, id) {
+        $.Pages.initSelectFxPluginInElement(element);
+        $.Pages.initSwitcheryPluginInElement('switchery_internal', element);
+    }
+</script>

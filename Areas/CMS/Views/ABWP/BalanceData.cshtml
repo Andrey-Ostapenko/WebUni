@@ -1,0 +1,16 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniBalance
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div id='WebUniBalanceData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.BalanceDataInternal, Model); }
+        </div>
+    </div>
+</div>
+
+<script>
+    initUniTextCard($('#WebUniBalanceData-@Model.ID'), '@Model.ID');
+</script>

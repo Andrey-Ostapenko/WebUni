@@ -1,0 +1,21 @@
+﻿@{
+    Layout = MVC.Shared.Views._ResponsiveLayout;
+}
+<div class="panel-body">
+    <div class="row" style="margin-top: 0px">
+        <div class="col-sm-12 col-md-12 no-padding">
+            <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                <div class="btn-group " style="margin-right: 20px">
+                    <a class="btn btn-success" id="" onclick="$('#smtpsettings-edit').find('form').submit()" style="display: block;">
+                        <i class="fa fa-check"></i>
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px">
+        @{Html.RenderAction(MVC.Communications.Notification.EmailSenderServerSettings());}
+    </div>
+</div>

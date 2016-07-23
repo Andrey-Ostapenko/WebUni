@@ -1,0 +1,263 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Areas.BWP.Models.Catalog
+@using livemenu.Areas.CMS.Helpers
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.Catalog
+@using Links
+@model livemenu.Kernel.Catalog.CatalogItemCardModel
+
+@{
+    var newitem = Model.IsNew() ? 1 : 0;
+
+    var disabled = Model.IsLink ? "disabled" : "none";
+    var placeholderd = Model.CatalogItemType.HasValue ? UniBlockServiceHelper.UniBlockNames[Model.CatalogItemType.Value] : Model.TypeName;
+    var placeholder = string.Format("{0} (заполните для изменения)", placeholderd);
+
+}
+
+@using (Ajax.BeginForm(MVC.CMS.Catalog.SaveCatalogItem(), new AjaxOptions
+{
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "catalog-item-card-form-container",
+    //OnSuccess = string.Format("OnCatalogItemSaved({0})", Model.ID)
+    OnComplete = "OnCatalogItemFormCompleted"
+
+},
+    new { id = "CatalogItemCardForm" }))
+{
+      @*@Html.HiddenFor(x => x.TypeName)*@
+    @Html.HiddenFor(x => x.ID)
+    @Html.HiddenFor(x => x.ParentID)
+    @Html.HiddenFor(x => x.RootID)
+   
+    @Html.HiddenFor(x => x.TypeCode)
+	@Html.HiddenFor(x => x.CatalogItemType)
+    @Html.HiddenFor(x => x.IsLink)
+    @Html.HiddenFor(x => x.ShowWebPageLink)
+	@Html.HiddenFor(x => x.IsGrouped)
+    @Html.HiddenFor(x => x.IsGeneriсDesign)
+
+    @Html.HiddenFor(x => x.ChangingUrl)
+
+    @Html.HiddenFor(x => x.firstItemDataIsLoaded)
+
+    if (Model.IsLink)
+    {
+           @Html.HiddenFor(x => x.Name)
+            @Html.HiddenFor(x => x.Code)
+     }
+    <div class="">
+        <div class="row">
+            <div class="col-sm-7">
+                <div class="form-group form-group-default required @disabled">
+                    <label>Название</label>
+                    @Html.TextBoxFor(x => x.Name, new Dictionary<string, object>()
+                    {
+                        {"class", "form-control"},
+                        {"data-url", Url.Action(MVC.CMS.Catalog.Transliterate())},
+                        {disabled, disabled},
+                    })
+                </div>
+            </div>
+            <div class="col-sm-5 ">
+                <div class="form-group form-group-default">
+                    @*<label>Видимость</label>*@
+                    <div class="checkbox check-success">
+                        @{
+                            var isChecked = Model.IsActive ? "checked" : "unchecked";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.IsActive, new {@checked = isChecked, @id = "IsActive"})
+                        @Html.LabelFor(x => x.IsActive, "Видимость")
+                        @*<input type="checkbox" id="IsActive" name="IsActive" value="@Model.IsActive" />*@
+                        @*<label for="IsActive">Видимость</label>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+@if (Model.CatalogItemType != CatalogItemTypeValue.Site)
+{
+    <div class="row">
+        <div class="col-sm-7 catalog-item-button-clear">
+            <div class="form-group form-group-default required @disabled">
+                <label>Код</label>
+                @if(Model.CatalogItemType != CatalogItemTypeValue.Version && Model.CatalogItemType != CatalogItemTypeValue.Pages && Model.CatalogItemType != CatalogItemTypeValue.Page)
+                {
+                    @Html.TextBoxFor(x => x.Code, new Dictionary<string, object>()
+                    {
+                        {"class", "form-control"},
+                        {disabled, disabled},
+                    });
+                    @Html.HiddenFor(x => x.CustomCode);
+                } else
+                {
+                    @Html.TextBoxFor(x => x.CustomCode, new Dictionary<string, object>()
+                    {
+                        {"class", "form-control"},
+                        {disabled, disabled},
+                    });
+                    @Html.HiddenFor(x => x.Code);
+                }
+            </div>
+            @if (Model.CatalogItemType != CatalogItemTypeValue.Version && Model.CatalogItemType != CatalogItemTypeValue.Pages && Model.CatalogItemType != CatalogItemTypeValue.Page)
+            {
+                Html.ValidationMessageFor(x => x.Code, String.Empty, new { @class = "error" });
+            } else
+            {
+                Html.ValidationMessageFor(x => x.CustomCode, String.Empty, new { @class = "error" });
+            }
+
+        </div>
+        <div class="col-sm-5 " style="">
+            <a class="btn btn-default" style="width: 100%; height: 54px; padding-top: 17px; font-family: 'futura-nl';
+                                                                                         font-size: 11px;
+                                                                                         /* float: left; */
+                                                                                         text-transform: uppercase;
+                                                                                         font-weight: 600;
+                                                                                         text-align: left;" onclick="generateCatalogItemCode()">
+                <i class="fa fa-code" style="font-size: 15px; margin-left: -4px; margin-right: 4px;"></i> Сделать код
+            </a>
+        </div>
+
+    </div>
+
+            <div class="row">
+                <div class="col-sm-12 catalog-item-button-clear">
+                    <div class="form-group form-group-default @disabled">
+                        <label>Название элемента</label>
+                        @Html.TextBoxFor(x => x.ElementName, new Dictionary<string, object>()
+                    {
+                        {"class", "form-control"},
+                        {disabled, disabled},
+                        {"placeholder", placeholder} 
+                    })
+
+                    </div>
+                    @Html.ValidationMessageFor(x => x.ElementName, String.Empty, new { @class = "error" })
+                </div>
+            </div>
+
+}
+else
+{
+    @Html.HiddenFor(x => x.Code);
+}
+    </div>
+}
+
+ @{   var state = (CatalogCardLoadingState) (ViewData["CatalogCardLoadingState"] ?? CatalogCardLoadingState.Loaded);}
+
+@if (state == CatalogCardLoadingState.Saved)
+{
+    <script>
+        function ciCardLoaded(titleText)
+        {
+            OnCatalogItemSaved(titleText);
+        }
+    </script>
+}
+else if (state == CatalogCardLoadingState.Created)
+{
+    <script>
+
+
+        function ciCardLoaded(titleText) {
+            var itemID = @Model.ID;
+            var parentItemID = @Model.ParentID;
+
+            OnCatalogItemCreated(parentItemID + '_' + itemID);
+        }
+    </script>
+}
+else
+{
+    <script>
+        function ciCardLoaded(titleText) {
+        }
+    </script>
+}
+
+<script>
+    var wcodeTypingTimer;
+    var wcodeDoneTypingInterval = 10;
+    var wcodeFinaldoneTypingInterval = 3000;
+
+    function isCodeNotEmpty() {
+        return $('#Code').val() == '';
+    }
+
+    $('#Name').keydown(function () {
+        clearTimeout(wcodeTypingTimer);
+        if (isCodeNotEmpty()) {
+            wcodeTypingTimer = setTimeout(function () {
+            }, wcodeDoneTypingInterval);
+        }
+    });
+
+    $('#Name').keyup(function () {
+        clearTimeout(wcodeTypingTimer);
+        wcodeTypingTimer = setTimeout(function () {
+            if (isCodeNotEmpty()) {
+                var input = $('#Name');
+                var url = input.data('url');
+
+                $.get(url,
+                    {
+                        text: input.val()
+                    },
+                    function (data) {
+                        var codeInp = $('#Code');
+                        codeInp.val(data);
+                    });
+            }
+        }, wcodeFinaldoneTypingInterval);
+    });
+
+    function generateCatalogItemCode() {
+        var input = $('#Name');
+        var url = input.data('url');
+
+        $.get(url,
+            {
+                text: input.val()
+            },
+            function (data) {
+                var codeInp;
+                if($('#CatalogItemType').val() === "Page" || $('#CatalogItemType').val() === "Pages" || $('#CatalogItemType').val() === "Version")
+                {
+                    codeInp = $('#CustomCode');
+                }
+                else
+                {
+                    codeInp = $('#Code');
+                }
+                var customCodeInp = $('#CustomCode');
+
+                if ($('#Code').attr('type') == 'hidden') {
+                    customCodeInp.val(data);
+                } else {
+                    codeInp.val(data);
+                }
+
+                
+            });
+    }
+  
+    $('#catalogItemModifiedDate').text('@Model.ModifiedDateText');
+    $('#ci-card-name').text('Выбран: @Model.CardName');
+
+
+    $(document).ready(function () {
+        var typeName = '@Model.TypeName';
+        var name = '@Model.Name';
+        var id = '@Model.ID';
+        var parentid = '@Model.ParentID';
+        workspaceItemChanged(typeName, name, id, parentid);
+        var titleText = '(' + 'готово' + ') ' + name;
+
+        ciCardLoaded(titleText);
+    });
+</script>

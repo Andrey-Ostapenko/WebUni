@@ -1,0 +1,29 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniLogin
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniLoginDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.LoginDesignInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    //initUniLineCard($('#WebUniCartListDesign-@Model.ID'), '@Model.ID');
+
+
+
+
+</script>

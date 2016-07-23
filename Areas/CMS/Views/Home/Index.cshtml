@@ -1,0 +1,273 @@
+﻿@using System.Linq
+@using livemenu.DAL
+@using livemenu.Helpers
+@using livemenu.Kernel.Catalog
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+    var site = ServiceLocator.Current.GetInstance<ICatalogItemRepository>().Get(x => x.CatalogItemTypeID == 9).SingleOrDefault();
+}
+
+<style>
+    a, a:focus, a:hover, a:active {
+        color: initial;
+    }
+
+    @@media (max-width: 767px) {
+        .jumbotron, .container-fluid {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+    }
+
+    
+</style>
+
+<div id="dash" class="panel-cms">
+
+    <div class="container-fluid ">
+        <div class="panel panel-transparent">
+            <div class="panel-body sortable">
+
+                <div class="row grid-stack">
+                    <div class="grid-stack-item "
+                         data-custom-id="grid-stack-item-sitebuilder"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-sitebuilder" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Catalog.Index("Site"))">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-sites.png">
+                                <div class="WebUni-panel-name">@site.Name</div>
+                                <div class="WebUni-panel-description">управление сайтом</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-cache"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-cache" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Pages.Index())">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-speed.png">
+                                <div class="WebUni-panel-name">Скорость</div>
+                                <div class="WebUni-panel-description">кэш и генерация</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-seo"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-seo" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.SEO.Meta())">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-seo.png">
+                                <div class="WebUni-panel-name">SEO</div>
+                                <div class="WebUni-panel-description">поисковая оптимизация</div>
+                            </a>
+                        </div>
+                    </div>
+                   
+					<div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-WebUni-goods"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="4"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-goods" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-goods"))">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-goods-and-services.png">
+                                <div class="WebUni-panel-name">Товары и услуги</div>
+                                <div class="WebUni-panel-description">каталог</div>
+                            </a>
+                        </div>
+                    </div>
+					   <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-WebUni-templates"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="4"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="WebUni-templates" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Tags.Index())">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-filter.png">
+                                <div class="WebUni-panel-name">Фильтры</div>
+                                <div class="WebUni-panel-description">каталог</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					 <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-WebUni-elements"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="4"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="WebUni-elements" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.ShortLink.Index())">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-short-links.png">
+                                <div class="WebUni-panel-name">Короткие ссылки</div>
+                                <div class="WebUni-panel-description">каталог</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					
+					  <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-news"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="9"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="news" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Catalog.Index("Site"))">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-feed.png">
+                                <div class="WebUni-panel-name">Новости</div>
+                                <div class="WebUni-panel-description">управление новостями</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					   <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-actions"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="9"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-actions" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-actions"))">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-actions.png">
+                                <div class="WebUni-panel-name">Акции</div>
+                                <div class="WebUni-panel-description">управление акциями</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					 <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-blog-actions"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="9"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-vacancies" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-vacancies"))">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-vacancies.png">
+                                <div class="WebUni-panel-name">Вакансии</div>
+                                <div class="WebUni-panel-description">управление объявлениями</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					 <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-fonts"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="12"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-fonts" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.UserFonts.Index())">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-fonts.png">
+                                <div class="WebUni-panel-name">Шрифты</div>
+                                <div class="WebUni-panel-description">каталог</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					 <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-stat"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="12"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-stat" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.WebCounters.Index())">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-statistics.png">
+                                <div class="WebUni-panel-name">Статистика</div>
+                                <div class="WebUni-panel-description">результаты</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					  <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-fm"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="12"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-fm" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.FileManager.Index())" data-pjax="#main-region" >
+                                <img src="/Admin/Content/Images/Panels/cms/cms-cloud.png">
+                                <div class="WebUni-panel-name">Файлы</div>
+                                <div class="WebUni-panel-description">менеджер файлов</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					
+					<div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-solutions"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="17"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-solutions" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-solutions"))">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-solutions.png">
+                                <div class="WebUni-panel-name">Решения</div>
+                                <div class="WebUni-panel-description">шаблоны проектов</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					<div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-templates"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="17"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-templates" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-templates"))">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-layout.png">
+                                <div class="WebUni-panel-name">Макеты</div>
+                                <div class="WebUni-panel-description">шаблоны страниц</div>
+                            </a>
+                        </div>
+                    </div>
+
+					<div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-elements"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="17"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="panel-elements" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.CMS.Catalog.Index("WebUni-elements"))">
+                                <img src="/Admin/Content/Images/Panels/cms/cms-elements.png">
+                                <div class="WebUni-panel-name">Элементы</div>
+                                <div class="WebUni-panel-description">шаблоны блоков</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var options = {
+        min_width: 0,
+        cell_height: 40,
+        vertical_margin: 20,
+
+    };
+    var name = "WebUni-cms-panel";
+    $('.grid-stack').gridstack(options);
+
+    $('.grid-stack').on('dragstop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    $('.grid-stack').on('resizestop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    var saved = $.cookie(name);
+    if (saved) {
+        panelLoadGridData(jQuery.parseJSON(saved)); 
+    }
+
+</script>

@@ -1,0 +1,23 @@
+﻿@{
+    Layout = MVC.Shared.Views._MenuLayout;
+}
+<div class="sidebar-menu" id="main-menu">
+    <ul class="menu-items">
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.Support.Home.Index())" data-pjax="#main-region" class="">
+                <span class="title">Настройки</span>
+            </a>
+            <span class="icon-thumbnail bg-success"><i class="fa fa-home"></i></span>
+        </li>
+     
+
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.FileManager.Index())" data-pjax="#main-region" class="detailed">
+                <span class="title">Файлы</span>
+                <span class="details">Управление файлами</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-cloud"></i></span>
+        </li>
+    </ul>
+    <div class="clearfix"></div>
+</div>

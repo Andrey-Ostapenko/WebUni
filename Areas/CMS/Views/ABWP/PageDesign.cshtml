@@ -1,0 +1,14 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniPage
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+        <div id='WebUniPageDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.PageDesignInternal, Model); }
+        </div>
+    </div>
+</div>
+<script>
+    initUniLineCard($('#WebUniPageDesign-@Model.ID'));
+</script>

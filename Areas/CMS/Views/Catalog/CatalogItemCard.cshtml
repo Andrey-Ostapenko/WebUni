@@ -1,0 +1,565 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Areas.CMS.Helpers
+@using livemenu.Areas.CMS.Models
+@using livemenu.Common.Entities
+@using livemenu.Common.Entities.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.Catalog.Custom
+@model livemenu.Kernel.Catalog.CatalogItemCardModel
+
+@{
+    var catalog_item_card_MM = Model.ID != 0 ? "true" : "false";
+    //string groupBtnName =  Model.CatalogItem.IsGrouped ? "<i class='fa fa-link' ></i> Разгруппировать" : "<i class='fa fa-chain-broken' ></i> Сгруппировать";
+    bool n = !Model.CatalogItem.IsGrouped;
+    bool notischain = !Model.CatalogItem.IsChain;
+
+
+    bool g = !Model.CatalogItem.IsGeneriсDesign;
+    bool isLine = Model.CatalogItem.CatalogItemTypeID == (long)CatalogItemTypeValue.Line;
+    bool isPage = Model.CatalogItem.CatalogItemTypeID == (long)CatalogItemTypeValue.Page;
+}
+
+
+<style>
+	.btn-ci-common-enabled
+	{
+		background-color: rgb(27, 195, 245) !important;
+	    color: white !important;
+	}
+
+</style>
+
+<ul class="nav nav-tabs nav-tabs-simple catalog-tabs">
+    <li class="active">
+        <a data-id="#catalog-tab-common" id='catalog-tab-common-btn' class="catalog-tab">Общие</a>
+    </li>
+    <li>
+        <a data-id="#catalog-tab-data" id='catalog-tab-data-btn' class="catalog-tab">Данные</a>
+    </li>
+    <li>
+        <a data-id="#catalog-tab-design" id='catalog-tab-design-btn' class="catalog-tab">Дизайн</a>
+    </li>
+    @if (isLine)
+    {
+        <li id="catalog-tab-shop-btn-li">
+            <a data-id="#catalog-tab-shop" id='catalog-tab-shop-btn' class="catalog-tab">Магазин</a>
+        </li>
+        <li id="catalog-tab-news-btn-li">
+            <a data-id="#catalog-tab-news" id='catalog-tab-news-btn' class="catalog-tab">Новости</a>
+        </li>
+    } else if (isPage)
+    {
+        <li id="catalog-tab-shop-btn-li">
+            <a data-id="#catalog-tab-seo" id='catalog-tab-seo-btn' class="catalog-tab">SEO</a>
+        </li>
+    }
+
+    <li>
+        <a data-id="#catalog-tab-templates" id='catalog-tab-templates-btn' class="catalog-tab">Шаблоны</a>
+    </li>
+
+
+</ul>
+
+<div class="row catalog-item-btns">
+    <div class="col-sm-12">
+        <div id="catalog-item-data-btns" class="btn-group">
+            <a href="#" id="data-back" onclick="reloadEditor();" class="btn btn-default normal-font ">Назад</a>
+
+            <a href="#" id="data-structure" class="btn btn-default normal-font ">Структура</a>
+            <div class="ci-only-grouped btn-group">
+                <a href="#" id="flat-data-group-structure" class="btn btn-default normal-font ">Структура группы</a>
+                <a href="#" id="flat-data-openall" class="btn btn-default normal-font ">раскрыть все</a>
+                <a href="#" id="flat-data-closeall" class="btn btn-default normal-font ">свернуть все</a>    
+            </div>
+            
+        </div>
+        <div id="catalog-item-design-btns" class="btn-group">
+            <a href="#" id="design-back" onclick="reloadEditor();" class="btn btn-default normal-font ">Назад</a>
+
+            <a href="#" id="design-structure" class="btn btn-default normal-font ">Структура</a>
+            <div class="ci-only-grouped btn-group">
+                <a href="#" id="flat-design-group-structure" class="btn btn-default normal-font ">Структура группы</a>
+                <a href="#" id="flat-design-openall" class="btn btn-default normal-font ">раскрыть все</a>
+                <a href="#" id="flat-design-closeall" class="btn btn-default normal-font ">свернуть все</a>
+            </div>
+            
+        </div>
+        <a href="#" id="ci-card-go-up-btn" onclick="jQuery('#catalog-item-card-container-scroll').animate({ scrollTop: 0 }, 600);" class="btn btn-default normal-font pull-right"><i class="fa fa-arrow-up"></i></a>
+    </div>
+    
+</div>
+
+<div id="catalog-item-card-container-wrapper">
+    <div id="catalog-item-card-container-scroll">
+        <div id="catalog-item-card-container" class="">
+            <div class="catalog-tab-content active" id="catalog-tab-common">
+
+
+                <div id="catalog-item-card-form-container">
+                    @{Html.RenderPartial(MVC.CMS.Catalog.Views.CatalogItemCardInternal, Model);}
+                </div>
+                @if (!Model.IsLink)
+                {
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group form-group-default">
+                                <label>Местоположение в проводнике </label>
+                                <div id="familyTree">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+
+                @if (!Model.IsLink && Model.ShowWebPageLink && Model.CatalogItemType != CatalogItemTypeValue.Site)
+                {
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group form-group-default">
+                                <label>Просмотр страницы</label>
+                                <div id="webpagelink">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+                @if (!Model.IsNew && Model.CatalogItemType != CatalogItemTypeValue.Site)
+                {
+                    <div class="row ">
+
+                        <div class="col-md-6 catalog-item-button-clear" style="">
+                            <button class="btn btn-default" style="width: 100%; height: 54px;" onclick="ClearCatalogItemPageCache('@Url.Action(MVC.CMS.Catalog.ClearCatalogItemPageCache(Model.ID, Model.CatalogItemType))')"><i class="fa fa-repeat"></i> Сбросить кэш</button>
+                        </div>
+                        <div class="col-md-6 catalog-item-button-regen" style="">
+                            <button class="btn btn-default" style="width: 100%; height: 54px;" onclick="RegenerateCatalogItemPage('@Url.Action(MVC.CMS.Catalog.RegenerateCatalogItemPage(Model.ID, Model.CatalogItemType))')"><i class="fa fa-refresh"></i> Перегенерировать</button>
+                        </div>
+                    </div>
+                }
+
+
+                @if (Model.RootID == CatalogItemCodes.Site.ToLong()
+&& Model.CatalogItemType.HasValue
+&& !new[]
+{
+         CatalogItemTypeValue.Elements,
+         CatalogItemTypeValue.Layouts,
+         CatalogItemTypeValue.Pages,
+         CatalogItemTypeValue.Projects,
+         CatalogItemTypeValue.Vacancies,
+         CatalogItemTypeValue.Solutions,
+         CatalogItemTypeValue.Panels,
+}.Contains(Model.CatalogItemType.Value))
+                {
+                    <div class="row " style="margin-bottom: 10px; margin-top: 10px;">
+                        <div class="col-md-6 catalog-item-button-clear" style="">
+                            @if (Model.CatalogItem.TemplateType == (long)CatalogItemTypeValue.Layouts)
+                            {
+                                <button class="btn btn-ci-common-enabled btn-default " onclick="transformToTemplate('@Url.Action(MVC.CMS.Catalog.TransformToTemplate(Model.ID))', null)" style="width: 100%; height: 54px;"><i class="fa fa-file"></i> Макет</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-default " style="width: 100%; height: 54px;" onclick="transformToTemplate('@Url.Action(MVC.CMS.Catalog.TransformToTemplate(Model.ID, CatalogItemTypeValue.Layouts))', @((long)CatalogItemTypeValue.Layouts))"><i class="fa fa-file"></i> Сделать макетом</button>
+                            }
+
+                        </div>
+                        <div class="col-md-6 catalog-item-button-regen" style="">
+                            @if (Model.CatalogItem.TemplateType == (long)CatalogItemTypeValue.Elements)
+                            {
+                                <button class="btn btn-ci-common-enabled btn-default " onclick="transformToTemplate('@Url.Action(MVC.CMS.Catalog.TransformToTemplate(Model.ID))', null)" style="width: 100%; height: 54px;"><i class="fa fa-file"></i> Элемент</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-default" style="width: 100%; height: 54px;" onclick="transformToTemplate('@Url.Action(MVC.CMS.Catalog.TransformToTemplate(Model.ID, CatalogItemTypeValue.Elements))', @((long)CatalogItemTypeValue.Elements))"><i class="fa fa-code"></i> Сделать элементом</button>
+                            }
+
+                        </div>
+                    </div>
+
+                }
+
+                <div class="row ">
+                    <div class="col-md-6 catalog-item-button-clear" style="">
+                        <button class="btn btn-default" style="width: 100%; height: 54px;" data-url="@Url.Action(MVC.CMS.Catalog.Import())" onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onCIWebUniSelected)"><i class="fa fa-upload"></i> Импорт</button>
+                    </div>
+                    <div class="col-md-6 catalog-item-button-regen" style="">
+                        <button class="btn btn-default" style="width: 100%; height: 54px;" onclick="window.location.href = '@Url.Action(MVC.CMS.Catalog.Export())' + '/' + $('#workspace-portlet').data('ciid')"><i class="fa fa-download"></i> Экспорт</button>
+                    </div>
+                </div>
+
+
+                @if (Model.CatalogItemType.HasValue && new[]
+{
+    CatalogItemTypeValue.Line,
+    CatalogItemTypeValue.Row,
+    CatalogItemTypeValue.Buttons,
+}.Contains(Model.CatalogItemType.Value))
+                {
+                    <div class="row " style="margin-top: 10px">
+                        @if (Model.CatalogItem.IsChain)
+                        {
+                            <div class="col-md-12 ">
+                                <button class="btn btn-default btn-ci-common-enabled normal-font" style="width: 100%; height: 54px;" onclick="changeChain('@Url.Action(MVC.CMS.Catalog.ChangeChain())', @Model.ID, '@notischain.ToString().ToLower()')"><i class='fa fa-code-fork'></i> Цепочка включена</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-md-12 " style="">
+                                <button class="btn btn-default normal-font" style="width: 100%; height: 54px;" onclick="changeChain('@Url.Action(MVC.CMS.Catalog.ChangeChain())', @Model.ID, '@notischain.ToString().ToLower()')"><i class='fa fa-code-fork'></i> Нажмите, чтобы объединить в цепочку</button>
+                            </div>
+                        }
+
+                    </div>
+                }
+
+
+                @if (Model.CatalogItemType == CatalogItemTypeValue.Line && Model.CatalogItem.IsChain)
+                {
+                    <div class="row " style="margin-top: 10px">
+                        @if (Model.IsGeneriсDesign)
+                        {
+                            <div class="col-md-12 ">
+                                <button class="btn btn-default btn-ci-common-enabled normal-font" style="width: 100%; height: 54px;" onclick="changeGenericDesign('@Url.Action(MVC.CMS.Catalog.ChangeGenericDesign())', @Model.ID, '@g.ToString().ToLower()')"><i class='fa fa-paint-brush'></i> Дизайн объединен</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-md-12 " style="">
+                                <button class="btn btn-default normal-font" style="width: 100%; height: 54px;" onclick="changeGenericDesign('@Url.Action(MVC.CMS.Catalog.ChangeGenericDesign())', @Model.ID, '@g.ToString().ToLower()')"><i class='fa fa-paint-brush'></i> Нажмите, чтобы объединить дизайн</button>
+                            </div>
+                        }
+
+                    </div>
+                }
+
+                @if (Model.CatalogItemType.HasValue && !new[]
+{
+    CatalogItemTypeValue.Site,
+    CatalogItemTypeValue.Pages,
+}.Contains(Model.CatalogItemType.Value))
+                {
+                    <div class="row " style="margin-top: 10px">
+                        @if (Model.CatalogItem.IsGrouped)
+                        {
+                            <div class="col-md-12 ">
+                                <button class="btn btn-default btn-ci-common-enabled normal-font" style="width: 100%; height: 54px;" onclick="changeGrouping('@Url.Action(MVC.CMS.Catalog.ChangeGrouping())', @Model.ID, '@n.ToString().ToLower()')"><i class='fa fa-object-ungroup'></i> Разгруппировать</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-md-12 " style="">
+                                <button class="btn btn-default  normal-font" style="width: 100%; height: 54px;" onclick="changeGrouping('@Url.Action(MVC.CMS.Catalog.ChangeGrouping())', @Model.ID, '@n.ToString().ToLower()')"><i class='fa fa-object-ungroup'></i> Сгруппировать</button>
+                            </div>
+                        }
+
+                    </div>
+                }
+
+                
+                @if (!Model.IsLink && (Model.TypeCode == CustomCatalogCodes.SiteGroup) && !Model.IsNew)
+                {
+                    <div id="sitegrouppricelist-list" style="">
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group form-group-default">
+                                    <label>Магазин</label>
+                                    @{ Html.RenderAction(MVC.CMS.Catalog.SiteGroupPriceListDetailGridViewPartial(Model.ID));}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="sitegrouppricelist-content">
+
+                    </div>
+                                        }
+
+
+                @if (!Model.IsLink && Model.TypeCode == CustomCatalogCodes.SiteGroup && !Model.IsNew)
+                {
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group form-group-default">
+                                <label>Характеристики поиска</label>
+                                @{ Html.RenderAction(MVC.CMS.Catalog.SearchPropertyGridViewPartial(Model.ID));}
+                            </div>
+                        </div>
+                    </div>
+                                    }
+
+
+                @if (!Model.IsLink)
+                {
+                    <script>
+
+        var id_ = '@Model.ID';
+        getGetFamilyTree(id_);
+        getWebPageLink(id_);
+                    </script>
+                }
+
+
+
+            </div>
+            <div class="catalog-tab-content" id="catalog-tab-news">
+                @{
+                    Html.RenderPartial(MVC.CMS.Catalog.Views.CatalogTabContentNewsPartial);
+                }
+            </div>
+
+        
+            @if (Model.ID != 0 && !Model.CatalogItemType.HasValue)
+            {
+                <div class="catalog-tab-content" id="catalog-tab-data">
+
+
+                    <div id="catalog-item-card-MM-container" data-loaded="@catalog_item_card_MM">
+
+                        @{Html.RenderAction(MVC.CMS.Catalog.CatalogItemDetail(Model.ID));}
+
+                    </div>
+                </div>
+                            }
+
+            @if (Model.ID != 0 && Model.CatalogItemType.HasValue)
+            {
+                if (Model.CatalogItem.IsGrouped)
+                {
+                    Html.RenderPartial(MVC.CMS.WebUni.Views.FlatData);
+                }
+                else if (Model.CatalogItemType != CatalogItemTypeValue.Addresses)
+                {
+                    Html.RenderAction(WebUniUniBlockEditHelper.WebUniLoaders[Model.CatalogItemType.Value](Model.CatalogItem.ID));
+                }
+            }
+
+            <div class="catalog-tab-content active" id="catalog-tab-templates">
+                @if (Model.RootID == CatalogItemCodes.Site.ToLong()
+     && Model.CatalogItemType.HasValue
+     && !new[]
+     {
+             CatalogItemTypeValue.Elements,
+             CatalogItemTypeValue.Layouts,
+             CatalogItemTypeValue.Pages,
+             CatalogItemTypeValue.Projects,
+             CatalogItemTypeValue.Vacancies,
+             CatalogItemTypeValue.Solutions,
+             CatalogItemTypeValue.Panels,
+     }.Contains(Model.CatalogItemType.Value))
+                {
+                    <div class="row " style="margin-bottom: 20px;">
+                        <div class="col-md-6" style="">
+                            <button class="btn btn-default normal-font" style="width: 100%; height: 54px;" onclick="makeTemplate('@Url.Action(MVC.CMS.Catalog.MakeTemplate(CatalogItemTypeValue.Layouts, Model.ID))')"><i class="fa fa-file"></i> сохранить как макет</button>
+                        </div>
+                        <div class="col-md-6" style="">
+                            <button class="btn btn-default normal-font" style="width: 100%; height: 54px;" onclick="makeTemplate('@Url.Action(MVC.CMS.Catalog.MakeTemplate(CatalogItemTypeValue.Elements, Model.ID))')"><i class="fa fa-code"></i> сохранить как элемент</button>
+                        </div>
+                    </div>
+
+                }
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    $('#pages-container').portlet({
+        progress: 'circle',
+        onRefresh: function () {
+
+        }
+    });
+
+    function onCatalogItemCardLoaded() {
+        if (currentCatalogItemIsGrouped) {
+            $('.ci-only-grouped').show();
+            $('#data-structure').hide();
+            $('#design-structure').hide();
+        } else {
+            $('.ci-only-grouped').hide();
+            $('#data-structure').show();
+            $('#design-structure').show();
+        }
+    }
+
+    onCatalogItemCardLoaded();
+
+    $('#flat-design-group-structure').click(function () {
+        var cont = $('#design-flat-group-structure-contrainer');
+        var url = cont.data('url');
+
+        $.get(url, function (data) {
+
+            cont.html(data);
+            $.Pages.initSwitcheryPluginInElement('switchery_internal', cont);
+            $('#design-flat').hide();
+            $('#flat-design-group-structure').hide();
+            $('#design-back').show();
+            cont.show();
+        });
+
+    });
+
+    $('#flat-data-group-structure').click(function () {
+        var cont = $('#data-flat-group-structure-contrainer');
+        var url = cont.data('url');
+
+        $.get(url, function(data) {
+
+            cont.html(data);
+            $.Pages.initSwitcheryPluginInElement('switchery_internal', cont);
+            $('#data-flat').hide();
+            $('#flat-data-group-structure').hide();
+            $('#data-back').show();
+            cont.show();
+        });
+
+    });
+
+
+    $('#design-structure').click(function () {
+        var cont = $('#catalog-tab-design-structure-container');
+        var url = cont.data('url');
+
+        $.get(url, function (data) {
+
+            cont.html(data);
+            $.Pages.initSwitcheryPluginInElement('switchery_internal', cont);
+            $('#catalog-tab-design-int').hide();
+            $('#design-structure').hide();
+            $('#design-back').show();
+            cont.show();
+        });
+
+    });
+
+    $('#data-structure').click(function () {
+        var cont = $('#catalog-tab-data-structure-container');
+        var url = cont.data('url');
+
+        $.get(url, function (data) {
+
+            cont.html(data);
+            $.Pages.initSwitcheryPluginInElement('switchery_internal', cont);
+            $('#catalog-tab-data-int').hide();
+            $('#data-link').hide();
+            $('#data-structure').hide();
+
+            $('#data-back').show();
+            cont.show();
+        });
+
+    });
+
+    $('#flat-design-closeall').click(function () {
+        $('#design-flat .panel-collapse.in')
+            .collapse('hide');
+        $('#design-flat .panel-heading a')
+            .addClass('collapsed');
+    });
+    $('#flat-design-openall').click(function () {
+        $('#design-flat .panel-collapse:not(".in")')
+            .collapse('show');
+        $('#design-flat .panel-heading a')
+            .removeClass('collapsed');
+    });
+    $('#flat-data-closeall').click(function () {
+        $('#data-flat .panel-collapse.in')
+            .collapse('hide');
+        $('#data-flat .panel-heading a')
+            .addClass('collapsed');
+    });
+    $('#flat-data-openall').click(function () {
+        $('#data-flat .panel-collapse:not(".in")')
+            .collapse('show');
+        $('#data-flat .panel-heading a')
+            .removeClass('collapsed');
+    });
+
+
+    fixCatalogItemCardContainerHeight();
+    $('#catalog-item-card-container-scroll').scrollbar(
+        {
+            "onScroll": function(y, x) {
+                var btn = $('#ci-card-go-up-btn');
+
+                if (y.scroll === 0) {
+                    btn.hide();
+                } else {
+                    btn.show();
+                }
+            }
+        });
+    var currentTabMode = '';
+    $('#catalogItemModifiedDate').text('@Model.ModifiedDateText');
+
+    function changeCatalogItemButtonsVisiblity(id) {
+        if (id === '#catalog-tab-data') {
+            $('#catalog-item-data-btns').show();
+            $('#catalog-item-design-btns').hide();
+        }
+        else if (id === '#catalog-tab-design') {
+            $('#catalog-item-design-btns').show();
+            $('#catalog-item-data-btns').hide();
+        } else {
+            $('#catalog-item-design-btns').hide();
+            $('#catalog-item-data-btns').hide();
+        }
+    }
+
+    restoreCatalogMode();
+    function restoreCatalogMode() {
+
+        var isline = @isLine.ToString().ToLower();
+        var isPage = @isPage.ToString().ToLower();
+
+        var id = $.cookie('catalog-mode');
+
+        if(!id){
+            id = $('.catalog-tabs').first().find('a').data('id');
+        } else if (id == '#catalog-tab-shop' && !isline) {
+              id = $('.catalog-tabs').first().find('a').data('id');
+        } else if (id == '#catalog-tab-news' && !isline) {
+            id = $('.catalog-tabs').first().find('a').data('id');
+        } else if (id == '#catalog-tab-seo' && !isPage) {
+                id = $('.catalog-tabs').first().find('a').data('id');
+    }
+
+        changeCatalogItemButtonsVisiblity(id);
+
+        $('.catalog-tab').parents('li').removeClass('active');
+        $(''+ id +'-btn').parents('li').addClass('active');
+        $(id).show();
+    }
+
+
+
+    $('.catalog-tab').click(function () {
+        var id = $(this).data('id');
+        $.cookie('catalog-mode', id);
+
+
+        $('.catalog-tab-content').hide();
+
+        currentTabMode = id;
+        $(id).show();
+
+        changeCatalogItemButtonsVisiblity(id);
+
+        $('.catalog-tab').parents('li').removeClass('active');
+        $(this).parents('li').addClass('active');
+
+    });
+</script>

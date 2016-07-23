@@ -1,0 +1,21 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniMap
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniMapDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.MapDesignInternal, Model); }
+        </div>
+
+    </div>
+</div>
+

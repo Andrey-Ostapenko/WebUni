@@ -1,0 +1,145 @@
+﻿@using livemenu.DAL
+@using livemenu.Helpers
+@using livemenu.Kernel.Catalog
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+    var site = ServiceLocator.Current.GetInstance<ICatalogItemRepository>().Get(x => x.CatalogItemTypeID == 9).SingleOrDefault();
+}
+
+<style>
+    a, a:focus, a:hover, a:active {
+        color: initial;
+    }
+
+    @@media (max-width: 767px) {
+        .jumbotron, .container-fluid {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+    }
+</style>
+
+<div id="dash" class="panel-communication">
+
+    <div class="container-fluid ">
+        <div class="panel panel-transparent">
+            <div class="panel-body sortable">
+
+                <div class="row grid-stack">
+                    <div class="grid-stack-item "
+                         data-custom-id="grid-stack-item-sitebuilder"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="0" 
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="sitebuilder" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Communications.Home.Email())" >
+                                <img src="/Admin/Content/Images/Panels/communication/communication-mail.png">
+                                <div class="WebUni-panel-name">Электронная почта</div>
+                                <div class="WebUni-panel-description">настройки</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-catalog-goods"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="catalog-goods" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Communications.Home.Phone())" >
+                                <img src="/Admin/Content/Images/Panels/communication/communication-phone.png">
+                                <div class="WebUni-panel-name">Телефония</div>
+                                <div class="WebUni-panel-description">настройки</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-catalog-filter"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="catalog-filter" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Communications.Home.Chat())" >
+                                <img src="/Admin/Content/Images/Panels/communication/communication-chat.png">
+                                <div class="WebUni-panel-name">Онлайн-чат</div>
+                                <div class="WebUni-panel-description">настройки</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-WebUni-solutions"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="4"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="WebUni-solutions" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Communications.Home.Social())" >
+                                <img src="/Admin/Content/Images/Panels/communication/communication-social.png">
+                                <div class="WebUni-panel-name">Социальные сети</div>
+                                <div class="WebUni-panel-description">настройки</div>
+                            </a>
+                        </div>
+                    </div>
+					
+					 <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-WebUni-notif-set"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="4"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="WebUni-solutions" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Communications.Notification.EmailSenderServer())" >
+                                <img src="/Admin/Content/Images/Panels/communication/communication-notification-settings.png">
+                                <div class="WebUni-panel-name">Уведомления</div>
+                                <div class="WebUni-panel-description">настройки</div>
+                            </a>
+                        </div>
+                    </div>
+					
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-WebUni-notif"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="4"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="WebUni-solutions" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Communications.Notification.Index())" >
+                                <img src="/Admin/Content/Images/Panels/communication/communication-notification.png">
+                                <div class="WebUni-panel-name">Уведомления</div>
+                                <div class="WebUni-panel-description">получатели</div>
+                            </a>
+                        </div>
+                    </div>
+                    
+					
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var options = {
+        min_width: 0,
+        cell_height: 40,
+        vertical_margin: 20,
+
+    };
+    var name = "WebUni-comm-panel1";
+    $('.grid-stack').gridstack(options);
+
+    $('.grid-stack').on('dragstop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    $('.grid-stack').on('resizestop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    var saved = $.cookie(name);
+    if (saved) {
+       panelLoadGridData(jQuery.parseJSON(saved));
+    }
+
+</script>

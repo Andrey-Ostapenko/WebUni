@@ -1,0 +1,283 @@
+﻿@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.Projects.Controllers
+@using livemenu.Common.Entities.Entities
+@using livemenu.Kernel.BWP.DynamicTables
+@using Microsoft.Practices.ServiceLocation
+@using livemenu.Helpers
+@using Unit = System.Web.UI.WebControls.Unit
+@model livemenu.Areas.Projects.Models.DynamicTableGridViewModel
+@{
+    Layout = null;
+
+    IEnumerable<DynamicTable> items;
+
+
+    if (Model.ApplicationID.HasValue)
+    {
+        items = ServiceLocator.Current.GetInstance<IDynamicTableService>().RawDataQueryable.Where(x => x.DynamicTableApplication.Select(a => a.ApplicationID).Distinct().Contains(Model.ApplicationID.Value)).AsEnumerable();
+    }
+    else
+    {
+        items = ServiceLocator.Current.GetInstance<IDynamicTableService>().RawDataQueryable.AsEnumerable();
+    }
+
+    items = items.ToList();
+
+}
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+}
+
+@using DevExpress.Data
+@using livemenu.Kernel.Settings
+@{
+
+    Layout = null;
+
+    //var settings = (ViewContext.Controller as DynamicTablesController).GetGridViewSettings();
+
+    var settings = new GridViewSettings();
+
+    settings.Settings.ShowFooter = true;
+
+    settings.Name = "DynamicTablesGridView";
+    settings.Width = new System.Web.UI.WebControls.Unit(100, UnitType.Percentage);
+    settings.Settings.ShowFilterRow = true;
+    settings.KeyFieldName = "ID";
+    if (!Model.ApplicationID.HasValue)
+    {
+        settings.Columns.Add(column =>
+        {
+            column.Width = new System.Web.UI.WebControls.Unit(4, UnitType.Pixel);
+            column.FieldName = "DisplayIndex";
+            column.Name = "DisplayIndex";
+            column.Caption = "№";
+            column.SortIndex = 1;
+            column.SortOrder = ColumnSortOrder.Ascending;
+            column.ReadOnly = true;
+            column.CellStyle.CssClass = "draggable-dynamicTables";
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            //  column.Width = new System.Web.UI.WebControls.Unit(100, UnitType.Pixel);
+            column.Name = "Applications";
+
+            column.FieldName = "Applications";
+            column.Caption = "Приложения";
+            column.ColumnType = MVCxGridViewColumnType.TokenBox;
+            //    column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+            //  column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+
+            var tokenBoxSettings = column.PropertiesEdit as TokenBoxProperties;
+            tokenBoxSettings.TextField = "Name";
+            tokenBoxSettings.ValueField = "ID";
+
+            //  tokenBoxSettings.ValueSeparator = ',';
+
+            tokenBoxSettings.ShowDropDownOnFocus = ShowDropDownOnFocusMode.Always;
+            tokenBoxSettings.ClientSideEvents.Init = "function (){$(window).trigger('resize');}";
+            tokenBoxSettings.ClientSideEvents.TokensChanged = "function (){$(window).trigger('resize');}";
+            tokenBoxSettings.AllowCustomTokens = false;
+            tokenBoxSettings.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+            tokenBoxSettings.DataSource = ServiceLocator.Current.GetInstance<IApplicationService>().GetAll();
+
+        });
+
+
+    }
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Group";
+        column.Caption = "Группа";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "DisplayName";
+        column.Caption = "Название";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Description";
+        column.Caption = "Описание";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Code";
+        column.Caption = "Код";
+    });
+
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Batch;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.DynamicTables.Name, Action = MVC.Projects.DynamicTables.ActionNames.GridViewPartial, appID = Model.ApplicationID };
+
+
+    settings.SettingsEditing.BatchUpdateRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.DynamicTables.Name, Action = MVC.Projects.DynamicTables.ActionNames.GridViewBatchUpdatePartial, appID = Model.ApplicationID };
+
+    settings.SettingsBehavior.AllowDragDrop = true;
+
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 50;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100", "500", "1000" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowGroupedColumns = true;
+    settings.Settings.ShowFooter = true;
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    //settings.EnableRowsCache = false;
+
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+    settings.SettingsBehavior.ConfirmDelete = true;
+
+    settings.CellEditorInitialize = (s, e) =>
+    {
+        ASPxEdit editor = (ASPxEdit)e.Editor;
+        editor.ValidationSettings.Display = Display.None;
+    };
+    settings.DataBound = (s, e) =>
+    {
+        if (Request.Params["resetfilters"] != null)
+            ((MVCxGridView)s).FilterExpression = null;
+    };
+
+    settings.Columns.Add(column =>
+    {
+        column.Name = "control";
+        column.Width = new Unit(100, UnitType.Pixel);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+            var id = DataBinder.Eval(c.DataItem, "ID");
+            var columns = (ICollection<DynamicColumn>)DataBinder.Eval(c.DataItem, "DynamicColumn");
+
+            var vis = columns != null && columns.Any();
+            ViewContext.Writer.Write(Html.StartEditButton(string.Format("ToStructureOrToData({1}, true)", name, id)));
+            if (vis)
+            {
+                ViewContext.Writer.Write(string.Format("<a class=\"btn  btn-xs btn-complete\" style=\"margin-left:13px;\" onclick=\"ToStructureOrToData({1})\"><i class=\"fa fa-table\"></i></a>", name, id));
+            }
+            ViewContext.Writer.Write(string.Format("<a class=\"btn  btn-xs btn-danger\" style=\"margin-left:13px;\" onclick=\"{0}.DeleteRow({1})\"><i class=\"fa fa-trash\"></i></a>", name, index));
+
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(string.Format("<a class=\"btn  btn-xs btn-info\" style=\"font-size:14px; \" onclick=\"{0}.AddNewRow()\"> <i class=\"fa fa-plus\"></i> новая база данных</a>", name)));
+        column.CellStyle.HorizontalAlign = System.Web.UI.WebControls.HorizontalAlign.Center;
+
+    });
+
+    settings.ClientSideEvents.EndCallback = "DynamicTablesTableEndCallback";
+    settings.ClientSideEvents.FocusedRowChanged = "DEFocusedRowChanged";
+
+    settings.ClientSideEvents.ColumnSorting = "GetSortedColumnIndex";
+    //settings.Styles.Row.CssClass = "draggable-dynamicTables";
+    if (!Model.ApplicationID.HasValue)
+    {
+        settings.HtmlRowPrepared = (s, e) =>
+        {
+            if (e.RowType == GridViewRowType.Data)
+            {
+                object displayIndex = e.GetValue("DisplayIndex");
+                if (displayIndex != null)
+                    e.Row.Attributes.Add("displayIndex", displayIndex.ToString());
+            }
+        };
+    }
+}
+
+
+@Html.DevExpress().GridView(settings).Bind(items).GetHtml()
+
+
+<script id="dxss_000" type="text/javascript">
+    $('#versionControlsContainer').hide();
+    
+    
+    dxo.BatchEditEndEditing.AddHandler(function (s, e) {
+        if (isFormulaMode())
+        {
+            e.cancel = true;
+        }
+    });
+
+    var currentEditCell= {}
+
+    dxo.BatchEditStartEditing.AddHandler(function (s, e) {
+       
+        var i = $('#formula-block');
+        if (i.hasClass('formula-mode')) {
+            e.cancel = true;
+            return;
+        }
+        
+        currentEditCell.fieldName = e.focusedColumn.fieldName;
+        currentEditCell.visibleIndex = e.visibleIndex;
+
+        if (preventEdit) {
+            preventEdit = false;
+            e.cancel = true;
+
+        }
+
+        
+        if (e.focusedColumn.name == "control" || e.focusedColumn.name == "DisplayIndex" )
+        {
+            e.cancel = true;
+        }
+        else if (e.focusedColumn.name == "Applications") {
+            setTimeout(function() {
+                var editor = s.GetEditor(e.focusedColumn.fieldName);
+                editor.AdjustControl();
+                editor.GetListBoxControl().AdjustControl();
+                $(window).trigger('resize');
+
+            }, 10);
+            
+        }
+        if (isFormula) {
+            var v = s.batchEditApi.GetCellValue(e.visibleIndex, e.focusedColumn.fieldName);
+            $('#formula-block').val(v);
+            $('#formula-block').data('cell', currentEditCell);
+            checkFormulaMode();
+            $('.canbeselectedcell').removeClass('selected-cell');
+        } else {
+            $('#formula-block').val('');
+            checkFormulaMode();
+            $('.canbeselectedcell').removeClass('selected-cell');
+        }
+    });
+
+    DynamicTablesEditing = true;
+    EditingDynamicTableStructure = false;
+</script>

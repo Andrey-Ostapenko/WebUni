@@ -1,0 +1,46 @@
+﻿@{
+    Layout = MVC.Shared.Views._MenuLayout;
+}
+<div class="sidebar-menu" id="main-menu">
+    <ul class="menu-items">
+        @*<li class="m-t-30 ">
+            <a href="@Url.Action(MVC.Settings.Home.Index())" data-pjax="#main-region" class="">
+                <span class="title">Панель</span>
+            </a>
+            <span class="icon-thumbnail"><i class="fa fa-th-list"></i></span>
+        </li>*@
+
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.Settings.Version.Index())" data-pjax="#main-region">
+                <span class="title">Версия</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-info"></i></span>
+        </li>
+
+
+        <li class="">
+            <a href="@Url.Action(MVC.Settings.Home.Applications())" class="">
+                <span class="title">Приложения</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-th"></i></span>
+        </li>
+
+        <li class="">
+            <a href="@Url.Action(MVC.Settings.Home.LoginPage())" data-pjax="#main-region" class="">
+                <span class="title">Логин</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-sign-in"></i></span>
+        </li>
+
+
+        @*<li class="">
+            <a href="@Url.Action(MVC.Settings.Home.Catalog())" data-pjax="#main-region" class="">
+                <span class="title">Сайт</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-link"></i></span>
+        </li>*@
+
+       
+    </ul>
+    <div class="clearfix"></div>
+</div>

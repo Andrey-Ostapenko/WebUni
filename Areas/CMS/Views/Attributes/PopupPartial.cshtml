@@ -1,0 +1,28 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc.UI
+@Html.DevExpress().PopupControl(settings =>
+        {
+            settings.Name = "attributePopup";
+            settings.CallbackRouteValues = new { Area = "CMS", Controller = "Attributes", Action = "EditPartial", agCode = "RegionAG" };
+            settings.CloseAction = CloseAction.OuterMouseClick;
+
+            settings.ResizingMode = ResizingMode.Postponed;
+            settings.AllowResize = true;
+            settings.ShowFooter = false;
+            settings.AllowDragging = true;
+            settings.EnableHotTrack = true;
+            settings.Height = Unit.Pixel(500);
+            settings.Width = 900;
+            // settings.ContentUrl = "/";
+            settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+            settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+            settings.LoadContentViaCallback = LoadContentViaCallback.OnFirstShow;
+            settings.ShowRefreshButton = true;
+            settings.ShowMaximizeButton = true;
+            settings.ShowPinButton = true;
+            //settings.sh = true;
+            settings.PopupElementID = "formDialogPopup";
+            settings.HeaderText = "Редактирование";
+
+        }).GetHtml()

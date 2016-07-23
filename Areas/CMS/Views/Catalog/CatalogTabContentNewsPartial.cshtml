@@ -1,0 +1,11 @@
+﻿@using livemenu.Common.Entities
+@model livemenu.Kernel.Catalog.CatalogItemCardModel
+
+@if (Model.CatalogItem.TemplateType == (long)CatalogItemTypeValue.Projects)
+{
+    <button class="btn btn-ci-common-enabled btn-default " onclick="transformToTemplate('@Url.Action(MVC.CMS.Catalog.TransformToTemplate(Model.ID))', null)" style="width: 100%; height: 54px;"><i class="fa fa-newspaper-o"></i> Новость</button>
+}
+else
+{
+    <button class="btn btn-default " style="width: 100%; height: 54px;" onclick="transformToTemplate('@Url.Action(MVC.CMS.Catalog.TransformToTemplate(Model.ID, CatalogItemTypeValue.Projects))', @((long) CatalogItemTypeValue.Projects))"><i class="fa fa-newspaper-o"></i> Сделать новостью</button>
+}

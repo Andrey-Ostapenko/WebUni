@@ -1,0 +1,137 @@
+﻿@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.IUniBlockWithGradient
+
+@Html.HiddenFor(x => x.UniViewGroupBackgroundGradient.BackgroundGradientCSS)
+@Html.HiddenFor(x => x.UniViewGroupBackgroundGradient.BackgroundGradientSource)
+
+@Html.HiddenFor(x => x.UniViewGroupBackgroundGradient.BackgroundHoverGradientCSS)
+@Html.HiddenFor(x => x.UniViewGroupBackgroundGradient.BackgroundHoverGradientSource)
+
+@Html.HiddenFor(x => x.UniViewGroupBackgroundGradient.BackgroundActiveGradientCSS)
+@Html.HiddenFor(x => x.UniViewGroupBackgroundGradient.BackgroundActiveGradientSource)
+
+<div class="form-group WebUni-form-group">
+    <label for="Height" class="col-sm-7 control-label">Градиент</label>
+    <div class="col-sm-5" style="float: right;">
+        <div class="checkbox WebUni-checkbox check-success ">
+            @{
+                var l = "c" + Model.CatalogItemID + "UniViewGroupBackgroundGradient.BackgroundGradientEnabled";
+            }
+            @Html.BasicCheckBoxFor(x => x.UniViewGroupBackgroundGradient.BackgroundGradientEnabled, new { id = l })
+            <label for="@l"></label>
+        </div>
+    </div>
+</div>
+
+<div class="form-group WebUni-form-group">
+    <label for="Height" class="col-sm-7 control-label">Градиент при наведении</label>
+    <div class="col-sm-5" style="float: right;">
+        <div class="checkbox WebUni-checkbox check-success ">
+            @{
+                l = "c" + Model.CatalogItemID + "UniViewGroupBackgroundGradient.BackgroundHoverGradientEnabled";
+            }
+            @Html.BasicCheckBoxFor(x => x.UniViewGroupBackgroundGradient.BackgroundHoverGradientEnabled, new { id = l })
+            <label for="@l"></label>
+        </div>
+    </div>
+</div>
+
+<div class="form-group WebUni-form-group">
+    <label for="Height" class="col-sm-7 control-label">Градиент при включении</label>
+    <div class="col-sm-5" style="float: right;">
+        <div class="checkbox WebUni-checkbox check-success ">
+            @{
+                l = "c" + Model.CatalogItemID + "UniViewGroupBackgroundGradient.BackgroundActiveGradientEnabled";
+            }
+            @Html.BasicCheckBoxFor(x => x.UniViewGroupBackgroundGradient.BackgroundActiveGradientEnabled, new { id = l })
+            <label for="@l"></label>
+        </div>
+    </div>
+</div>
+
+
+
+<ul class="nav nav-tabs nav-tabs-fillup WebUni-vg-tabs">
+    <li class="active">
+        <a data-toggle="tab" href="#@Model.CatalogItemID-gradient-before"><span>до наведения</span></a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#@Model.CatalogItemID-gradient-after"><span>при наведении</span></a>
+    </li>
+    <li>
+        <a data-toggle="tab" href="#@Model.CatalogItemID-gradient-active"><span>при включении</span></a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="@Model.CatalogItemID-gradient-before">
+        <div class="form-group WebUni-form-group-big">
+            <div class="row image-selector-wrapper">
+                <div id="backgroundGradientPreview" onclick="showModalForGradientGenerator('#UniViewGroupBackgroundGradient_BackgroundGradientCSS', '#backgroundGradientPreview', '#UniViewGroupBackgroundGradient_BackgroundGradientSource')" class="col-sm-6 col-md-6" style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center;">
+                </div>
+                @if (Model.UniViewGroupBackgroundGradient != null)
+                {
+                    <style>
+                        #backgroundGradientPreview @Html.Raw(Model.UniViewGroupBackgroundGradient.BackgroundGradientCSS)
+                        </style>
+                }
+                <div class="col-sm-6 col-md-6">
+                    <div class="row">
+                        <div class=" btn-group col-sm-9">
+                            <a onclick="showModalForGradientGenerator('#UniViewGroupBackgroundGradient_BackgroundGradientCSS', '#backgroundGradientPreview', '#UniViewGroupBackgroundGradient_BackgroundGradientSource')" class="btn btn-default">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane" id="@Model.CatalogItemID-gradient-after">
+        <div class="form-group WebUni-form-group-big">
+            <div class="row image-selector-wrapper">
+                <div id="backgroundHoverGradientPreview" onclick="showModalForGradientGenerator('#UniViewGroupBackgroundGradient_BackgroundHoverGradientCSS', '#backgroundHoverGradientPreview', '#UniViewGroupBackgroundGradient_BackgroundHoverGradientSource')" class="col-sm-6 col-md-6" style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center;">
+                </div>
+                @if (Model.UniViewGroupBackgroundGradient != null)
+            {
+                    <style>
+            #backgroundHoverGradientPreview @Html.Raw(Model.UniViewGroupBackgroundGradient.BackgroundHoverGradientCSS)
+                    </style>
+                }
+                <div class="col-sm-6 col-md-6">
+                    <div class="row">
+                        <div class=" btn-group col-sm-9">
+                            <a onclick="showModalForGradientGenerator('#UniViewGroupBackgroundGradient_BackgroundHoverGradientCSS', '#backgroundHoverGradientPreview', '#UniViewGroupBackgroundGradient_BackgroundHoverGradientSource')" class="btn btn-default">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane" id="@Model.CatalogItemID-gradient-active">
+        <div class="form-group WebUni-form-group-big">
+            <div class="row image-selector-wrapper">
+                <div id="backgroundActivePreview" onclick="showModalForGradientGenerator('#UniViewGroupBackgroundGradient_BackgroundActiveGradientCSS', '#backgroundActivePreview', '#UniViewGroupBackgroundGradient_BackgroundActiveGradientSource')" class="col-sm-6 col-md-6" style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center;">
+                </div>
+                @if (Model.UniViewGroupBackgroundGradient != null)
+            {
+                    <style>
+            #backgroundActivePreview @Html.Raw(Model.UniViewGroupBackgroundGradient.BackgroundActiveGradientCSS)
+                    </style>
+                }
+                <div class="col-sm-6 col-md-6">
+                    <div class="row">
+                        <div class=" btn-group col-sm-9">
+                            <a onclick="showModalForGradientGenerator('#UniViewGroupBackgroundGradient_BackgroundActiveGradientCSS', '#backgroundActivePreview', '#UniViewGroupBackgroundGradient_BackgroundActiveGradientSource')" class="btn btn-default">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniForgot
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniForgotDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.ForgotDesignInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    //initUniLineCard($('#WebUniForgotDesign-@Model.ID'), '@Model.ID');
+
+
+
+
+</script>

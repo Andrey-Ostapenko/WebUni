@@ -1,0 +1,563 @@
+﻿@{
+    Layout = null;
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var viewgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.GalleryDataColumns);
+    var viewVisible = viewgroup.IsVisible ? string.Empty : "hidden";
+    var viewcollapsed = viewgroup.IsCollapse ? "collapsed" : string.Empty;
+    var viewcollapsein = !viewgroup.IsCollapse ? "in" : string.Empty;
+
+    var templateviewgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.GalleryDataTemplate);
+    var templateviewVisible = templateviewgroup.IsVisible ? string.Empty : "hidden";
+    var templateviewcollapsed = templateviewgroup.IsCollapse ? "collapsed" : string.Empty;
+    var templateviewcollapsein = !templateviewgroup.IsCollapse ? "in" : string.Empty;
+
+    var toolsviewgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.GalleryDataTools);
+    var toolsviewVisible = toolsviewgroup.IsVisible ? string.Empty : "hidden";
+    var toolsviewcollapsed = toolsviewgroup.IsCollapse ? "collapsed" : string.Empty;
+    var toolsviewcollapsein = !toolsviewgroup.IsCollapse ? "in" : string.Empty;
+}
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniGallery
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.GalleryDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+    OnComplete = "OnCatalogItemFormCompleted"
+
+},
+
+                                    new
+                                    {
+                                        @class = "form-horizontal ",
+
+                                    }))
+
+{
+
+    <div class="line-cont" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+        @Html.HiddenFor(x => x.SectionCount)
+        @Html.HiddenFor(x => x.Section1Width)
+        @Html.HiddenFor(x => x.Section2Width)
+        @Html.HiddenFor(x => x.Section3Width)
+        @Html.HiddenFor(x => x.Section4Width)
+        @Html.HiddenFor(x => x.Section5Width)
+        @Html.HiddenFor(x => x.Section6Width)
+        @Html.HiddenFor(x => x.Section7Width)
+        @Html.HiddenFor(x => x.Section8Width)
+        @Html.HiddenFor(x => x.Section9Width)
+        @Html.HiddenFor(x => x.Section10Width)
+        @Html.HiddenFor(x => x.Section11Width)
+        @Html.HiddenFor(x => x.Section12Width)
+
+        @Html.HiddenFor(x => x.XSSectionCount)
+        @Html.HiddenFor(x => x.XSSection1Width)
+        @Html.HiddenFor(x => x.XSSection2Width)
+        @Html.HiddenFor(x => x.XSSection3Width)
+        @Html.HiddenFor(x => x.XSSection4Width)
+        @Html.HiddenFor(x => x.XSSection5Width)
+        @Html.HiddenFor(x => x.XSSection6Width)
+        @Html.HiddenFor(x => x.XSSection7Width)
+        @Html.HiddenFor(x => x.XSSection8Width)
+        @Html.HiddenFor(x => x.XSSection9Width)
+        @Html.HiddenFor(x => x.XSSection10Width)
+        @Html.HiddenFor(x => x.XSSection11Width)
+        @Html.HiddenFor(x => x.XSSection12Width)
+
+        @Html.HiddenFor(x => x.MDSectionCount)
+        @Html.HiddenFor(x => x.MDSection1Width)
+        @Html.HiddenFor(x => x.MDSection2Width)
+        @Html.HiddenFor(x => x.MDSection3Width)
+        @Html.HiddenFor(x => x.MDSection4Width)
+        @Html.HiddenFor(x => x.MDSection5Width)
+        @Html.HiddenFor(x => x.MDSection6Width)
+        @Html.HiddenFor(x => x.MDSection7Width)
+        @Html.HiddenFor(x => x.MDSection8Width)
+        @Html.HiddenFor(x => x.MDSection9Width)
+        @Html.HiddenFor(x => x.MDSection10Width)
+        @Html.HiddenFor(x => x.MDSection11Width)
+        @Html.HiddenFor(x => x.MDSection12Width)
+
+        @Html.HiddenFor(x => x.LGSectionCount)
+        @Html.HiddenFor(x => x.LGSection1Width)
+        @Html.HiddenFor(x => x.LGSection2Width)
+        @Html.HiddenFor(x => x.LGSection3Width)
+        @Html.HiddenFor(x => x.LGSection4Width)
+        @Html.HiddenFor(x => x.LGSection5Width)
+        @Html.HiddenFor(x => x.LGSection6Width)
+        @Html.HiddenFor(x => x.LGSection7Width)
+        @Html.HiddenFor(x => x.LGSection8Width)
+        @Html.HiddenFor(x => x.LGSection9Width)
+        @Html.HiddenFor(x => x.LGSection10Width)
+        @Html.HiddenFor(x => x.LGSection11Width)
+        @Html.HiddenFor(x => x.LGSection12Width)
+
+        @Html.HiddenFor(x => x.CarouselEnabled)
+        @Html.HiddenFor(x => x.CarouselWithBrowsing)
+
+
+        <div class="@viewVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.GalleryDataColumns">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-view-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@viewcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.GalleryDataColumns]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-view-acc" class="vg-acc-content collapse @viewcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-big-first">
+                            <label for="Height" class="col-sm-7 control-label">Колонки</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.SectionEnabled, new { data_init_plugin = "switchery_internal", onchange = "onVGElementsEnabledChanged($(this))", })
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group WebUni-form-group">
+                            <div class="col-sm-7 ">
+
+                                @Html.DropDownList("s", new SelectList(
+                                        new[]
+                                        {
+                                            new { Value = 0, Text = "На телефоне (меньше чем 768px)" },
+                                            new { Value = 1, Text = "На планшете (768px и выше)" },
+                                            new { Value = 2, Text = "На ноутбуке (992px и выше)" },
+                                            new { Value = 3, Text = "На десктопе (1200px и выше)" },
+                                        },
+                                        "Value",
+                                        "Text",
+                                        1),
+                                        new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select", onchange = "onLineSliderTypeChanged($(this), 'WebUniGalleryData-" + Model.ID + "')" }
+                                        )
+                            </div>
+                            <div class="col-sm-5" style="float: right;">
+
+                            </div>
+                        </div>
+
+
+
+                        <div class="line-sm">
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Количество колонок</label>
+                                <div class="col-sm-5" style="float: right;">
+                                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                        @Html.BasicCheckBoxFor(x => x.SMSectionEnabled, new { data_init_plugin = "switchery_internal" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="column-count-slider-wrapper">
+                                <div class="column-count-slider"></div>
+                            </div>
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Соотношение сторон</label>
+                                <div class="col-sm-5" style="float: right;">
+
+                                </div>
+                            </div>
+
+
+                            <div class="column-count-width-slider-wrapper">
+                                <div class="column-count-width-slider"></div>
+                            </div>
+
+                        </div>
+                        <div class="line-xs">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-8 control-label">Количество колонок</label>
+                                <div class="col-sm-4" style="float: right;">
+                                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                        @Html.BasicCheckBoxFor(x => x.XSSectionEnabled, new { data_init_plugin = "switchery_internal" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="column-count-slider-wrapper-xs">
+                                <div class="column-count-slider-xs"></div>
+                            </div>
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Соотношение сторон</label>
+                                <div class="col-sm-5" style="float: right;">
+
+                                </div>
+                            </div>
+
+
+                            <div class="column-count-width-slider-wrapper-xs">
+                                <div class="column-count-width-slider-xs"></div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="line-md">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-8 control-label">Количество колонок</label>
+                                <div class="col-sm-4" style="float: right;">
+                                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                        @Html.BasicCheckBoxFor(x => x.MDSectionEnabled, new { data_init_plugin = "switchery_internal" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="column-count-slider-wrapper-md">
+                                <div class="column-count-slider-md"></div>
+                            </div>
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Соотношение сторон</label>
+                                <div class="col-sm-5" style="float: right;">
+
+                                </div>
+                            </div>
+
+
+                            <div class="column-count-width-slider-wrapper-md">
+                                <div class="column-count-width-slider-md"></div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="line-lg">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-8 control-label">Количество колонок</label>
+                                <div class="col-sm-4" style="float: right;">
+                                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                        @Html.BasicCheckBoxFor(x => x.LGSectionEnabled, new { data_init_plugin = "switchery_internal" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="column-count-slider-wrapper-lg">
+                                <div class="column-count-slider-lg"></div>
+                            </div>
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Соотношение сторон</label>
+                                <div class="col-sm-5" style="float: right;">
+
+                                </div>
+                            </div>
+
+
+                            <div class="column-count-width-slider-wrapper-lg">
+                                <div class="column-count-width-slider-lg"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="@templateviewVisible vg-view vg-elements flat-panel-group">
+        <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.GalleryDataTemplate">
+            <div class="panel-heading" role="tab" id="headingOne1">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-template-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@templateviewcollapsed">
+                        @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.GalleryDataTemplate]
+                    </a>
+                </h4>
+            </div>
+            <div id="vg-@Model.CatalogItemID-template-acc" class="vg-acc-content collapse @templateviewcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                <div class="panel-body">
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-big-first">
+                        <label for="LayoutEnabled" class="col-sm-7 control-label">Включить макет</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                @Html.BasicCheckBoxFor(x => x.LayoutEnabled, new { data_init_plugin = "switchery_internal", onchange = "onVGElementsEnabledChanged($(this))", })
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="radio WebUni-radio radio-success">
+                        <input type="radio" name="carousel-template" value="carousel" id="gallery-carousel-radio" @(Model.CarouselEnabled ? "checked=\"checked\"":"")>
+                        <label for="gallery-carousel-radio">Карусель</label>
+                        <input type="radio" name="carousel-template" value="carouselWithBrowsing" id="gallery-carouselwithbrowsing-radio" @(Model.CarouselWithBrowsing ? "checked=\"checked\"":"")>
+                        <label for="gallery-carouselwithbrowsing-radio">Карусель с просмотром</label>
+                    </div>
+
+                    <div class="form-group WebUni-form-group" hidden="hidden">
+                        <label for="TapeEnabled" class="col-sm-7 control-label">Лента</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success ">
+                                @{
+                                    var l = "c" + Model.CatalogItemID + "TapeEnabled";
+                                }
+                                @Html.BasicCheckBoxFor(x => x.TapeEnabled, new { id = l })
+                                <label for="@l"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*<div class="form-group WebUni-form-group">
+                        <label for="CarouselEnabled" class="col-sm-7 control-label">Карусель</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success ">
+                                @{
+                                    l = "c" + Model.CatalogItemID + "CarouselEnabled";
+                                }
+                                @Html.BasicCheckBoxFor(x => x.CarouselEnabled, new { id = l })
+                                <label for="@l"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group">
+                        <label for="CarouselWithBrowsing" class="col-sm-7 control-label">Карусель с просмотром</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success ">
+                                @{
+                                    l = "c" + Model.CatalogItemID + "CarouselWithBrowsing";
+                                }
+                                @Html.BasicCheckBoxFor(x => x.CarouselWithBrowsing, new { id = l })
+                                <label for="@l"></label>
+                            </div>
+                        </div>
+                    </div>*@
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-big-first" hidden="hidden">
+                        <label for="Height" class="col-sm-7 control-label">Тип</label>
+                        <div class="col-sm-5">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="@toolsviewVisible vg-view vg-elements flat-panel-group">
+        <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.GalleryDataTools">
+            <div class="panel-heading" role="tab" id="headingOne1">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-tools-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@toolsviewcollapsed">
+                        @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.GalleryDataTools]
+                    </a>
+                </h4>
+            </div>
+            <div id="vg-@Model.CatalogItemID-tools-acc" class="vg-acc-content collapse @toolsviewcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                <div class="panel-body">
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-big-first">
+                        <label for="LoupeOnHover" class="col-sm-7 control-label">Лупа при наведении</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                @Html.BasicCheckBoxFor(x => x.LoupeOnHover, new { data_init_plugin = "switchery_internal", onchange = "onVGElementsEnabledChanged($(this))", })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group">
+                        <label for="SmoothBrowsing" class="col-sm-7 control-label">Плавный просмотр</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success ">
+                                @{
+                                    l = "c" + Model.CatalogItemID + "SmoothBrowsing";
+                                }
+                                @Html.BasicCheckBoxFor(x => x.SmoothBrowsing, new { id = l })
+                                <label for="@l"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group">
+                        <label for="ZoomOnScroll" class="col-sm-7 control-label">Зум при скролле</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success ">
+                                @{
+                                    l = "c" + Model.CatalogItemID + "ZoomOnScroll";
+                                }
+                                @Html.BasicCheckBoxFor(x => x.ZoomOnScroll, new { id = l })
+                                <label for="@l"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-big-first" hidden="hidden">
+                        <label for="BrowsingOnActive" class="col-sm-7 control-label">Просмотр при включении</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                @Html.BasicCheckBoxFor(x => x.BrowsingOnActive, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-group">
+                        <label for="Height" class="col-sm-8 control-label">Настройки лупы при наведении</label>
+                        <div class="col-sm-4" style="float: right;">
+
+                        </div>
+                    </div>
+                    
+                    <ul class="nav nav-tabs nav-tabs-fillup WebUni-vg-tabs">
+                        <li>
+                            <a data-toggle="tab" href="#@Model.CatalogItemID-loupe-xs"><span>< 768px</span></a>
+                        </li>
+                        <li class="active">
+                            <a data-toggle="tab" href="#@Model.CatalogItemID-loupe-sm"><span>768px и выше</span></a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#@Model.CatalogItemID-loupe-md"><span>992px и выше</span></a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#@Model.CatalogItemID-loupe-lg"><span>1200px и выше</span></a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane " id="@Model.CatalogItemID-loupe-xs">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-8 control-label">Положение лупы при наведении</label>
+                                <div class="col-sm-4" style="float: right;">
+
+                                </div>
+                            </div>
+
+                            <div class="radio WebUni-radio radio-success">
+                                @Html.RadioButtonFor(x => x.LoupeXSPosition, 10, new { id = "LoupeXSPosition0" })
+                                <label class="control-label" for="LoupeXSPosition0">Лупа слева</label>
+                                
+                                @Html.RadioButtonFor(x => x.LoupeXSPosition, 1, new { id = "LoupeXSPosition1" })
+                                <label class="control-label" for="LoupeXSPosition1">Лупа внутри картинки</label>
+
+                                @Html.RadioButtonFor(x => x.LoupeXSPosition, 2, new { id = "LoupeXSPosition2" })
+                                <label class="control-label" for="LoupeXSPosition2">Лупа справа</label>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane active" id="@Model.CatalogItemID-loupe-sm">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Положение лупы при наведении</label>
+                                <div class="col-sm-5" style="float: right;">
+
+                                </div>
+                            </div>
+
+                            <div class="radio WebUni-radio radio-success">
+                                @Html.RadioButtonFor(x => x.LoupeSMPosition, 10, new { id = "LoupeSMPosition0" })
+                                <label class="control-label" for="LoupeSMPosition0">Лупа слева</label>
+
+                                @Html.RadioButtonFor(x => x.LoupeSMPosition, 1, new { id = "LoupeSMPosition1" })
+                                <label class="control-label" for="LoupeSMPosition1">Лупа внутри картинки</label>
+
+                                @Html.RadioButtonFor(x => x.LoupeSMPosition, 2, new { id = "LoupeSMPosition2" })
+                                <label class="control-label" for="LoupeSMPosition2">Лупа справа</label>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane" id="@Model.CatalogItemID-loupe-md">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-8 control-label">Положение лупы при наведении</label>
+                                <div class="col-sm-4" style="float: right;">
+
+                                </div>
+                            </div>
+
+                            <div class="radio WebUni-radio radio-success">
+                                @Html.RadioButtonFor(x => x.LoupeMDPosition, 10, new { id = "LoupeMDPosition0" })
+                                <label class="control-label" for="LoupeMDPosition0">Лупа слева</label>
+
+                                @Html.RadioButtonFor(x => x.LoupeMDPosition, 1, new { id = "LoupeMDPosition1" })
+                                <label class="control-label" for="LoupeMDPosition1">Лупа внутри картинки</label>
+
+                                @Html.RadioButtonFor(x => x.LoupeMDPosition, 2, new { id = "LoupeMDPosition2" })
+                                <label class="control-label" for="LoupeMDPosition2">Лупа справа</label>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane" id="@Model.CatalogItemID-loupe-lg">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-8 control-label">Положение лупы при наведении</label>
+                                <div class="col-sm-4" style="float: right;">
+
+                                </div>
+                            </div>
+
+
+
+                            <div class="radio WebUni-radio radio-success">
+                                @Html.RadioButtonFor(x => x.LoupeLGPosition, 10, new { id = "LoupeLGPosition0" })
+                                <label class="control-label" for="LoupeLGPosition0">Лупа слева</label>
+
+                                @Html.RadioButtonFor(x => x.LoupeLGPosition, 1, new { id = "LoupeLGPosition1" })
+                                <label class="control-label" for="LoupeLGPosition1">Лупа внутри картинки</label>
+
+                                @Html.RadioButtonFor(x => x.LoupeLGPosition, 2, new { id = "LoupeLGPosition2" })
+                                <label class="control-label" for="LoupeLGPosition2">Лупа справа</label>
+
+
+                                @*<label class="col-sm-7 control-label" for="">Лупа слева</label>
+                                <div class="col-sm-5" style="float: right;">
+                                    <div class="radio WebUni-checkbox radio-success">
+                                        @Html.RadioButtonFor(x => x.LoupeLGPosition, 10, new { id = "LoupeLGPosition0" })
+                                        <label for="LoupeLGPosition0"></label>
+                                    </div>
+                                </div>
+                                <label class="col-sm-7 control-label" for="">Лупа внутри картинки</label>
+                                <div class="col-sm-5" style="float: right;">
+                                    <div class="radio WebUni-checkbox radio-success">
+                                        @Html.RadioButtonFor(x => x.LoupeLGPosition, 1, new { id = "LoupeLGPosition1" })
+                                        <label for="LoupeLGPosition1"></label>
+                                    </div>
+                                </div>
+                                <label class="col-sm-7 control-label" for="">Лупа справа</label>
+                                <div class="col-sm-5" style="float: right;">
+                                    <div class="radio WebUni-checkbox radio-success">
+                                        @Html.RadioButtonFor(x => x.LoupeLGPosition, 2, new { id = "LoupeLGPosition2" })
+                                        <label for="LoupeLGPosition2"></label>
+                                    </div>
+                                </div>*@
+
+
+
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

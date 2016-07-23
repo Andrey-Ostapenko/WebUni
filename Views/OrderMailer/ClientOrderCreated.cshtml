@@ -1,0 +1,158 @@
+﻿@using livemenu.Kernel.Configuration
+@using Microsoft.Practices.ServiceLocation
+@using Mvc.Mailer
+@model livemenu.Common.Entities.Entities.Order
+
+@{
+    Layout = null;
+    var ba = ServiceLocator.Current.GetInstance<IConfigurationService>().GetBWPConfig().BaseApplication.Name;
+}
+<html>
+<head>
+    <link href="" rel="stylesheet">
+    @*<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>*@
+
+</head>
+<body>
+    <style>
+        .right {
+            text-align: right;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+
+        .page-header {
+            padding-bottom: 10px;
+        }
+    </style>
+    @{
+        var payment = Model.IsMoneyCache ?? false ? "Наличные" : "Безналичный платеж";
+    }
+    @Styles.Render(Url.Abs("/Content/bootstrap.min.css"))
+    <div class="page-header">
+        <div class="container" style="margin-top: 20px">
+            <h1 style="margin-top: 20px">Заказ #@Model.Number оформлен!</h1>
+
+
+            <p>Дата: @Model.CreationDate.Value.ToString("dd.MM.yyyy")</p>
+
+            <p>Способ оплаты: @payment</p>
+            <p>
+                Комментарий:
+                @if (string.IsNullOrEmpty(Model.Comment))
+                {
+                    <i>не указано</i>
+                }
+                else
+                {
+                    @Model.Comment
+                }
+            </p>
+
+            @if (Model.OrderDeliveryTypeID.HasValue && Model.OrderDeliveryTypeID.Value != 3)
+            {
+                //      <p>Получение товара: @Model.OrderDeliveryType.Name</p>
+                @*if (@Model.OrderDeliveryTypeID == 1)
+                    {
+                        <p>Пункт самовывоза: <strong>@Model.Storage.Name</strong> @Model.Storage.Address</p>
+                    }
+                    else
+                    {
+                        <p>Адрес доставки: @Model.DeliveryAddress</p>
+                    }*@
+            }
+        </div>
+    </div>
+    <div class="">
+        <div class="container">
+            @if (ba == "nucode2.WebUni.ru" || ba == "www.nu-code.ru")
+            {
+                <div class="row">
+                    @{
+                        string name = Model.Client.Login;
+                        var np = Model.Client.NaturalPerson.FirstOrDefault();
+                        if (np != null && !string.IsNullOrEmpty(np.FirstName))
+                        {
+                            name = np.FirstName;
+                        }
+                    }
+                    Уважаемая(ый) @name,
+                    Спасибо за Ваш заказ! В ближайшее время наши менеджеры свяжутся с Вами.
+
+                    С уважением, Ваш NuCode
+                </div>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Артикул</th>
+                                            <th>Наименование</th>
+                                            <th>Количество</th>
+                                            <th>Стоимость</th>
+                                            <th>Итого</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            double total = 0;
+                                        }
+                                        @foreach (var item in Model.OrderElement)
+                                        {
+                                            var safeP = (double)(item.CustomPrice ?? 0);
+                                            var price = item.Count * (safeP);
+                                            total += price;
+
+
+                                            <tr>
+                                                <th scope="row">@item.DisplayIndex</th>
+                                                <td>@item.Articul</td>
+                                                <td>@item.Name</td>
+                                                <td class="right">@item.Count</td>
+
+                                                <td class="right">@safeP.ToString("N2")</td>
+                                                <td class="right">@price.ToString("N2")</td>
+                                            </tr>
+                                        }
+
+                                        @if (Model.OrderDeliveryTypeID == 2)
+                                        {
+                                            total += (double)(Model.DeliveryPrice ?? 0);
+                                            var dprice = (Model.DeliveryPrice ?? 0).ToString("N2");
+                                            <tr>
+                                                <td colspan="5" style="text-align: right">Доставка</td>
+
+                                                <td class="right">@dprice</td>
+                                            </tr>
+                                        }
+
+                                        <tr>
+                                            <td colspan="5" style="text-align: right">Итого</td>
+
+                                            <td class="right">@total.ToString("N2")</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                                            }
+
+
+
+        </div>
+    </div>
+
+
+</body>
+</html>

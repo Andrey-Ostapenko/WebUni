@@ -1,0 +1,91 @@
+﻿@{
+    Layout = null;
+
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var viewgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.PageSEOPage);
+    var viewVisible = viewgroup.IsVisible ? string.Empty : "hidden";
+    var viewcollapsed = viewgroup.IsCollapse ? "collapsed" : string.Empty;
+    var viewcollapsein = !viewgroup.IsCollapse ? "in" : string.Empty;
+}
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniPage
+@using (Ajax.BeginForm(MVC.CMS.WebUni.PageSEOSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    OnComplete = "OnCatalogItemFormCompleted"
+},
+new
+{
+    @class = "form-horizontal ",
+}))
+{
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+        <div class="@viewVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.PageSEOPage">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-view-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@viewcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.PageSEOPage]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-view-acc" class="vg-acc-content collapse @viewcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Включить SEO</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.UseInSitemap, new { data_init_plugin = "switchery_internal", onchange = "onVGElementsEnabledChanged($(this))", })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group WebUni-form-group">
+                        <label for="Height" class="col-sm-7 control-label">Использовать название как заголовок</label>
+                        <div class="col-sm-5" style="float: right;">
+                            <div class="checkbox WebUni-checkbox check-success ">
+                                @{
+                                    var l = "c" + Model.CatalogItemID + "SEOUseNameAsTitle";
+                                }
+                                @Html.BasicCheckBoxFor(x => x.SEOUseNameAsTitle, new { id = l })
+                                <label for="@l"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-group">
+                        <label for="Height" class="col-sm-7 control-label">Пользовательский заголовок</label>
+                        <div class="col-sm-5" style="float: right;">
+                            @Html.TextBoxFor(m => m.SEOTitle, new { @class = "form-control"})
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-group">
+                        <label for="Height" class="col-sm-7 control-label">Описание</label>
+                        <div class="col-sm-5" style="float: right;">
+                                @Html.TextAreaFor(m => m.SEODescription, new { @class = "form-control", rows = 5 })
+                        </div>
+                    </div>
+
+                    <div class="form-group WebUni-form-group WebUni-form-group-group">
+                        <label for="Height" class="col-sm-7 control-label">Ключевые слова</label>
+                        <div class="col-sm-5" style="float: right;">
+                            @Html.TextAreaFor(m => m.SEOKeywords, new { @class = "form-control", rows = 10 })
+                        </div>
+                    </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+}

@@ -1,0 +1,25 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniCaption
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniCaptionData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.CaptionDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    initUniCaptionCard($('#WebUniCaptionData-@Model.ID'), @Model.ID);
+</script>

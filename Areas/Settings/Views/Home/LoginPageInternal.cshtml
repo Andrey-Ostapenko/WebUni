@@ -1,0 +1,9 @@
+﻿@{
+    Layout = null;
+}
+
+@model livemenu.Common.Kernel.Settings.ApplicationSettings
+
+<div id="system-settings-edit">
+    @{ Html.RenderPartial(MVC.Settings.Home.Views.LoginPageInternalEdit, Model); }
+</div>

@@ -1,0 +1,20 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniVacancies
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniVacanciesData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.VacanciesDataInternal, Model); }
+        </div>
+
+    </div>
+</div>

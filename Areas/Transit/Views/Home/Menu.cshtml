@@ -1,0 +1,33 @@
+﻿@using livemenu.Kernel.Executing
+@{
+    Layout = MVC.Shared.Views._MenuLayout;
+}
+<div class="sidebar-menu" id="main-menu">
+    <ul class="menu-items">
+		<li class="m-t-30 ">
+            <a href="@Url.Action(MVC.Transit.Home.Index())"  class="">
+                <span class="title">Панель</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-th-list"></i></span>
+        </li>
+
+		<li class="">
+            <a href="@Url.Action(MVC.Transit.Home.Module())"  >
+                <span class="title">Подключить</span>
+				</a>
+            <span class="icon-thumbnail "><i class="fa fa-truck"></i></span>
+        </li>
+		
+
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.FileManager.Index(LMExecutingType.Transit))"  class="detailed">
+                <span class="title">Файлы</span>
+                <span class="details">Управление файлами</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-cloud"></i></span>
+		</li>	
+    
+     
+    </ul>
+    <div class="clearfix"></div>
+</div>

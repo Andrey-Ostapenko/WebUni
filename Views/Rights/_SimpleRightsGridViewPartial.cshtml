@@ -1,0 +1,62 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+
+
+
+@{
+    
+    
+    
+	var grid = Html.DevExpress().GridView(settings => {
+        settings.Name = "SimpleRightsGridView";
+        settings.CallbackRouteValues = new { Controller = "Rights", Action = "SimpleRightsGridViewPartial", id = (long)ViewBag.RightSubjectID };
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+   
+        //settings.ClientSideEvents.BeginCallback = "function(s, e) { LoadingPanel.Show(); }";
+        //settings.ClientSideEvents.EndCallback = "function(s, e) { LoadingPanel.Hide(); }";
+        
+        
+        settings.Width = new Unit(100, UnitType.Percentage);
+        settings.CommandColumn.Visible = false;
+
+        settings.KeyFieldName = "SimpleRightObject";
+
+		settings.SettingsPager.Visible = false;
+		settings.Settings.ShowGroupPanel = false;
+		settings.Settings.ShowFilterRow = true;
+		settings.SettingsBehavior.AllowSelectByRowClick = false;
+
+        
+        settings.Columns.Add(column =>
+        {
+            column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+            column.Caption = "Название";
+            column.FieldName = "Name";
+            column.ReadOnly = true;
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+        });
+        settings.Columns.Add(set =>
+        {
+            set.Width = new Unit(49, UnitType.Pixel);
+            set.SetDataItemTemplateContent(a =>
+            {
+                var sid = DataBinder.Eval(a.DataItem, "SimpleRightValueID");
+
+                string allowedStyle = "btn-white";
+                if ((bool)DataBinder.Eval(a.DataItem, "Value"))
+                {
+                    allowedStyle = "btn-success checked";
+                }
+
+                ViewContext.Writer.Write(string.Format("<button class='btn btn-xs {0} ' onclick='OnRightsSimpleCheckedChanged( \"{1} \", {2}, {3}, GetRightsCatalogCheckedValue($(this)))' ", allowedStyle, Url.Action(MVC.Rights.SimpleRightsChanged()), (long)ViewBag.RightSubjectID, sid) + " ><i class='fa fa-check'></i></button>");
+            });
+        });
+ //       settings.Columns["Value"].Width = new Unit(1, UnitType.Percentage);
+			});
+           
+		if (ViewData["EditError"] != null){
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()

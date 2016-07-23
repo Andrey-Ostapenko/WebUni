@@ -1,0 +1,44 @@
+﻿@{
+    Layout = MVC.Shared.Views._MenuLayout;
+}
+
+@model  livemenu.Models.Menu.MenuModel
+<div class="sidebar-menu" id="main-menu">
+    <ul class="menu-items">
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.Cloud.Home.Index())"  class="">
+                <span class="title">Панель</span>
+            </a>
+            <span class="icon-thumbnail"><i class="fa fa-th-list"></i></span>
+        </li>
+
+		<li class="">
+            <a href="@Url.Action(MVC.Cloud.Home.ControlPanel())"   class="">
+                <span class="title">WebUni</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-play"></i></span>
+        </li>
+		
+		
+		<li class="">
+            <a href="@Url.Action(MVC.Cloud.Home.Server())"   class="">
+                <span class="title">Сервер</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-tasks"></i></span>
+        </li>
+		
+		<li class="">
+            <a href="@Url.Action(MVC.Cloud.Home.Backup())"  class="detailed">
+                <span class="title">Архив</span>
+                <span class="details">Резервные копии</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-archive"></i></span>
+        </li>
+			
+		       
+
+        
+    </ul>
+    <div class="clearfix"></div>
+</div>
+

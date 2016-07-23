@@ -1,0 +1,1262 @@
+﻿@{ Layout = null;}
+
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.SiteGroupPriceListData
+
+
+@using (Ajax.BeginForm(MVC.CMS.Catalog.SiteGroupPriceListDataCardSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "SiteGroupPriceListDataCard",
+    InsertionMode = InsertionMode.Replace,
+    OnComplete = "SiteGroupPriceListDetailGridView.PerformCallback();"
+}))
+{
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.CatalogItemID)
+    @Html.HiddenFor(m => m.PriceListElementID)
+
+
+    <div class="row">
+        <div class="col-sm-4 p-t-20">
+
+            <div class="form-group form-group-default">
+
+                <div class="checkbox check-success">
+                    @Html.BasicCheckBoxFor(x => x.ShowBuyButton)
+                    @*<input type="checkbox" checked="checked" value="1" id="IsActive">
+                    *@
+                    <label for="ShowBuyButton">Показывать кнопку "Купить"</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 p-t-20">
+            <div class="form-group form-group-default">
+
+                <div class="checkbox check-success">
+                    @Html.BasicCheckBoxFor(x => x.ShowPrice)
+                    @*<input type="checkbox" checked="checked" value="1" id="IsActive">
+                    *@
+                    <label for="ShowPrice">Показывать цену</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 p-t-20">
+            <div class="form-group form-group-default">
+
+                <div class="checkbox check-success">
+                    @Html.BasicCheckBoxFor(x => x.ShowDetails)
+                    @*<input type="checkbox" checked="checked" value="1" id="IsActive">
+                    *@
+                    <label for="ShowDetails">Показывать описание</label>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="row">
+
+        <div class="col-sm-12 p-t-20">
+
+            <div class="form-group">
+                <label>Изображение</label>
+
+                <div class="row image-selector-wrapper">
+                    <div class="col-sm-3 col-md-3" style="width: 150px; height: 100px; border-style: solid; border-width: 1px; border-color: #CCCCCC; border-radius: 0px; text-align: center; ">
+
+
+                        <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)">
+                            @{
+    var imageUrlModel = Model.ImageUrl;
+    var imageUrl = string.IsNullOrEmpty(imageUrlModel) ? Url.Content("~/BWP/Resources/Images/empty_image.png") : Url.Content("~/" + imageUrlModel);
+                            }
+                            @Html.HiddenFor(m => m.ImageUrl, new { @class = "imgItem" })
+
+                            <img style="max-height: 98px; max-width: 148px;  " alt="нет" src="@imageUrl" />
+                        </a>
+
+
+
+                    </div>
+
+                    <div class="col-sm-9 col-md-9">
+                        <div class="row">
+                            <div class=" btn-group col-sm-9">
+                                <a onclick="OpenFM('@Url.Action(MVC.FileManager.Modal())', $(this), onImageSelected)" class="btn btn-default">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <a onclick="imageEditDelete($(this))" class="btn btn-danger">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row sm-p-t-20">
+                            <p class="bold image-wrapper-text">@Model.ImageUrl</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label>Текст</label>
+                @Html.TextAreaFor(m => m.Text, new { @class = "ckeditor_internal" })
+            </div>
+
+            <div class="form-group">
+                <label>Кнопка "Купить"</label>
+                @Html.TextAreaFor(m => m.BuyButton, new { @class = "ckeditor_internal" })
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-sm-12 p-t-20">
+            <div class="form-group">
+                <label>Настройки кнопки 'Купить'</label>
+            </div>
+            <div class="panel panel-group panel-transparent form-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-buy-paddings">Отступы</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-buy-paddings">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Отступы снаружи по вертикали</label>
+                                @Html.TextBoxFor(m => m.BuyButtonExternalVerticalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы снаружи по горизонтали</label>
+                                @Html.TextBoxFor(m => m.BuyButtonExternalHorizontalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы по вертикали</label>
+                                @Html.TextBoxFor(m => m.BuyButtonInternalVerticalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы по горизонтали</label>
+                                @Html.TextBoxFor(m => m.BuyButtonInternalHorizontalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-buy-border">Границы</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-buy-border">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Толщина границы</label>
+                                @Html.TextBoxFor(m => m.BuyButtonBorderThickness, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Использовать цвет границы</label>
+                                @Html.BasicCheckBoxFor(m => m.BuyButtonBorderColorEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Цвет границы</label>
+                                @{
+    var item = Model.BuyButtonBorderColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.BuyButtonBorderColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.BuyButtonBorderColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Цвет границы при наведении</label>
+
+                                @{
+    item = Model.BuyButtonHoverBorderColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.BuyButtonHoverBorderColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.BuyButtonHoverBorderColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-buy-back">Фон</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-buy-back">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Использовать фон</label>
+                                @Html.BasicCheckBoxFor(m => m.BuyButtonBackgroundEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Фон</label>
+                                @{
+    item = Model.BuyButtonBackgroundColor
+        ;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.BuyButtonBackgroundColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.BuyButtonBackgroundColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Фон при наведении</label>
+                                @{
+    item = Model.BuyButtonHoverBackgroundColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.BuyButtonHoverBackgroundColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.BuyButtonHoverBackgroundColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-buy-font">Шрифт</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-buy-font">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Местоположение</label>
+                                @Html.TextBoxFor(m => m.BuyButtonAlign, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Размер</label>
+                                @Html.TextBoxFor(m => m.BuyButtonSize, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.BuyButtonBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.BuyButtonBoldHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Курсив</label>
+                                @Html.BasicCheckBoxFor(m => m.BuyButtonItalicEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Курсив при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.BuyButtonItalicHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Подчеркивать</label>
+                                @Html.BasicCheckBoxFor(m => m.BuyButtonUnderlineEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Подчеркивать при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.BuyButtonUnderlineHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                           
+
+
+                            <div class="form-group">
+                                <label>Цвет заголовка</label>
+                                @{
+    item = Model.BuyButtonColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.BuyButtonColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.BuyButtonColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+                            <div class="form-group">
+                                <label>Цвет заголовка при наведении</label>
+                                @{
+    item = Model.BuyButtonHoverColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.BuyButtonHoverColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.BuyButtonHoverColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Адаптивная верстка текста</label>
+                                @Html.BasicCheckBoxFor(m => m.BuyButtonAdaptiveFontSizeEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+
+                            <div class="form-group">
+                                <label>астройка адаптивной верскти</label>
+                                @Html.TextBoxFor(m => m.BuyButtonAdaptiveFontSizeCoef, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    
+    
+    
+    <div class="row">
+
+        <div class="col-sm-12 p-t-20">
+            <div class="form-group">
+                <label>Настройки цены</label>
+            </div>
+            <div class="panel panel-group panel-transparent form-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-price-paddings">Отступы</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-price-paddings">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Отступы снаружи по вертикали</label>
+                                @Html.TextBoxFor(m => m.PriceExternalVerticalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы снаружи по горизонтали</label>
+                                @Html.TextBoxFor(m => m.PriceExternalHorizontalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы по вертикали</label>
+                                @Html.TextBoxFor(m => m.PriceInternalVerticalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы по горизонтали</label>
+                                @Html.TextBoxFor(m => m.PriceInternalHorizontalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-price-border">Границы</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-price-border">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Толщина границы</label>
+                                @Html.TextBoxFor(m => m.PriceBorderThickness, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Использовать цвет границы</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceBorderColorEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Цвет границы</label>
+                                @{
+    item = Model.PriceBorderColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.PriceBorderColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.PriceBorderColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Цвет границы при наведении</label>
+
+                                @{
+    item = Model.PriceHoverBorderColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.PriceHoverBorderColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.PriceHoverBorderColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-price-back">Фон</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-price-back">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Использовать фон</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceBackgroundEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Фон</label>
+                                @{
+    item = Model.PriceBackgroundColor
+        ;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.PriceBackgroundColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.PriceBackgroundColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Фон при наведении</label>
+                                @{
+    item = Model.PriceHoverBackgroundColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.PriceHoverBackgroundColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.PriceHoverBackgroundColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-price-font">Шрифт</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-price-font">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Местоположение</label>
+                                @Html.TextBoxFor(m => m.PriceAlign, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Размер</label>
+                                @Html.TextBoxFor(m => m.PriceSize, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceBoldHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Курсив</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceItalicEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Курсив при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceItalicHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Подчеркивать</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceUnderlineEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Подчеркивать при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceUnderlineHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Цвет заголовка</label>
+                                @{
+    item = Model.PriceColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.PriceColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.PriceColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+                            <div class="form-group">
+                                <label>Цвет заголовка при наведении</label>
+                                @{
+    item = Model.PriceHoverColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.PriceHoverColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.PriceHoverColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Адаптивная верстка текста</label>
+                                @Html.BasicCheckBoxFor(m => m.PriceAdaptiveFontSizeEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+
+                            <div class="form-group">
+                                <label>астройка адаптивной верскти</label>
+                                @Html.TextBoxFor(m => m.PriceAdaptiveFontSizeCoef, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    
+    <div class="row">
+
+        <div class="col-sm-12 p-t-20">
+            <div class="form-group">
+                <label>Настройки описания</label>
+            </div>
+            <div class="panel panel-group panel-transparent form-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-desc-paddings">Отступы</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-desc-paddings">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Отступы снаружи по вертикали</label>
+                                @Html.TextBoxFor(m => m.DetailsExternalVerticalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы снаружи по горизонтали</label>
+                                @Html.TextBoxFor(m => m.DetailsExternalHorizontalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы по вертикали</label>
+                                @Html.TextBoxFor(m => m.DetailsInternalVerticalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы по горизонтали</label>
+                                @Html.TextBoxFor(m => m.DetailsInternalHorizontalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-desc-border">Границы</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-desc-border">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Толщина границы</label>
+                                @Html.TextBoxFor(m => m.DetailsBorderThickness, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Использовать цвет границы</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsBorderColorEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Цвет границы</label>
+                                @{
+    item = Model.DetailsBorderColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.DetailsBorderColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.DetailsBorderColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Цвет границы при наведении</label>
+
+                                @{
+    item = Model.DetailsHoverBorderColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.DetailsHoverBorderColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.DetailsHoverBorderColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-desc-back">Фон</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-desc-back">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Использовать фон</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsBackgroundEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Фон</label>
+                                @{
+    item = Model.DetailsBackgroundColor
+        ;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.DetailsBackgroundColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.DetailsBackgroundColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Фон при наведении</label>
+                                @{
+    item = Model.DetailsHoverBackgroundColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.DetailsHoverBackgroundColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.DetailsHoverBackgroundColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-desc-font">Шрифт</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-desc-font">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Местоположение</label>
+                                @Html.TextBoxFor(m => m.DetailsAlign, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Размер</label>
+                                @Html.TextBoxFor(m => m.DetailsSize, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsBoldHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Курсив</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsItalicEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Курсив при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsItalicHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Подчеркивать</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsUnderlineEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Подчеркивать при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsUnderlineHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Цвет заголовка</label>
+                                @{
+    item = Model.DetailsColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.DetailsColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.DetailsColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+                            <div class="form-group">
+                                <label>Цвет заголовка при наведении</label>
+                                @{
+    item = Model.DetailsHoverColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.DetailsHoverColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.DetailsHoverColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Адаптивная верстка текста</label>
+                                @Html.BasicCheckBoxFor(m => m.DetailsAdaptiveFontSizeEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+
+                            <div class="form-group">
+                                <label>астройка адаптивной верскти</label>
+                                @Html.TextBoxFor(m => m.DetailsAdaptiveFontSizeCoef, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    
+    
+    <div class="row">
+
+        <div class="col-sm-12 p-t-20">
+            <div class="form-group">
+                <label>Настройки текста</label>
+            </div>
+            <div class="panel panel-group panel-transparent form-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-text-paddings">Отступы</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-text-paddings">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Отступы снаружи по вертикали</label>
+                                @Html.TextBoxFor(m => m.TextExternalVerticalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы снаружи по горизонтали</label>
+                                @Html.TextBoxFor(m => m.TextExternalHorizontalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы по вертикали</label>
+                                @Html.TextBoxFor(m => m.TextInternalVerticalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Отступы по горизонтали</label>
+                                @Html.TextBoxFor(m => m.TextInternalHorizontalPadding, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-text-border">Границы</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-text-border">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Толщина границы</label>
+                                @Html.TextBoxFor(m => m.TextBorderThickness, new
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Использовать цвет границы</label>
+                                @Html.BasicCheckBoxFor(m => m.TextBorderColorEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Цвет границы</label>
+                                @{
+    item = Model.TextBorderColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.TextBorderColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.TextBorderColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Цвет границы при наведении</label>
+
+                                @{
+    item = Model.TextHoverBorderColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.TextHoverBorderColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.TextHoverBorderColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-text-back">Фон</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-text-back">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Использовать фон</label>
+                                @Html.BasicCheckBoxFor(m => m.TextBackgroundEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Фон</label>
+                                @{
+    item = Model.TextBackgroundColor
+        ;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.TextBackgroundColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.TextBackgroundColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Фон при наведении</label>
+                                @{
+    item = Model.TextHoverBackgroundColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.TextHoverBackgroundColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.TextHoverBackgroundColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" href="#b-btn-text-font">Шрифт</a>
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse " id="b-btn-text-font">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label>Местоположение</label>
+                                @Html.TextBoxFor(m => m.TextAlign, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Размер</label>
+                                @Html.TextBoxFor(m => m.TextSize, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.TextBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.TextBoldHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Курсив</label>
+                                @Html.BasicCheckBoxFor(m => m.TextItalicEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Курсив при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.TextItalicHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Подчеркивать</label>
+                                @Html.BasicCheckBoxFor(m => m.TextUnderlineEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Подчеркивать при наведении</label>
+                                @Html.BasicCheckBoxFor(m => m.TextUnderlineHoverEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.TextBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.TextBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+                            <div class="form-group">
+                                <label>Полужирный</label>
+                                @Html.BasicCheckBoxFor(m => m.TextBoldEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Цвет заголовка</label>
+                                @{
+    item = Model.TextColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.TextColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.TextColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+                            <div class="form-group">
+                                <label>Цвет заголовка при наведении</label>
+                                @{
+    item = Model.TextHoverColor;
+    if (string.IsNullOrEmpty(item))
+    {
+        Model.TextHoverColor = "rgb(0, 0, 0)";
+    }
+                                }
+
+                                @Html.TextBoxFor(m => m.TextHoverColor, new
+                    {
+                        @class = "color-picker-fe_internal form-control"
+                    })
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Адаптивная верстка текста</label>
+                                @Html.BasicCheckBoxFor(m => m.TextAdaptiveFontSizeEnabled, new { data_init_plugin = "switchery_internal" })
+                            </div>
+
+                            <div class="form-group">
+                                <label>астройка адаптивной верскти</label>
+                                @Html.TextBoxFor(m => m.TextAdaptiveFontSizeCoef, new //todo
+                    {
+                        @class = "spin-fe_internal"
+                    })
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+}
+
+<script>
+
+    var old_widget_title;
+    $(document).ready(function () {
+
+
+        $('.field-validation-error').addClass('error');
+        $('.input-validation-error').closest('.form-group').addClass('has-error');
+
+        $.Pages.initSwitcheryPlugin('switchery_internal');
+        $.Pages.initSelect2Plugin();
+
+
+        var editor = CKEDITOR.replaceAll('ckeditor_internal');
+
+
+        for (var i in CKEDITOR.instances) {
+
+            CKEDITOR.instances[i].on('change', function () { CKEDITOR.instances[i].updateElement() });
+
+        }
+
+
+        $(".color-picker-fe_internal").ColorPickerSliders({
+            placement: 'auto',
+            trigger: 'manual',
+            hsvpanel: true,
+            order: {
+                rgb: 1,
+                hsl: 2,
+                cie: 3,
+                opacity: 4
+            },
+            titleswatchesadd: 'Добавить в образцы',
+            titleswatchesreset: 'Сбросить образцы',
+            labels: {
+                hslhue: 'HSL-тон',
+                hslsaturation: 'HSL-насыщенность',
+                hsllightness: 'HSL-светлота',
+                rgbred: 'RGP-красный',
+                rgbgreen: 'RGP-зеленый',
+                rgbblue: 'RGP-голубой',
+                ciehue: 'CIE-тон',
+
+                ciechroma: 'CIE-цветность',
+                cielightness: 'CIE-светлота',
+                opacity: 'Прозрачность',
+
+            }
+        });
+
+
+        $('body').on('click', function (e) {
+            if ($(e.target).attr('role') !== 'popover' && !$(e.target).hasClass('color-picker-fe_internal')
+            && $(e.target).parents('.cp-popover-container').length === 0) {
+
+                jQuery.each($('.color-picker-fe_internal'), function (i, val) {
+                    val = $(this);
+                    if ($(val).data('shown')) {
+                        $(val).trigger("colorpickersliders.hide");
+                        $(val).data('shown', false);
+                    }
+                });
+
+
+
+            }
+        });
+
+        $(".color-picker-fe_internal").on('click', function (e) {
+            if ($(this).data('shown') == false || $(".color-picker-fe_internal").data('shown') == undefined) {
+                $(this).data('shown', true);
+                $(this).trigger("colorpickersliders.show");
+            }
+
+
+        });
+
+
+        $(".spin-fe_internal").TouchSpin({
+            min: -1000000000,
+            max: 1000000000,
+            step: 1,
+            decimals: 0,
+            boostat: 5,
+            maxboostedstep: 10,
+            //postfix: '%'
+        });
+
+    });
+</script>

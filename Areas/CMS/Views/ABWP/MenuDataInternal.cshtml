@@ -1,0 +1,81 @@
+﻿@{
+    Layout = null;
+
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var viewgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.MenuDataMenu);
+    var viewVisible = viewgroup.IsVisible ? string.Empty : "hidden";
+    var viewcollapsed = viewgroup.IsCollapse ? "collapsed" : string.Empty;
+    var viewcollapsein = !viewgroup.IsCollapse ? "in" : string.Empty;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniMenu
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.MenuDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+        <div class="@viewVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID"  data-vg="@CatalogItemViewGroup.MenuDataMenu">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-view-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@viewcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.MenuDataMenu]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-view-acc" class="vg-acc-content collapse @viewcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="" class="col-sm-7 control-label">Отображение</label>
+                            <div class="col-sm-5" style="float: right;">
+                            </div>
+                        </div>
+                        <div class="form-group WebUni-form-group">
+                            <div class="col-sm-7 ">
+                                @Html.DropDownListFor(m => m.IsVertical, new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = "true", Text = "Вертикальное"},
+                                        new {Value = "false", Text = "Горизонтальное"},
+                                    },
+                                    "Value",
+                                    "Text",
+                                    Model.IsVertical),
+                                    new {@class = "cs-select cs-skin-slide", data_init_plugin = "cs-select"}
+                                    )
+                            </div>
+
+                            <div class="col-sm-5" style="float: right;">
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}

@@ -1,0 +1,722 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniLine
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniLineData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.LineDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    initUniLineCard($('#WebUniLineData-@Model.ID'));
+    initUniLineSelectCard($('#WebUniLineData-@Model.ID'));
+
+
+
+    function initUniLineSelectCard(element) {
+        var actionclientroletarget = element.find("#ActionClientRoleIDsString");
+        actionclientroletarget.select2
+        (
+            {
+                placeholder: 'Выберите роли',
+                multiple: true,
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchbyclientrole'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = actionclientroletarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getbyclientrole') + '?id=' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+
+
+        var clientroletarget = element.find("#ClientRoleIDsString");
+        clientroletarget.select2
+        (
+            {
+                placeholder: 'Выберите роли',
+                multiple: true,
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchbyclientrole'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = clientroletarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getbyclientrole') + '?id=' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+
+        var deniedclientroletarget = element.find("#DeniedClientRoleIDsString");
+        deniedclientroletarget.select2
+        (
+            {
+                placeholder: 'Выберите роли',
+                multiple: true,
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchbyclientrole'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = deniedclientroletarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getbyclientrole') + '?id=' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+        var clientrolestatustarget = element.find("#ClientRoleStatusIDsString");
+        clientrolestatustarget.select2
+        (
+            {
+                placeholder: 'Выберите статусы',
+                multiple: true,
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchbyclientrolestatus'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = clientrolestatustarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getbyclientrolestatus') + '?id=' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+
+
+
+
+        onLineActionTypeChanged(element.find('#ActionType'), "WebUniLineData-" + @Model.ID);
+        onActionLineActionTypeChanged(element.find('#LineActionType'), 'WebUniLineData-' + @Model.ID );
+        onLineFileLinkSourceTypeChanged(element.find('#FileLinkSourceType'),  'WebUniLineData-' + @Model.ID);
+     
+        
+       
+        var lineActionToggledynamicEntity = element.find("#LineActionToggleDynamicEntityComplexIDsString");
+        lineActionToggledynamicEntity.select2
+                (
+                    {
+                        maximumSelectionSize: 1,
+                        multiple: true,
+                        placeholder: "Нажмите для выбора поставщика данных",
+                        allowClear: true,
+                        ajax: {
+                        },
+                        initSelection: function (element, callback) {
+                            var id = lineActionToggledynamicEntity.val();
+                            
+                            if (id !== null && id.length > 0 ) {
+                                $.ajax({
+                                    url: $('#workspace-portlet').data('getdynamicentityfull'),
+                                    data: {ids: id},
+                                    dataType: "json"
+                                }).done(function (data) {
+                                    callback(data);
+                                });
+                            }
+                        },
+                        formatResult: s2FormatResult,
+                        formatSelection: s2FormatSelection
+                    }
+
+                ).on("select2-opening", function (e) {
+                    e.preventDefault();
+                    SetDynamicEntity('fullcell', lineActionToggledynamicEntity);
+                }
+
+
+        ).on("select2-removed", function (e) {
+           
+        });
+        
+        
+        var fileLinkdynamicEntity = element.find("#FileLinkDynamicEntityComplexIDsString");
+        fileLinkdynamicEntity.select2
+                (
+                    {
+                        maximumSelectionSize: 1,
+                        multiple: true,
+                        placeholder: "Нажмите для выбора поставщика данных",
+                        allowClear: true,
+                        ajax: {
+                        },
+                        initSelection: function (element, callback) {
+                            var id = fileLinkdynamicEntity.val();
+                            
+                            if (id !== null && id.length > 0 ) {
+                                $.ajax({
+                                    url: $('#workspace-portlet').data('getdynamicentityfull'),
+                                    data: {ids: id},
+                                    dataType: "json"
+                                }).done(function (data) {
+                                    callback(data);
+                                });
+                            }
+                        },
+                        formatResult: s2FormatResult,
+                        formatSelection: s2FormatSelection
+                    }
+
+                ).on("select2-opening", function (e) {
+                    e.preventDefault();
+                    SetDynamicEntity('fullcell', fileLinkdynamicEntity);
+                }
+
+
+        ).on("select2-removed", function (e) {
+           
+        });
+
+
+
+        var anchortarget = element.find("#AnchorLinkCatalogItemID");
+        anchortarget.select2
+        (
+            {
+                multiple: true,
+                maximumSelectionSize: 1,
+                placeholder:'выберите полосу',
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchsection'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more : more};
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = anchortarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getsection') + '/' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data[0]);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+        anchortarget.on("change", function (ev) {
+            var values = ev.val;
+            anchortarget.val(values);
+        });
+
+
+        var buttontarget = element.find("#ButtonLinkCatalogItemID");
+        buttontarget.select2
+                (
+                    {
+                        multiple: true,
+                        maximumSelectionSize: 1,
+                        placeholder:'выберите полосу',
+                        allowClear: true,
+                        ajax: {
+                            url: $('#workspace-portlet').data('searchsection'),
+                            dataType: 'json',
+                            data: function (term, page) {
+                                return {
+                                    id: term,
+                                    pageLimit: 10,
+                                    page: page
+                                };
+                            },
+                            results: function (data, page) {
+                                var more = (page * 10) < data.count;
+                                return { results: data.items, more : more};
+                            }
+                        },
+                        initSelection: function (element, callback) {
+
+                            var id = buttontarget.val();
+                            if (id !== null && id.length > 0) {
+                                $.ajax($('#workspace-portlet').data('getsection') + '/' + id, {
+                                    dataType: "json"
+                                }).done(function (data) {
+                                    callback(data[0]);
+                                });
+                            }
+                        },
+                        formatResult: s2FormatResult,
+                        formatSelection: s2FormatSelection
+                    }
+                );
+
+        buttontarget.on("change", function (ev) {
+            var values = ev.val;
+            buttontarget.val(values);
+        });
+
+        var pagelinktarget = element.find("#PageLinkCatalogItemID");
+        pagelinktarget.select2
+            (
+                {
+                    multiple: true,
+                    maximumSelectionSize: 1,
+                    placeholder:'выберите страницу',
+                    allowClear: true,
+                    ajax: {
+                        url: $('#workspace-portlet').data('searchpage'),
+                        dataType: 'json',
+                        data: function (term, page) {
+                            return {
+                                id: term,
+                                pageLimit: 10,
+                                page: page
+                            };
+                        },
+                        results: function (data, page) {
+                            var more = (page * 10) < data.count;
+                            return { results: data.items, more : more};
+                        }
+                    },
+
+                    initSelection: function (element, callback) {
+
+                        var id = pagelinktarget.val();
+
+                        if (id !== null && id.length > 0) {
+                            $.ajax($('#workspace-portlet').data('getpage') + '/' + id, {
+                                dataType: "json"
+                            }).done(function (data) {
+                                callback(data[0]);
+                            });
+                        }
+                    },
+                    formatResult: s2FormatResult,
+                    formatSelection: s2FormatSelection
+                }
+            );
+
+        pagelinktarget.on("change", function (ev) {
+            var values = ev.val;
+            pagelinktarget.val(values);
+        });
+
+
+
+        var inputSavedRedirecttarget = element.find("#InputSavedRedirectCatalogItemID");
+        inputSavedRedirecttarget.select2
+            (
+                {
+                    multiple: true,
+                    maximumSelectionSize: 1,
+                    placeholder:'выберите страницу',
+                    allowClear: true,
+                    ajax: {
+                        url: $('#workspace-portlet').data('searchpage'),
+                        dataType: 'json',
+                        data: function (term, page) {
+                            return {
+                                id: term,
+                                pageLimit: 10,
+                                page: page
+                            };
+                        },
+                        results: function (data, page) {
+                            var more = (page * 10) < data.count;
+                            return { results: data.items, more : more};
+                        }
+                    },
+
+                    initSelection: function (element, callback) {
+
+                        var id = inputSavedRedirecttarget.val();
+
+                        if (id !== null && id.length > 0) {
+                            $.ajax($('#workspace-portlet').data('getpage') + '/' + id, {
+                                dataType: "json"
+                            }).done(function (data) {
+                                callback(data[0]);
+                            });
+                        }
+                    },
+                    formatResult: s2FormatResult,
+                    formatSelection: s2FormatSelection
+                }
+            );
+
+       
+
+        var target = element.find('#TagsIDsString');
+
+        target.select2
+        (
+            {
+                multiple: true,
+                placeholder: 'выберите фильтр',
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchtag'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term
+                        };
+                    },
+                    results: function (data) {
+                        return { results: data };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = target.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('gettag') + '/' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+
+
+            }
+
+        );
+
+        target.on("change", function (ev) {
+            var choice;
+            var values = ev.val;
+
+            if (values !== null && values.length > 0) {
+                for (var i = 0; i < values.length; i++) {
+                    if (typeof choice !== 'undefined') {
+                        choice += ",";
+                        choice += values[i];
+                    }
+                    else {
+                        choice = values[i];
+                    }
+                }
+            }
+
+
+            target.val(choice);
+        });
+
+
+        var filterTagSelector = element.find('#FilterTagsIDsString');
+
+        filterTagSelector.select2
+        (
+            {
+                multiple: true,
+                maximumSelectionSize: 1,
+                placeholder: 'выберите тег фильтрации',
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchtag'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term
+                        };
+                    },
+                    results: function (data) {
+                        return { results: data };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = filterTagSelector.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('gettag') + '/' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+
+                            callback(data[0]);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+
+
+            }
+
+        );
+
+        filterTagSelector.on("change", function (ev) {
+            var values = ev.val;
+            filterTagSelector.val(values);
+        });
+
+
+
+        var socialNetworkSelector = element.find('#SocialLink_SocialNetworkID');
+
+        socialNetworkSelector.select2
+        (
+            {
+                multiple: true,
+                maximumSelectionSize: 1,
+                placeholder: 'выберите социальную сеть для публикации',
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchsocialnetwork'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term
+                        };
+                    },
+                    results: function (data) {
+                        return { results: data };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = socialNetworkSelector.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getsocialnetwork') + '/' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+
+                            callback(data[0]);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+
+
+            }
+
+        );
+
+        socialNetworkSelector.on("change", function (ev) {
+            var values = ev.val;
+            socialNetworkSelector.val(values);
+            updateSocialLinkInputs();
+        });
+
+        function updateSocialLinkInputs(){
+            switch(socialNetworkSelector.val()){
+                case "1":
+                    $('#socialLinkTitleEnabled').hide();
+                    $('#socialLinkDescriptionEnabled').hide();
+                    $('#socialLinkImageEnabled').hide();
+                    $('#socialLinkTitle').hide();
+                    $('#socialLinkDescription').hide();
+                    $('#socialLinkImage').hide();
+                    break;
+                case "2":
+                    $('#socialLinkTitleEnabled').show();
+                    $('#socialLinkDescriptionEnabled').show();
+                    $('#socialLinkImageEnabled').show();
+                    $('#socialLinkTitle').show();
+                    $('#socialLinkDescription').show();
+                    $('#socialLinkImage').show();
+                    break;
+                case "3":
+                    $('#socialLinkTitleEnabled').hide();
+                    $('#socialLinkDescriptionEnabled').show();
+                    $('#socialLinkImageEnabled').hide();
+                    $('#socialLinkTitle').hide();
+                    $('#socialLinkDescription').show();
+                    $('#socialLinkImage').hide();
+                    break;
+            }
+        }
+        updateSocialLinkInputs();
+
+
+        var dynamicEntity = element.find("#DynamicEntityComplexIDsString");
+        dynamicEntity.select2
+                (
+                    {
+                        multiple: true,
+                        placeholder: "Нажмите для выбора поставщика данных",
+                        allowClear: true,
+                        ajax: {
+                        },
+                        initSelection: function (element, callback) {
+                            //   var tableID = $('#DynamicTableID').val();
+                            var id = dynamicEntity.val();
+                            var splt = id.split('_');
+                          //  console.log('getdinamicentity' + $('#workspace-portlet').data('getdinamicentity'));
+                            console.log(id);
+                            if (id !== null && id.length > 0 ) {
+                                $.ajax({
+                                    url: $('#workspace-portlet').data('getdinamicentity'),
+                                    data: {ids: id},
+                                    dataType: "json"
+                                }).done(function (data) {
+                                    //if(data[0].text != "")
+                                //    console.log(data);
+                                    callback(data);
+                                    getDynamicEntitiesOverview($('#DynamicEntityComplexIDsString').val());
+                                  //  $('#dynamicEntityOverview').html(data.overview);
+                                });
+                            }
+                        },
+                        formatResult: s2FormatResult,
+                        formatSelection: s2FormatSelection
+                    }
+
+                ).on("select2-opening", function (e) {
+                    e.preventDefault();
+                    SetDynamicEntity('simple');
+                }
+
+
+        ).on("select2-removed", function (e) {
+            $('#dynamicEntityOverview').empty();
+            getDynamicEntitiesOverview($('#DynamicEntityComplexIDsString').val());
+        });
+
+        var inputtarget = element.find("#InputCatalogItemIDsString");
+        inputtarget.select2
+        (
+            {
+                placeholder: 'Выберите поле ввода',
+                multiple: true,
+               
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchbytype'),
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            type: 'Input',
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function (element, callback) {
+
+                    var id = inputtarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getbytype') + '?id=' + id + '&type=Input', {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+
+    }
+
+
+</script>

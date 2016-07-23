@@ -1,0 +1,272 @@
+﻿@using livemenu.Kernel.Authentication
+@using livemenu.Kernel.Executing
+@using livemenu.Kernel.Management
+@{
+    Layout = null;
+}
+
+
+@{
+    var lmc = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<ILMExecutingContext>();
+    var license = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<ILicenseInfoService>().GetLicense();
+    var CurrentLMExecutingContext = lmc.ExecutingType;
+    
+}
+
+
+<style>
+
+    #appMenu .row {
+        margin-bottom: 10px;
+    }
+
+    #appMenu img {
+        width: 75%;
+    }
+   .p-l-27 {
+        padding-left: 27px !important;
+    }
+
+    .p-l-27 > img {
+        background-color: white;
+    }
+    
+    .p-l-27:hover > img {
+        background-color: rgb(230,230,230);
+    }
+
+    .sidebar-overlay-slide img {
+        display: none;
+    }
+    .sidebar-overlay-slide.show img {
+        display: inline-block !important;
+    }
+
+    .small_menu_icon {
+        display: none;
+    }
+
+    .small_menu_icon {
+        display: inline-block;
+        margin-top: 15px;
+        float: right;
+    
+    }
+     .menu-pin .small_menu_icon {
+        display: none;
+    }
+    .sidebar-open .small_menu_icon {
+        display: none;
+    }
+
+    .sidebar-visible .small_menu_icon {
+        display: none;
+    }
+
+</style>
+<nav class="page-sidebar" data-pages="sidebar">
+    <div class="sidebar-overlay-slide from-top" id="appMenu">
+        @if (license.ShowAllSubsystems)
+        {
+            <div class="row">
+                <div class="col-xs-12 no-padding">
+
+                    <a target="_blank" href="@Url.Action(MVC.Home.Index())" class="p-l-27">
+
+                        @{
+                            var hover1 = Url.Content("~/Content/Images/1-profile-menu-hover-ru.png");
+                            var normal1 = CurrentLMExecutingContext == LMExecutingType.LM ? hover1 : Url.Content("~/Content/Images/1-profile-menu-ru.png");
+                        }
+
+                        <img src="@normal1" data-src="@normal1" data-src-hover="@hover1" alt="profile">
+                    </a>
+
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-xs-12 no-padding">
+                <a target="_blank"  href="@Url.Action(MVC.Team.Home.Index())" class="p-l-27">
+
+                    @{
+                        var hover2 = Url.Content("~/Content/Images/2-team-menu-hover-ru.png");
+                        var normal2 = CurrentLMExecutingContext == LMExecutingType.Team ? hover2 : Url.Content("~/Content/Images/2-team-menu-ru.png");
+                    }
+                    <img src="@normal2" data-src="@normal2" data-src-hover="@hover2" alt="team">
+                </a>
+
+            </div>
+        </div>
+@if (license.ShowAllSubsystems)
+{
+        <div class="row">
+            <div class="col-xs-12 no-padding">
+                <a target="_blank"  href="@Url.Action(MVC.Cloud.Home.Index())" class="p-l-27">
+
+                    @{
+                        var hover3 = Url.Content("~/Content/Images/3-server-menu-hover-ru.png");
+                        var normal3 = CurrentLMExecutingContext == LMExecutingType.Cloud ? hover3 : Url.Content("~/Content/Images/3-server-menu-ru.png");
+                    }
+                    <img src="@normal3" data-src="@normal3" data-src-hover="@hover3" alt="server">
+                </a>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 no-padding">
+                <a target="_blank"  href="@Url.Action(MVC.Communications.Home.Index())" class="p-l-27">
+
+                    @{
+                        var hover4 = Url.Content("~/Content/Images/4-mail-menu-hover-ru.png");
+                        var normal4 = CurrentLMExecutingContext == LMExecutingType.Communications ? hover4 : Url.Content("~/Content/Images/4-mail-menu-ru.png");
+                    }
+                    <img src="@normal4" data-src="@normal4" data-src-hover="@hover4" alt="mail">
+                </a>
+
+            </div>
+        </div>
+        }
+        <div class="row">
+            <div class="col-xs-12 no-padding">
+                <a target="_blank"  href="@Url.Action(MVC.CMS.Home.Index())" class="p-l-27">
+                    @{
+                        var hover5 = Url.Content("~/Content/Images/5-sites-menu-hover-ru.png");
+                        var normal5 = CurrentLMExecutingContext == LMExecutingType.CMS ? hover5 : Url.Content("~/Content/Images/5-sites-menu-ru.png");
+                    }
+
+                    <img src="@normal5" data-src="@normal5" data-src-hover="@hover5" alt="cms">
+                </a>
+
+            </div>
+        </div>
+        
+            <div class="row">
+                <div class="col-xs-12 no-padding">
+                    <a target="_blank"  href="@Url.Action(MVC.Projects.Home.Index())" class="p-l-27">
+
+                        @{
+                            var hover6 = Url.Content("~/Content/Images/6-news-menu-hover-ru.png");
+                            var normal6 = CurrentLMExecutingContext == LMExecutingType.Projects ? hover6 : Url.Content("~/Content/Images/6-news-menu-ru.png");
+                        }
+                        <img src="@normal6" data-src="@normal6" data-src-hover="@hover6" alt="news">
+                    </a>
+
+                </div>
+            </div>
+        
+        <div class="row">
+            <div class="col-xs-12 no-padding">
+                <a target="_blank"  href="@Url.Action(MVC.CRM.Home.Index())" class="p-l-27">
+
+                    @{
+                        var hover7 = Url.Content("~/Content/Images/7-crm-menu-hover-ru.png");
+                        var normal7 = CurrentLMExecutingContext == LMExecutingType.CRM ? hover7 : Url.Content("~/Content/Images/7-crm-menu-ru.png");
+                    }
+                    <img src="@normal7" data-src="@normal7" data-src-hover="@hover7" alt="crm">
+                </a>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 no-padding">
+                <a target="_blank"  href="@Url.Action(MVC.WMS.Home.Index())" class="p-l-27">
+
+                    @{
+                        var hover8 = Url.Content("~/Content/Images/8-storage-menu-hover-ru.png");
+                        var normal8 = CurrentLMExecutingContext == LMExecutingType.WMS ? hover8 : Url.Content("~/Content/Images/8-storage-menu-ru.png");
+                    }
+                    <img src="@normal8" data-src="@normal8" data-src-hover="@hover8" alt="storages">
+                </a>
+
+            </div>
+        </div>
+        @if (license.ShowAllSubsystems)
+        {
+            <div class="row">
+                <div  class="col-xs-12 no-padding">
+                    <a target="_blank"  href="@Url.Action(MVC.Transit.Home.Index())" class="p-l-27">
+                        @{
+                            var hover9 = Url.Content("~/Content/Images/9-delivery-menu-hover-ru.png");
+                            var normal9 = CurrentLMExecutingContext == LMExecutingType.Transit ? hover9 : Url.Content("~/Content/Images/9-delivery-menu-ru.png");
+                        }
+
+                        <img src="@normal9" data-src="@normal9" data-src-hover="@hover9" alt="delivery">
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 no-padding">
+                    <a target="_blank"  href="@Url.Action(MVC.Partner.Home.Index())" class="p-l-27">
+
+                        @{
+                            var hover10 = Url.Content("~/Content/Images/10-partners-menu-hover-ru.png");
+                            var normal10 = CurrentLMExecutingContext == LMExecutingType.Partner ? hover10 : Url.Content("~/Content/Images/10-partners-menu-ru.png");
+                        }
+                        <img src="@normal10" data-src="@normal10" data-src-hover="@hover10" alt="partners">
+                    </a>
+
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-xs-12 no-padding">
+                    <a target="_blank"  href="@Url.Action(MVC.Market.Home.Index())" class="p-l-27">
+
+                        @{
+                            var hover11 = Url.Content("~/Content/Images/11-market-menu-hover-ru.png");
+                            var normal11 = CurrentLMExecutingContext == LMExecutingType.Market ? hover11 : Url.Content("~/Content/Images/11-market-menu-ru.png");
+                        }
+                        <img src="@normal11" data-src="@normal11" data-src-hover="@hover11" alt="market">
+                    </a>
+
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-xs-12 no-padding">
+                <a target="_blank"  href="@Url.Action(MVC.Settings.Home.Index())" class="p-l-27">
+
+                    @{
+                        var hover12 = Url.Content("~/Content/Images/12-settings-menu-hover-ru.png");
+                        var normal12 = CurrentLMExecutingContext == LMExecutingType.Settings ? hover12 : Url.Content("~/Content/Images/12-settings-menu-ru.png");
+                    }
+                    <img src="@normal12" data-src="@normal12" data-src-hover="@hover12" alt="settings">
+                </a>
+
+
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="sidebar-header">
+        <img src="~/assets/img/logo_white.png" alt="logo" class="brand" data-src="~/assets/img/logo_white.png" data-src-retina="~/assets/img/logo_white_2x.png" width="78" height="22">
+        <div class="sidebar-header-controls">
+            <button type="button" class="btn btn-link visible-lg-inline" data-toggle-pin="sidebar" style="margin-left: 54px;">
+                <i class="fa fs-12"></i>
+            </button>
+        </div>
+        <img class="small_menu_icon" src="@Url.Content("~/assets/img/WebUni_admin_small.png")" />
+    </div>
+    @RenderBody()
+</nav>
+<script>
+
+
+    $(document).ready(function() {
+        $('#appMenu img').mouseleave(function () {
+            $(this).attr('src', $(this).data('src').replace('~', ''));
+        });
+        $('#appMenu img').mouseenter(function () {
+            $(this).attr('src', $(this).data('src-hover').replace('~', ''));
+        });
+    })
+
+</script>

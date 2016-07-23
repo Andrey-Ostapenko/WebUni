@@ -1,0 +1,101 @@
+﻿@{
+    Layout = null;
+
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var textgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.VersionDataVersions);
+    var textVisible = textgroup.IsVisible ? string.Empty : "hidden";
+    var textcollapsed = textgroup.IsCollapse ? "collapsed" : string.Empty;
+    var textcollapsein = !textgroup.IsCollapse ? "in" : string.Empty;
+
+    var urlchanginggroup = groups.GetConfigurationSafe(CatalogItemViewGroup.VersionsDataChangingUrl);
+    var urlchangingVisible = urlchanginggroup.IsVisible ? string.Empty : "hidden";
+    var urlchangingcollapsed = urlchanginggroup.IsCollapse ? "collapsed" : string.Empty;
+    var urlchangingcollapsein = !urlchanginggroup.IsCollapse ? "in" : string.Empty;
+    var urlchangingDisabled = !Model.CatalogItem.ChangingUrl ? "vg-disabled" : string.Empty;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniVersion
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.VersionDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+        <div class="@textVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID"  data-vg="@CatalogItemViewGroup.VersionDataVersions">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-view-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@textcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.VersionDataVersions]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-view-acc" class="vg-acc-content collapse @textcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Версия прайс листа</label>
+                            <div class="col-sm-5" style="float: right;">
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group WebUni-form-group-input">
+                            <div class="">
+                                <input type="hidden" class="select2-offscreen" id="PriceListVersionIDHDN" style="width: 100%" value="@(Model.PriceListVersionID ?? 0)" />
+                                <input type="text" id="PriceListVersionID" class='tag-input full-width' name="PriceListVersionID" value="@(Model.PriceListVersionID ?? 0)" />
+                            </div>
+                        </div>      
+
+                      </div>
+                  </div>
+             </div>
+
+        </div>
+
+        <div class="@urlchangingVisible @urlchangingDisabled vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.VersionsDataChangingUrl">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-urlchanging-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@urlchangingcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.VersionsDataChangingUrl]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-urlchanging-acc" class="vg-acc-content collapse @urlchangingcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+                        <div class="form-group WebUni-form-group WebUni-form-group-big">
+                            <label for="Height" class="col-sm-7 control-label">Вставлять код этого элемента в ссылки</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.CatalogItem.ChangingUrl, new { data_init_plugin = "switchery_internal", onchange = "onVGElementsEnabledChanged($(this)); $('#ChangingUrl').val($(this).is(':checked'));", })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+}

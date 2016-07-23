@@ -1,0 +1,20 @@
+﻿
+@{
+    var title = "Профиль";
+    ViewBag.Title = title;
+    Layout = null;
+}
+@using livemenu.Kernel.Authentication
+@model  livemenu.Kernel.Account.MyProfileModel
+
+
+<div id="my-profile-edit">
+    @if (Model.Method == AuthenticationMethod.Local)
+    {
+        Html.RenderPartial(MVC.Account.Views.MyProfileInternal, Model);
+    }
+    else if(Model.Method == AuthenticationMethod.WebUniAccount)
+    {
+        <h3>Профиль Вашей учетной записи доступен в личном кабинете WebUni <a href="http://www.WebUni.ru/enter?return=profile" target="_blank">перейти</a></h3>
+    }
+</div>

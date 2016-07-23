@@ -1,0 +1,139 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniLine
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div  id='WebUniLineDesign-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.LineDesignInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    var element = $('#WebUniLineDesign-@Model.ID');
+    initUniLineCard(element);
+
+    onLineItemSourceTypeChanged(element.find('#BackgroundSourceType'), '@Model.CatalogItemID-grback-before');
+    onLineItemSourceTypeChanged(element.find('#BackgroundHoverSourceType'), '@Model.CatalogItemID-grback-after');
+    onLineItemSourceTypeChanged(element.find('#BackgroundActiveSourceType'), '@Model.CatalogItemID-grback-active');
+
+
+    var dynamicEntity = element.find("#BackgroundDynamicEntityComplexIDsString");
+    dynamicEntity.select2
+    (
+        {
+            maximumSelectionSize: 1,
+            multiple: true,
+            placeholder: "Нажмите для выбора поставщика данных",
+            allowClear: true,
+            ajax: {
+            },
+            initSelection: function (element, callback) {
+                var id = dynamicEntity.val();
+
+                if (id !== null && id.length > 0) {
+                    $.ajax({
+                        url: $('#workspace-portlet').data('getdynamicentityfull'),
+                        data: { ids: id },
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+
+    ).on("select2-opening", function (e) {
+            e.preventDefault();
+            SetDynamicEntity('fullcell', dynamicEntity);
+        }
+
+
+    ).on("select2-removed", function (e) {
+
+    });
+
+    var dynamicEntity1 = element.find("#BackgroundHoverDynamicEntityComplexIDsString");
+    dynamicEntity1.select2
+    (
+        {
+            maximumSelectionSize: 1,
+            multiple: true,
+            placeholder: "Нажмите для выбора поставщика данных",
+            allowClear: true,
+            ajax: {
+            },
+            initSelection: function (element, callback) {
+                var id = dynamicEntity1.val();
+
+                if (id !== null && id.length > 0) {
+                    $.ajax({
+                        url: $('#workspace-portlet').data('getdynamicentityfull'),
+                        data: { ids: id },
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+
+    ).on("select2-opening", function (e) {
+            e.preventDefault();
+            SetDynamicEntity('fullcell', dynamicEntity1);
+        }
+
+
+    ).on("select2-removed", function (e) {
+
+    });
+
+    var dynamicEntity2 = element.find("#BackgroundActiveDynamicEntityComplexIDsString");
+    dynamicEntity2.select2
+    (
+        {
+            maximumSelectionSize: 1,
+            multiple: true,
+            placeholder: "Нажмите для выбора поставщика данных",
+            allowClear: true,
+            ajax: {
+            },
+            initSelection: function (element, callback) {
+                var id = dynamicEntity2.val();
+
+                if (id !== null && id.length > 0) {
+                    $.ajax({
+                        url: $('#workspace-portlet').data('getdynamicentityfull'),
+                        data: { ids: id },
+                        dataType: "json"
+                    }).done(function (data) {
+                        callback(data);
+                    });
+                }
+            },
+            formatResult: s2FormatResult,
+            formatSelection: s2FormatSelection
+        }
+
+    ).on("select2-opening", function (e) {
+            e.preventDefault();
+            SetDynamicEntity('fullcell', dynamicEntity2);
+        }
+
+
+    ).on("select2-removed", function (e) {
+
+    });
+
+
+</script>

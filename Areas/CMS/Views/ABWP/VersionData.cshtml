@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniVersion
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div   id='WebUniVersionData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.VersionDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    initUniTextCard($('#WebUniVersionData-@Model.ID'), '@Model.ID');
+
+    var priceListVersion = $("#PriceListVersionID");
+    priceListVersion.select2
+        (
+            {
+                multiple: false,
+                placeholder: 'выберите версию',
+                allowClear: false,
+                ajax: {
+                    url: '@Url.Action(MVC.CRM.PriceList.GetPriceListVersions())',
+                    dataType: 'json',
+                    data: function (term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function (data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+
+                initSelection: function (element, callback) {
+                    var id = priceListVersion.val();
+
+                    if (id !== null && id.length > 0) {
+                        $.ajax('@Url.Action(MVC.CRM.PriceList.GetPriceListVersion())' + '/' + id, {
+                            dataType: "json"
+                        }).done(function (data) {
+                            callback(data[0]);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+
+</script>

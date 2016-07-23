@@ -1,0 +1,51 @@
+﻿@{
+    Layout = null;
+}
+
+@model  livemenu.Areas.BWP.Models.Catalog.CatalogItemDetailModel
+@{
+    var citabID = "citab" + Model.ID;
+}
+
+
+@if (Model.MMs.Any())
+{
+
+    <div class="">
+        @*<div class="panel-heading">
+            <div class="panel-title">
+                Редактирование
+            </div>
+        </div>*@
+        <div class="panel-body">
+            <div class="row">
+                <ul class="nav nav-tabs nav-tabs-fillup" id="@citabID">
+                    @{
+                      string first = "active";
+                    }
+                    @foreach (var mm in Model.MMs)
+                    {
+                        <li class="@first">
+                            <a data-toggle="ajax-tab" data-target="#tab-content" href="@Url.Action(MVC.CMS.MicroModule.Open(mm.Code))">@mm.Name</a>
+                        </li>
+                        first = string.Empty;
+
+                    }
+                </ul>
+            </div>
+            <div class="row">
+                <div class="tab-content bg-white">
+                    <div class="tab-pane active" id="tab-content">
+                        @if (Model.MMs.Any())
+                        {
+                            Html.RenderAction(MVC.CMS.MicroModule.Open(Model.MMs.First().Code));
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+}

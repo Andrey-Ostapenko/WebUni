@@ -1,0 +1,185 @@
+﻿@using System.Data.Entity
+@using System.Linq
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.Projects.Controllers
+@using livemenu.Kernel.BWP.DynamicTables
+@using Microsoft.Practices.ServiceLocation
+@using livemenu.Helpers
+
+@model livemenu.Areas.Projects.Models.DynamicTableStructureGridViewModel
+
+@{
+    Layout = null;
+
+    string dxo_batchUpdateUrl;
+    if (Model.ApplicationID.HasValue)
+    {
+        dxo_batchUpdateUrl = Url.Action(MVC.Projects.DynamicTables.GridViewEditTableStructureBatchUpdatePartial()) + "?AppID=" + @Model.ApplicationID + "&dynamicTableID=" + @Model.Table.ID; ;
+    }
+    else
+    {
+        dxo_batchUpdateUrl = @Url.Action(MVC.Projects.DynamicTables.GridViewEditTableStructureBatchUpdatePartial()) + "?dynamicTableID=" + @Model.Table.ID; ;
+    }
+
+
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+
+
+    var settings = (ViewContext.Controller as DynamicTablesController).GetGridViewEditTableStructureSettings();
+
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Batch;
+
+    settings.SettingsEditing.BatchEditSettings.EditMode = GridViewBatchEditMode.Cell;
+    settings.SettingsEditing.BatchEditSettings.StartEditAction = GridViewBatchStartEditAction.Click;
+
+    settings.CallbackRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.DynamicTables.Name, Action = MVC.Projects.DynamicTables.ActionNames.GridViewPartial, appID = Model.ApplicationID, dynamicTableID = Model.Table.ID, editstructure = true };
+
+
+    settings.SettingsEditing.BatchUpdateRouteValues = new { Area = MVC.Projects.Name, Controller = MVC.Projects.DynamicTables.Name, Action = MVC.Projects.DynamicTables.ActionNames.GridViewEditTableStructureBatchUpdatePartial, appID = Model.ApplicationID, dynamicTableID = Model.Table.ID /*String.Format("{0}?dynamicTableID={1}&", MVC.Projects.DynamicTables.ActionNames.GridViewEditTableStructureBatchUpdatePartial, Model.ID.ToString()) */};
+
+    settings.SettingsBehavior.AllowDragDrop = true;
+
+    settings.SettingsPager.Mode = GridViewPagerMode.ShowPager;
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.PageSize = 50;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "10", "50", "100", "500", "1000" };
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+    settings.Settings.ShowHeaderFilterButton = false;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowGroupedColumns = true;
+    settings.Settings.ShowFooter = true;
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowStatusBar = GridViewStatusBarMode.Hidden;
+    settings.EnableRowsCache = false;
+
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+    settings.SettingsBehavior.ConfirmDelete = true;
+
+
+    settings.CellEditorInitialize = (s, e) =>
+    {
+        ASPxEdit editor = (ASPxEdit)e.Editor;
+        editor.ValidationSettings.Display = Display.None;
+    };
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.Name = "control";
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.DeleteButton(string.Format("{0}.DeleteRow({1})", name, index)));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton(string.Format("{0}.AddNewRow()", name))));
+        column.SetEditItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+
+    });
+
+    settings.InitNewRow = (s, e) =>
+    {
+        e.NewValues["IsNotNullable"] = false;
+    };
+    settings.DataBound = (s, e) =>
+    {
+        if (Request.Params["resetfilters"] != null)
+            ((MVCxGridView)s).FilterExpression = null;
+    };
+
+    settings.ClientSideEvents.ColumnSorting = "GetSortedColumnIndex";
+    //settings.Styles.Row.CssClass = "draggable-dynamicColumns";
+
+    settings.HtmlRowPrepared = (s, e) =>
+    {
+        if (e.RowType == GridViewRowType.Data)
+        {
+            object displayIndex = e.GetValue("DisplayIndex");
+            if (displayIndex != null)
+                e.Row.Attributes.Add("displayIndex", displayIndex.ToString());
+        }
+    };
+
+    settings.BeforeGetCallbackResult = (s, e) =>
+    {
+        if (ViewBag.VisibleIndex == null)
+            return;
+        var gridView = (MVCxGridView)s;
+        gridView.FocusedRowIndex = ViewBag.VisibleIndex;
+    };
+
+    settings.ClientSideEvents.ColumnSorting = "GetSortedColumnIndex";
+}
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    e.QueryableSource = ServiceLocator.Current.GetInstance<IDynamicColumnService>().RawDataQueryable.Where(col => col.DynamicTableID == Model.Table.ID);
+}).GetHtml()
+
+<script id="dxss_0001" type="text/javascript">
+    dxo.callbackUrl = "@Html.Raw(@Url.Action(MVC.Projects.DynamicTables.GridViewPartial(Model.ApplicationID, Model.Table.ID, true)))";
+    dxo.batchUpdateUrl = '@Html.Raw(@dxo_batchUpdateUrl)';
+    
+    $('#ToDinamicTablesBtn').show();
+    
+    $('#ToStructureBtn').hide();
+    @{
+        if(Model.Table.DynamicColumn.Count == 0)
+        {
+            @Html.Raw("$('#ToDataBtn').hide(); $('#formulamode').show();");
+        }
+        else
+        {
+            @Html.Raw("$('#ToDataBtn').show(); $('#formulamode').hide();");
+        }
+    }
+    $('#importExportBtnContainer').hide();
+    $('#versionControlsContainer').hide();
+    $('#main-portlet .panel-title').html('@Model.Table.DisplayName');
+
+    dxo.BatchEditStartEditing.AddHandler(function (s, e) {
+        if (e.focusedColumn.name == "control" || e.focusedColumn.name == "DisplayIndex") {
+            e.cancel = true;
+        }
+    });
+
+    @{
+        if(Request.Params["focusedRowIndex"]!= null)
+        {
+            @Html.Raw(String.Format("DynamicTablesFocusedRow = {0};", Request.Params["focusedRowIndex"]));
+        }
+    }
+    DynamicTablesEditing = false;
+    EditingDynamicTableStructure = true;
+</script>

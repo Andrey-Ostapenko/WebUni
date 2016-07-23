@@ -1,0 +1,140 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniMap
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniMapData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.MapDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+<script>
+    initUniMapCard($('#WebUniMapData-@Model.ID'), @Model.ID);
+
+    function initUniMapCard(element, id) {
+        initVGElements(element);
+        $.Pages.initSelectFxPluginInElement(element);
+        $.Pages.initSwitcheryPluginInElement('switchery_internal', element);
+        onMapViewTypeChanged($('#WebUniMapData-@Model.ID').find('#ViewType'), 'WebUniMapData-' + @Model.ID );
+        var addresstarget = element.find("#AddressesIDsString");
+        addresstarget.select2        (
+            {
+                placeholder: 'Выберите адреса',
+                multiple: true,
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchaddress'),
+                    dataType: 'json',
+                    data: function(term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function(data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function(element, callback) {
+
+                    var id = addresstarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getaddress') + '?id=' + id, {
+                            dataType: "json"
+                        }).done(function(data) {
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+        var countriestarget = element.find("#CountriesIDsString");
+        countriestarget.select2        (
+            {
+                placeholder: 'Выберите страны',
+                multiple: true,
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchcountry'),
+                    dataType: 'json',
+                    data: function(term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function(data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function(element, callback) {
+
+                    var id = countriestarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getcountry') + '?id=' + id, {
+                            dataType: "json"
+                        }).done(function(data) {
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+
+        var citytarget = element.find("#CitiesIDsString");
+        citytarget.select2        (
+            {
+                placeholder: 'Выберите города',
+                multiple: true,
+                allowClear: true,
+                ajax: {
+                    url: $('#workspace-portlet').data('searchcity'),
+                    dataType: 'json',
+                    data: function(term, page) {
+                        return {
+                            id: term,
+                            pageLimit: 10,
+                            page: page
+                        };
+                    },
+                    results: function(data, page) {
+                        var more = (page * 10) < data.count;
+                        return { results: data.items, more: more };
+                    }
+                },
+                initSelection: function(element, callback) {
+
+                    var id = citytarget.val();
+                    if (id !== null && id.length > 0) {
+                        $.ajax($('#workspace-portlet').data('getcity') + '?id=' + id, {
+                            dataType: "json"
+                        }).done(function(data) {
+                            callback(data);
+                        });
+                    }
+                },
+                formatResult: s2FormatResult,
+                formatSelection: s2FormatSelection
+            }
+        );
+    }
+</script>

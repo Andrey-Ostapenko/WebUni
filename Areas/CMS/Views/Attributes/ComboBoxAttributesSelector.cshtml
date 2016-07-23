@@ -1,0 +1,27 @@
+﻿@{
+    Layout = null;
+}
+@using System.Web.UI.WebControls
+@using DevExpress.Utils.Drawing.Helpers
+@using DevExpress.Web
+@using DevExpress.Web.Mvc.UI
+@model livemenu.Areas.BWP.Models.Attributes.ComboBoxAttributesSelector
+
+        @Html.DevExpress().ComboBox(
+            settings =>
+            {
+                settings.Name = Model.uID;
+                settings.Width = new Unit(100, UnitType.Percentage);
+                settings.SelectedIndex = 0;
+                settings.Properties.AllowUserInput = true;
+               // settings.Properties.AnimationType = AnimationType.Fade;
+                settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+                settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+                settings.CallbackRouteValues = new { Area = "CMS", Controller = "Attributes", Action = "ComboBoxAttributesSelector", uID = Model.uID, agCode = Model.AgCode, id = Model.Value };
+                settings.Properties.CallbackPageSize = 15;
+                settings.Properties.ValueType = typeof (long);
+                settings.Properties.TextField = "Name";
+                settings.Properties.ValueField = "ID";
+            }
+            ).BindList(@Model.AttributeList).Bind(Model.Value).GetHtml()
+  

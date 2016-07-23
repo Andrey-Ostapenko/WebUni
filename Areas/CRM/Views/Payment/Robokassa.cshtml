@@ -1,0 +1,39 @@
+﻿@using livemenu.Helpers
+
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+}
+
+
+
+<div class="panel panel-transparent">
+    <div class="panel-body no-padding">
+        <div class="panel panel-default" style="overflow: auto; ">
+            <div class="panel-heading ">
+                <div class="panel-title">
+                    Робокасса
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row" style="margin-top: 0px">
+                    <div class="col-sm-12 col-md-12 no-padding">
+                        <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                            <div class="btn-group " style="margin-right: 20px">
+                                <a class="btn btn-success" id="" onclick="$('#robokassasettings-edit').find('form').submit()" style="display: block;">
+                                    <i class="fa fa-check"></i>
+                                </a>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 20px">
+                    @{Html.RenderAction(MVC.CRM.Payment.RobokassaSettings());}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

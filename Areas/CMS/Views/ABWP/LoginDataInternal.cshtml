@@ -1,0 +1,156 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniLogin
+@{ 
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var textsgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.LoginDataText);
+    var textsVisible = textsgroup.IsVisible ? string.Empty : "hidden";
+    var textsDisabled = string.Empty;
+    var textscollapsed = textsgroup.IsCollapse ? "collapsed" : string.Empty;
+    var textscollapsein = !textsgroup.IsCollapse ? "in" : string.Empty;
+
+
+    var viewgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.LoginDataView);
+    var viewVisible = viewgroup.IsVisible ? string.Empty : "hidden";
+    var viewDisabled = string.Empty;
+    var viewcollapsed = viewgroup.IsCollapse ? "collapsed" : string.Empty;
+    var viewcollapsein = !viewgroup.IsCollapse ? "in" : string.Empty;
+}
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.LoginDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+
+        <div class="@viewVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.LoginDataView">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-view-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@viewcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.LoginDataView]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-view-acc" class="vg-acc-content collapse @viewcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Перейти на страницу</label>
+                            <div class="col-sm-5" style="float: right;">
+                                
+                            </div>
+                        </div>
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" class="select2-offscreen" id="RedirectPageCatalogItemIDHDN" style="width: 100%" value="@Model.RedirectPageCatalogItemID" />
+                                <input type="text" id="RedirectPageCatalogItemID" class='tag-input full-width' name="RedirectPageCatalogItemID" value="@Model.RedirectPageCatalogItemID" />
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <div class="@textsVisible @textsDisabled vg-links vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.LoginDataText">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.ID-link-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@textscollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.LoginDataText]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.ID-link-acc" class="vg-acc-content collapse @textscollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле логина</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.LoginText, new
+                               {
+                                   @class = "input-sm form-control WebUni-form-element",
+                                   placeholder = "Название поля логина"
+                               })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Поле пароля</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.PasswordText, new
+                                {
+                                    @class = "input-sm form-control WebUni-form-element",
+                                    placeholder = "Название поля пароля"
+                                })
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group">
+                            <label class="col-sm-7 control-label">Кнопка входа</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success ">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            @Html.TextBoxFor(m => m.SignInText, new
+                                {
+                                    @class = "input-sm form-control WebUni-form-element",
+                                    placeholder = "Название кнопки войти"
+                                })
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+}

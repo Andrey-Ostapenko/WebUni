@@ -1,0 +1,80 @@
+﻿@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+
+@model livemenu.Common.Entities.Entities.UniWebinar
+
+@{
+    Layout = null;
+}
+
+@{
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var webinarApiGroup = groups.GetConfigurationSafe(CatalogItemViewGroup.WebinarDataApi);
+    var webinarApiVisible = webinarApiGroup.IsVisible ? string.Empty : "hidden";
+    var webinarApiCollapsed = webinarApiGroup.IsCollapse ? "collapsed" : string.Empty;
+
+    const string webinarTokenApi = @"Ключ API";
+}
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.WebinarDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+},
+    new
+    {
+        @class = "form-horizontal ",
+    }))
+
+{
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+    </div>
+
+     <!-- #region Вебинара API -->
+    <form id="frmWebinarCreate">
+            <div class="@webinarApiVisible vg-view vg-elements flat-panel-group">
+                <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.WebinarDataApi">
+                    <div class="panel-heading" role="tab" id="headingOne1">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse"
+                               data-target="#vg-@Model.CatalogItemID-view-acc"
+                               href="#"
+                               aria-expanded="false"
+                               aria-controls="collapseOne"
+                               class="@webinarApiCollapsed">
+                                @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.WebinarDataApi]
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="vg-@Model.CatalogItemID-view-acc"
+                         class="vg-acc-content collapse @webinarApiCollapsed"
+                         role="tabpanel"
+                         aria-labelledby="headingOne1"
+                         aria-expanded="false"
+                         style="">
+                        <div class="panel-body">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">@webinarTokenApi</label>
+                                <div class="col-sm-5" style="float: right;"></div>
+                            </div>
+                            <div class="form-group WebUni-form-group WebUni-form-group-group WebUni-form-group-input">
+                                <div class="">
+                                    @Html.TextBoxFor(m => m.TokenApi, new { @class = "tag-input full-width", placeholder = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"})
+                                    @*<input type="text"
+                                           id="webinar-api-token"
+                                           class='tag-input full-width'
+                                           name="TokenApi"
+                                           placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"/>*@
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- #endregion -->
+}

@@ -1,0 +1,197 @@
+﻿@using System.Web.UI.WebControls
+@using livemenu.Helpers
+@using livemenu.Kernel.Rights
+@using livemenu.Models.Rights
+@{
+    Layout = null;
+}
+
+
+@model  livemenu.Models.Rights.Catalogs.RightsCatalogModel
+
+@{
+
+    Session["NewCatalogInitItemID"] = (long)Model.CatalogItemID;
+
+    var treeList = Html.DevExpress().TreeList(settings =>
+    {
+        settings.Name = "RightsCatalog";
+        settings.SettingsBehavior.AutoExpandAllNodes = false;
+
+        settings.CallbackRouteValues = new { Controller = "Rights", Action = "RightsCatalogTreeListPartial", cid  = Model.CatalogItemID, rsid = Model.RightSubjectID, isRoot = Model.IsRoot };
+        settings.Style.Add("border-collapse", "collapse");
+
+        settings.SettingsEditing.AllowNodeDragDrop = false;
+        settings.SettingsBehavior.AllowDragDrop = false;
+        settings.SettingsBehavior.AllowSort = true;
+        settings.SettingsBehavior.AllowFocusedNode = false;
+
+        settings.Settings.ShowTreeLines = true;
+
+        settings.SettingsSelection.Enabled = false;
+        settings.SettingsSelection.AllowSelectAll = true;
+        settings.SettingsSelection.Recursive = false;
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.PageSize = 10;
+        settings.SettingsPager.Mode = TreeListPagerMode.ShowAllNodes;
+
+
+        settings.CommandColumn.Visible = false;
+
+        settings.SettingsEditing.Mode = TreeListEditMode.Inline;
+        settings.SettingsBehavior.DisablePartialUpdate = true; //error length todo
+
+
+        settings.AutoGenerateColumns = false;
+        settings.Width = Unit.Percentage(100);
+        //     settings.Settings.GridLines = System.Web.UI.WebControls.GridLines.Both;
+        settings.Settings.SuppressOuterGridLines = true;
+        settings.Settings.GridLines = System.Web.UI.WebControls.GridLines.Both;
+        settings.Settings.GridLines = System.Web.UI.WebControls.GridLines.Both;
+        settings.Settings.ShowPreview = true;
+        //  settings.Height = new Unit(400);
+        settings.KeyFieldName = "ID";
+        settings.ParentFieldName = "ParentID";
+        settings.ClientSideEvents.EndCallback = "OnCallbackComplete";
+        //   settings.ClientSideEvents.StartDragNode = "OnStartDragNode";
+        settings.SetPreviewTemplateContent(a =>
+        {
+            var ciID = ((Dictionary<string, long>)Session["DX_RightsCatalogNavigator_MAP"])[a.NodeKey];
+                ViewContext.Writer.Write("<div id='nc-ci-id-{0}'></div>", ciID);
+
+        });
+
+        //settings.Columns.Add(
+        //column =>
+        //{
+        //    column.Visible = false;
+        //    column.FieldName = "HasMicroModules";
+        //    column.Caption = "HasMicroModules";
+
+        //    column.AllowSort = DefaultBoolean.False;
+        //});
+        //settings.Columns.Add(
+        //column =>
+        //{
+        //    column.Visible = false;
+        //    column.FieldName = "TypeCode";
+        //    column.Caption = "Код типа";
+
+        //    column.AllowSort = DefaultBoolean.False;
+        //    //column.Width = new Unit(30, UnitType.Percentage);
+
+        //}
+        //);
+        settings.Columns.Add(
+        column =>
+        {
+            column.FieldName = "TypeName";
+            column.Caption = "Тип";
+            column.AllowSort = DefaultBoolean.False;
+            //column.Width = new Unit(30, UnitType.Percentage);
+        });
+
+        settings.Columns.Add(
+        column =>
+        {
+            column.FieldName = "Name";
+            column.Caption = "Название";
+            column.AllowSort = DefaultBoolean.False;
+            //column.Width = new Unit(30, UnitType.Percentage);
+            column.SetEditCellTemplateContent(a =>
+            {
+                Html.DevExpress().TextBox(
+                edtSettings =>
+                {
+                    edtSettings.Name = "Name";
+                    edtSettings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+                    edtSettings.ShowModelErrors = true;
+                }
+                )
+                .Bind(DataBinder.Eval(a.DataItem, "Name"))
+                .Render();
+            });
+        }
+        );
+
+        //settings.Columns.Add(
+        // column =>
+        // {
+        //     column.AllowSort = DefaultBoolean.False;
+        //     column.Width = new Unit(49, UnitType.Pixel);
+        //     column.SetEditCellTemplateContent(a => { });
+        //     column.SetDataCellTemplateContent(a =>
+        //     {
+        //         var ciID = ((Dictionary<string, long>)Session["DX_RightsCatalogNavigator_MAP"])[a.NodeKey];
+        //         if ((bool)DataBinder.Eval(a.DataItem, "HasMicroModules"))
+        //         {
+        //             ViewContext.Writer.Write(@"<button class='btn btn-info btn-xs' onclick=""{0}, '{1}', $(this))"" data-nc-det-mode='closed' >  <i class='entypo-down-open'></i></button>", @"ncOpenDetail('nc-ci-id-" + ciID + "'", @Url.Action(MVC.NewCatalog.CatalogItemDetail(ciID)));
+        //         }
+        //     });
+        // });
+
+        settings.Columns.Add(column =>
+        {
+
+            //          column.FieldName = "IsViewAllowedSync";
+            column.Caption = "Просмотр";
+            column.Width = new Unit(109, UnitType.Pixel);
+            column.SetDataCellTemplateContent(a =>
+            {
+               
+                
+               Html.RenderPartial(MVC.Rights.Views._RightsButtonsPanel, new RightsButtonsPanelModel()
+               {
+                   Allowed = (bool) DataBinder.Eval(a.DataItem, "ViewAllowed"),
+                   Denied = (bool)DataBinder.Eval(a.DataItem, "ViewDenied"),
+                   IsSync = (bool)DataBinder.Eval(a.DataItem, "IsViewSync"),
+                   RightsHolderID = long.Parse(a.NodeKey),
+                   RightSubjectID = Model.RightSubjectID,
+                   IsEnabled = true,
+                   AllowedType = RightValueType.ViewAllowed,
+                   DeniedType = RightValueType.ViewDenied,
+                   IsSyncType = RightValueType.IsViewSync,
+               });
+            });
+
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.Caption = "Редактирование";
+            column.Width = new Unit(103, UnitType.Pixel);
+            column.SetDataCellTemplateContent(a =>
+            {
+       //         if ((bool) DataBinder.Eval(a.DataItem, "ViewAllowed"))
+                {
+                    Html.RenderPartial(MVC.Rights.Views._RightsButtonsPanel, new RightsButtonsPanelModel()
+                    {
+                        Allowed = (bool) DataBinder.Eval(a.DataItem, "EditAllowed"),
+                        Denied = (bool)DataBinder.Eval(a.DataItem, "EditDenied"),
+                        IsSync = (bool)DataBinder.Eval(a.DataItem, "IsEditSync"),
+                        RightsHolderID = long.Parse(a.NodeKey),
+                        RightSubjectID = Model.RightSubjectID,
+                        IsEnabled = true,
+                        AllowedType = RightValueType.EditAllowed,
+                        DeniedType = RightValueType.EditDenied,
+                        IsSyncType = RightValueType.IsEditSync,
+                    });
+                }
+            });
+
+        });
+
+    });
+
+}
+@treeList.BindToVirtualData(new RightsCatalogNavigator(Model.RightSubjectID, Model.IsRoot).VirtualModeCreateChildren, RightsCatalogNavigator.VirtualModeNodeCreating).GetHtml()
+
+<script>
+    $(document).ready(function () {
+        OnCallbackComplete();
+    });
+
+    
+</script>
+

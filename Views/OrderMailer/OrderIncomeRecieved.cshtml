@@ -1,0 +1,125 @@
+@using Mvc.Mailer
+@model livemenu.Common.Entities.Entities.Order
+
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <link href="" rel="stylesheet">
+    @*<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>*@
+
+</head>
+<body>
+    <style>
+        .right {
+            text-align: right;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+    </style>
+    @{
+        var payment = Model.IsMoneyCache ?? false ? "Наличные" : "Безналичный платеж";
+        var income = (Model.Income ?? 0).ToString("N2") + " руб";
+    }
+    @Styles.Render(Url.Abs("/Content/bootstrap.min.css"))
+    <div class="page-header">
+        <div class="container" style="margin-top: 20px">
+            <h1 style="margin-top: 20px">Поступил заказ #@Model.Number</h1>
+            <p>Клиент: @Model.ClientName</p>
+            <p>Дата: @Model.CreationDate.Value.ToString("dd.MM.yyyy")</p>
+            <p>E-mail: @Model.Client.Email</p>
+            <p>Телефон: @Model.Client.Phone</p>
+            <p>Способ оплаты: @payment</p>
+            <p>Комментарий: @Model.Comment</p>
+
+        @if (Model.OrderDeliveryType != null)
+        {
+            <p>Получение товара: @Model.Client.Email</p>
+            @*if (@Model.OrderDeliveryTypeID == 1)
+            {
+                <p>Пункт самовывоза: <strong>@Model.Storage.Name</strong> @Model.Storage.Address</p>
+            }
+            else
+            {
+                <p>Адрес доставки: @Model.DeliveryAddress</p>
+            }*@
+        }
+            <p><strong>Получено: @income</strong></p>
+
+
+
+    </div>
+</div>
+<div class="">
+    <div class="container">
+        <div class="row">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Артикул</th>
+                        <th>Наименование</th>
+                        <th>Количество</th>
+                        <th>Стоимость</th>
+                        <th>Итого</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        double total = 0;
+                    }
+                    @foreach (var item in Model.OrderElement)
+                    {
+                        var safeP = (double)(item.CustomPrice ?? 0);
+                        var price = item.Count * (safeP);
+                        total += price;
+
+
+                        <tr>
+                            <th scope="row">@item.DisplayIndex</th>
+                            <td>@item.Articul</td>
+                            <td>@item.Name</td>
+                            <td class="right">@item.Count</td>
+
+                            <td class="right">@safeP.ToString("N2")</td>
+                            <td class="right">@price.ToString("N2")</td>
+                        </tr>
+                    }
+                   @if (Model.OrderDeliveryTypeID.HasValue && Model.OrderDeliveryTypeID.Value != 3)
+                   {
+                       total += (double)(Model.DeliveryPrice ?? 0);
+                       var dprice = (Model.DeliveryPrice ?? 0).ToString("N2");
+                         <tr>
+                            <td colspan="5" style="text-align: right">Доставка</td>
+
+                            <td class="right">@dprice</td>
+                        </tr>
+                    }
+                   
+
+                    <tr>
+                        <td colspan="5" style="text-align: right">Итого</td>
+
+                        <td class="right">@total.ToString("N2")</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>
+

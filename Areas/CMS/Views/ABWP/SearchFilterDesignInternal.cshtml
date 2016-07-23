@@ -1,0 +1,969 @@
+﻿
+@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniSearchFilter
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.SearchFilterDesignSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+            new
+            {
+                @class = "form-horizontal ",
+            }))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+
+
+
+
+    <div class="form-group WebUni-form-group">
+            <div class="col-sm-7 ">
+                @Html.DropDownListFor(m => m.Align, new SelectList(
+                    new[]
+                    {
+                        new { Value = 0, Text = "Слева" },
+                        new { Value = 1, Text = "По центру" },
+                        new { Value = 2, Text = "Справа" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.Align),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+            </div>
+
+        </div>
+
+        <div class="form-group WebUni-form-group">
+            <label for="Height" class="col-sm-7 control-label">Растягивать на полную ширину при вертикальном расположении</label>
+            <div class="col-sm-5" style="float: right;">
+                <div class="checkbox WebUni-checkbox check-success ">
+                    @{
+                        var fw = "c" + Model.CatalogItemID + "IsVerticalFullWidth";
+                    }
+                    @Html.BasicCheckBoxFor(x => x.IsVerticalFullWidth, new { id = fw })
+                    <label for="@fw"></label>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    <div class="form-group WebUni-form-group WebUni-form-group-big">
+        <label for="Height" class="col-sm-7 control-label">Текст</label>
+        <div class="col-sm-5" style="float: right;">
+        </div>
+    </div>
+
+		
+
+        <div class="form-group WebUni-form-group WebUni-form-group-big">
+            <label for="Height" class="col-sm-7 control-label">Размер</label>
+            <div class="col-sm-5" style="float: right;">
+                @Html.TextBoxFor(m => m.Size, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+            </div>
+
+        </div>
+
+
+    <div class="form-group WebUni-form-group WebUni-form-group-group">
+                <label for="Height" class="col-sm-7 control-label">До наведения</label>
+                <div class="col-sm-5" style="float: right;">
+
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет</label>
+                @{
+                    var item = Model.Color;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.Color = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.Color, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Жирный</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            var idr = "c" + Model.CatalogItemID + "Bold";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.Bold, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Курсив</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "Italic";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.Italic, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Подчеркивать</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "Underline";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.Underline, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                <label for="Height" class="col-sm-7 control-label">При наведении</label>
+                <div class="col-sm-5" style="float: right;">
+
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет</label>
+                @{
+                    item = Model.HoverColor;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.HoverColor = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.HoverColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Жирный</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "HoverBold";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.HoverBold, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Курсив</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "HoverItalic";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.HoverItalic, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Подчеркивать</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "HoverUnderline";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.HoverUnderline, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                <label for="Height" class="col-sm-7 control-label">При включении</label>
+                <div class="col-sm-5" style="float: right;">
+
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет</label>
+                @{
+                    item = Model.ActiveColor;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.ActiveColor = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.ActiveColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Жирный</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "ActiveBold";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.ActiveBold, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Курсив</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "ActiveItalic";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.ActiveItalic, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Подчеркивать</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "ActiveUnderline";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.ActiveUnderline, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group WebUni-form-group-big">
+                <label for="Height" class="col-sm-7 control-label">Отступы</label>
+                <div class="col-sm-5" style="float: right;">
+                </div>
+            </div>
+
+
+
+            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                <label for="Height" class="col-sm-7 control-label">Снаружи</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                        @Html.BasicCheckBoxFor(x => x.MarginEnabled, new { data_init_plugin = "switchery_internal" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <div class="col-sm-7 ">
+                    @Html.DropDownListFor(m => m.IsMarginTopInPixel, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Отступ снаружи-сверху (px)" },
+                        new { Value = "false", Text = "Отступ снаружи-сверху (%)" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsMarginTopInPixel),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                </div>
+
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.MarginTop, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+
+                <div class="col-sm-7 ">
+                    @Html.DropDownListFor(m => m.IsMarginLeftInPixel, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Отступ снаружи-слева (px)" },
+                        new { Value = "false", Text = "Отступ снаружи-слева (%)" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsMarginLeftInPixel),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                </div>
+
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.MarginLeft, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group">
+                <div class="col-sm-7 ">
+                    @Html.DropDownListFor(m => m.IsMarginRightInPixel, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Отступ снаружи-справа (px)" },
+                        new { Value = "false", Text = "Отступ снаружи-справа (%)" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsMarginRightInPixel),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                </div>
+
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.MarginRight, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <div class="col-sm-7 ">
+                    @Html.DropDownListFor(m => m.IsMarginBottomInPixel, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Отступ снаружи-внизу (px)" },
+                        new { Value = "false", Text = "Отступ снаружи-внизу (%)" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsMarginBottomInPixel),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                </div>
+
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.MarginBottom, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+
+
+
+
+            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                <label for="Height" class="col-sm-7 control-label">Внутри</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                        @Html.BasicCheckBoxFor(x => x.PaddingEnabled, new { data_init_plugin = "switchery_internal" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <div class="col-sm-7 ">
+                    @Html.DropDownListFor(m => m.IsPaddingTopInPixel, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Отступ внутри-сверху (px)" },
+                        new { Value = "false", Text = "Отступ внутри-сверху (%)" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsPaddingTopInPixel),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                </div>
+
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.PaddingTop, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+            <div class="form-group WebUni-form-group">
+                <div class="col-sm-7 ">
+                    @Html.DropDownListFor(m => m.IsPaddingLeftInPixel, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Отступ внутри-слева (px)" },
+                        new { Value = "false", Text = "Отступ внутри-слева (%)" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsPaddingLeftInPixel),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                </div>
+
+
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.PaddingLeft, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+            <div class="form-group WebUni-form-group">
+                <div class="col-sm-7 ">
+                    @Html.DropDownListFor(m => m.IsPaddingRightInPixel, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Отступ внутри-справа (px)" },
+                        new { Value = "false", Text = "Отступ внутри-справа (%)" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsPaddingRightInPixel),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                </div>
+
+
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.PaddingRight, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+            <div class="form-group WebUni-form-group">
+                <div class="col-sm-7 ">
+                    @Html.DropDownListFor(m => m.IsPaddingBottomInPixel, new SelectList(
+                    new[]
+                    {
+                        new { Value = "true", Text = "Отступ внутри-внизу (px)" },
+                        new { Value = "false", Text = "Отступ внутри-внизу (%)" },
+                    },
+                    "Value",
+                    "Text",
+                    Model.IsPaddingBottomInPixel),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+                </div>
+
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.PaddingBottom, new
+           {
+               @class = "spin-fe_padding input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group WebUni-form-group-big">
+                <label for="Height" class="col-sm-7 control-label">Границы</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                        @Html.BasicCheckBoxFor(x => x.BorderAllEnabled, new { data_init_plugin = "switchery_internal" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                <label for="Height" class="col-sm-7 control-label">До наведения</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                        @Html.BasicCheckBoxFor(x => x.BorderEnabled, new { data_init_plugin = "switchery_internal" })
+                    </div>
+                </div>
+            </div>
+
+
+        <div class="form-group WebUni-form-group ">
+            <label for="BorderStyle" class="col-sm-7 control-label">
+                @Html.DropDownListFor(m => m.BorderStyle, Helpers.BorderStyleSelectList(
+                    "Value",
+                    "Text",
+                    Model.BorderStyle),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+            </label>
+            <div class="col-sm-5" style="float: right;">
+            </div>
+        </div>
+
+
+    <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Толщина границы</label>
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BorderWidth, new
+           {
+               @class = "spin-fe_width input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Закругление границы</label>
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BorderRadius, new
+           {
+               @class = "spin-fe_width input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет границы</label>
+                @{
+                    item = Model.BorderColor;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.BorderColor = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BorderColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                </div>
+            </div>
+
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать верхнюю границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderTopEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderTopEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать левую границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderLeftEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderLeftEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать правую границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderRightEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderRightEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать нижнюю границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderBottomEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderBottomEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+    <div class="form-group WebUni-form-group WebUni-form-group-group">
+        <label for="Height" class="col-sm-7 control-label">При наведении</label>
+        <div class="col-sm-5" style="float: right;">
+            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                @Html.BasicCheckBoxFor(x => x.BorderHoverEnabled, new {data_init_plugin = "switchery_internal"})
+            </div>
+        </div>
+    </div>
+
+        <div class="form-group WebUni-form-group ">
+            <label for="BorderHoverStyle" class="col-sm-7 control-label">
+                @Html.DropDownListFor(m => m.BorderHoverStyle, Helpers.BorderStyleSelectList(
+                    "Value",
+                    "Text",
+                    Model.BorderHoverStyle),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+            </label>
+            <div class="col-sm-5" style="float: right;">
+            </div>
+        </div>
+
+    <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Толщина границы</label>
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BorderHoverWidth, new
+           {
+               @class = "spin-fe_width input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Закругление границы</label>
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BorderHoverRadius, new
+           {
+               @class = "spin-fe_width input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет границы</label>
+                @{
+                    item = Model.BorderHoverColor;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.BorderHoverColor = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BorderHoverColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                </div>
+            </div>
+
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать верхнюю границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success  ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderHoverTopEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderHoverTopEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать левую границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderHoverLeftEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderHoverLeftEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать правую границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderHoverRightEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderHoverRightEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать нижнюю границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderHoverBottomEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderHoverBottomEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+
+
+    <div class="form-group WebUni-form-group WebUni-form-group-group">
+        <label for="Height" class="col-sm-7 control-label">При включении</label>
+        <div class="col-sm-5" style="float: right;">
+            <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                @Html.BasicCheckBoxFor(x => x.BorderActiveEnabled, new {data_init_plugin = "switchery_internal"})
+            </div>
+        </div>
+    </div>
+
+        <div class="form-group WebUni-form-group ">
+            <label for="BorderActiveStyle" class="col-sm-7 control-label">
+                @Html.DropDownListFor(m => m.BorderActiveStyle, Helpers.BorderStyleSelectList(
+                    "Value",
+                    "Text",
+                    Model.BorderActiveStyle),
+                    new { @class = "cs-select cs-skin-slide", data_init_plugin = "cs-select" }
+                    )
+            </label>
+            <div class="col-sm-5" style="float: right;">
+            </div>
+        </div>
+
+    <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Толщина границы</label>
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BorderActiveWidth, new
+           {
+               @class = "spin-fe_width input-sm form-control WebUni-form-element "
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Закругление границы</label>
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BorderActiveRadius, new
+           {
+               @class = "spin-fe_width input-sm form-control WebUni-form-element",
+               placeholder = "авто"
+           })
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет границы</label>
+                @{
+                    item = Model.BorderActiveColor;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.BorderActiveColor = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BorderActiveColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                </div>
+            </div>
+
+
+
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать верхнюю границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success  ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderActiveTopEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderActiveTopEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать левую границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success  ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderActiveLeftEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderActiveLeftEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать правую границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderActiveRightEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderActiveRightEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Показывать нижнюю границу</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success  ">
+                        @{
+                            idr = "c" + Model.CatalogItemID + "BorderActiveBottomEnabled";
+                        }
+                        @Html.BasicCheckBoxFor(x => x.BorderActiveBottomEnabled, new { id = idr })
+                        <label for="@idr"></label>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+            @*<div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет фона</label>
+                @{
+                    item = Model.BackgroundColor;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.BackgroundColor = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BackgroundColor, new
+               {
+                   @class = "color-picker-fe_internal form-control WebUni-form-element"
+               })
+                </div>
+            </div>*@
+
+
+
+            <div class="form-group WebUni-form-group WebUni-form-group-big">
+                <label for="Height" class="col-sm-7 control-label">Фон</label>
+                <div class="col-sm-5" style="float: right;">
+                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                        @Html.BasicCheckBoxFor(x => x.BackgroundColorEnabled, new { data_init_plugin = "switchery_internal" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет фона</label>
+                @{
+                    item = Model.BackgroundColor;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.BackgroundColor = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BackgroundColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                </div>
+            </div>
+
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет фона при наведении</label>
+                @{
+                    item = Model.BackgroundHoverColor;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.BackgroundHoverColor = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BackgroundHoverColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                </div>
+            </div>
+
+
+            <div class="form-group WebUni-form-group">
+                <label for="Height" class="col-sm-7 control-label">Цвет фона при включении</label>
+                @{
+                    item = Model.BackgroundActiveColor;
+                    if (string.IsNullOrEmpty(item))
+                    {
+                        Model.BackgroundActiveColor = "rgb(0, 0, 0)";
+                    }
+                }
+                <div class="col-sm-5" style="float: right;">
+                    @Html.TextBoxFor(m => m.BackgroundActiveColor, new
+           {
+               @class = "color-picker-fe_internal form-control WebUni-form-element"
+           })
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+}
+

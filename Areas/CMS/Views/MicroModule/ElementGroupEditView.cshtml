@@ -1,0 +1,161 @@
+﻿@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.Configuration
+@model livemenu.Areas.BWP.Models.ElementGroupEditModel
+
+<style>
+    .cp-popover-container .popover {
+        z-index: 100000;
+    }
+
+    .panel-collapse .form-group {
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+</style>
+
+@functions
+{
+
+    string GetVisualGroupName(string code)
+    {
+        var gr = Model.ElementGroupContainerConfig.VisualGroupConfig.SingleOrDefault(x => x.Code == code);
+        return gr != null ? gr.LocalizedNames.GetStringForCurrentLocale() : string.Empty;
+    }
+
+}
+
+@if (Model.ElementGroupContainerConfig.VisualGroupConfig != null && Model.ElementGroupContainerConfig.VisualGroupConfig.Any())
+{
+    var dict = Enumerable.Range(0, Model.ElementGroupContainerConfig.ElementGroupConfig.Count).ToList()
+        .ToDictionary(x => x, x => Model.ElementGroupContainerConfig.ElementGroupConfig[x]);
+
+    var groups = dict.GroupBy(x => x.Value.VisualGroup);
+   
+    
+    <div class="panel panel-group panel-transparent form-group" id="ac-@Model.ElementGroupID">
+        @foreach (var group in groups)
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-parent="#ac-@Model.ElementGroupID" data-toggle="collapse" href="#@group.Key">@GetVisualGroupName(group.Key)</a>
+                    </h4>
+                </div>
+                <div class="panel-collapse collapse " id="@group.Key">
+                    <div class="panel-body">
+                        @{
+                            ViewBag.UseCustomIndexer = true;
+                            ViewBag.CustomIndexer = group.Select(x => x.Key).ToList();
+
+                            Html.RenderPartial(MVC.CMS.MicroModule.Views.ElementGroupEditViewInternal, Model);
+                        }
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+}
+else
+{
+    Html.RenderPartial(MVC.CMS.MicroModule.Views.ElementGroupEditViewInternal, Model);
+}
+
+
+
+<script>
+    $.Pages.initSwitcheryPlugin();
+
+    var editor = CKEDITOR.replaceAll('ckeditor');
+
+
+    for (var i in CKEDITOR.instances) {
+
+        CKEDITOR.instances[i].on('change', function () { CKEDITOR.instances[i].updateElement() });
+
+    }
+    $(document).ready(function () {
+
+        //$("#multi").val().select2();
+
+
+     
+
+
+
+    });
+
+
+    $(".color-picker-fe").ColorPickerSliders({
+        placement: 'auto',
+        trigger: 'manual',
+        hsvpanel: true,
+        order: {
+            rgb: 1,
+            hsl: 2,
+            cie: 3,
+            opacity: 4
+        },
+        titleswatchesadd: 'Добавить в образцы',
+        titleswatchesreset: 'Сбросить образцы',
+        labels: {
+            hslhue: 'HSL-тон',
+            hslsaturation: 'HSL-насыщенность',
+            hsllightness: 'HSL-светлота',
+            rgbred: 'RGP-красный',
+            rgbgreen: 'RGP-зеленый',
+            rgbblue: 'RGP-голубой',
+            ciehue: 'CIE-тон',
+
+            ciechroma: 'CIE-цветность',
+            cielightness: 'CIE-светлота',
+            opacity: 'Прозрачность',
+
+        }
+    });
+
+    $(".spin-fe").TouchSpin({
+        min: -1000000000,
+        max: 1000000000,
+        step: 1,
+        decimals: 0,
+        boostat: 5,
+        maxboostedstep: 10,
+        //postfix: '%'
+    });
+
+    $('body').on('click', function (e) {
+        if ($(e.target).attr('role') !== 'popover' && !$(e.target).hasClass('color-picker-fe') 
+        && $(e.target).parents('.cp-popover-container').length === 0) {
+
+            jQuery.each($('.color-picker-fe'), function (i, val) {
+                val = $(this);
+                if ($(val).data('shown')) {
+                    $(val).trigger("colorpickersliders.hide");
+                    $(val).data('shown', false);
+                }
+            });
+
+          
+
+        }
+    });
+
+    $(".color-picker-fe").on('click', function (e) {
+        if ($(this).data('shown') == false || $(".color-picker-fe").data('shown') == undefined) {
+            $(this).data('shown', true);
+            $(this).trigger("colorpickersliders.show");
+        }
+
+
+    });
+    //$("#demoContainer").mouseup(function (e) {
+    //    var subject = $("#demo");
+
+    //    if (e.target.id != subject.attr('id')) {
+    //        subject.fadeOut();
+    //    }
+    //});
+
+</script>

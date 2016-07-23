@@ -1,0 +1,163 @@
+﻿@using System.Data.Entity.Core.Common.EntitySql
+@using livemenu.Helpers
+@model livemenu.Models.FileManager.FileManagerModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = Model.IsExternal ? MVC.FileManager.Views.FileManagerLayout : null;// (Model.IsModal ? null : Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region"));
+    var fm_url = @Url.Action(MVC.FileManager.Connect());
+}
+
+
+<style>
+    .elfinder-navbar, .elfinder-quicklook-navbar {
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+    }
+
+    .elfinder .elfinder-button {
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+        box-sizing: content-box;
+    }
+</style>
+
+<script type="text/javascript">
+    function initfm(onlyDir) {
+        var myCommands = elFinder.prototype._options.commands;
+        var disabled = ['search', 'help'];
+        $.each(disabled, function (i, cmd) {
+            (idx = $.inArray(cmd, myCommands)) !== -1 && myCommands.splice(idx, 1);
+        });
+        
+        var $window = $(window);
+        var options = {
+            @if (Model.IsExternal)
+               {
+                   @: resizable: true,
+                   @: height: ($window.height() - 3),
+                   }
+
+            url: '@fm_url',
+            commands: myCommands,
+            lang: 'ru',
+            //uiOptions: {
+            //    onlyMimes: ["image"]
+            //},
+            getFileCallback: fileCallback,
+
+            //    toolbar: [
+            //        ['back', 'forward'],
+            //        ['reload'],
+            //        ['home', 'up'],
+            //        ['mkdir', 'mkfile', 'upload'],
+            //        ['open', 'download'],
+            //        ['info'],
+            //        ['quicklook'],
+            //        ['copy', 'cut', 'paste'],
+            //        ['rm'],
+            //        ['duplicate', 'rename', 'edit', 'resize'],
+            //        ['view', 'sort']
+            //    ]
+            //},
+            handlers: {
+                select: function (event, elfinderInstance) {
+                    fmSelectedFile = null;
+
+                    if (event.data.selected.length == 1) {
+                        var item = $('#' + event.data.selected[0]);
+
+                           
+
+                        if ((!onlyDir && !item.hasClass('directory')) || (onlyDir && item.hasClass('directory'))) {
+                            fmSelectedFile = elfinderInstance.path(event.data.selected[0]);
+                            //var file = elfinderInstance.file(fmSelectedFile);
+                            //console.log(file.name);//File name
+                            //console.log(elfinderInstance.path(fmSelectedFile));
+                        }
+                    }
+
+
+
+                    if (fmSelectedFile != null) {
+                        $('#fm-ok-btn').removeClass('disabled');
+                    } else {
+                        $('#fm-ok-btn').addClass('disabled');
+                    }
+
+
+                }
+            }
+        };
+        var $elfinder = $('#elfinder').elfinder(options).elfinder('instance');
+
+
+
+        @if (Model.IsExternal && false)
+        {
+            @:  $window.resize(function () {
+                @: var win_height = $window.height();
+                @: if ($elfinder.options.height != win_height) {
+                        @:     $elfinder.resize('auto', win_height);
+                        @:  }
+                @:   })
+        }
+    }
+
+</script>
+
+
+@if (Model.IsExternal)
+{
+    <script>
+        function getUrlParam(paramName) {
+            var reParam = new RegExp('(?:[\?&]|&amp;)' + paramName + '=([^&]+)', 'i');
+            var match = window.location.search.match(reParam);
+
+            return (match && match.length > 1) ? match[1] : '';
+        }
+
+        function fileCallback(file) {
+            var funcNum = getUrlParam('CKEditorFuncNum');
+            var u = '/Admin/' + file.url;
+            window.opener.CKEDITOR.tools.callFunction(funcNum, u);
+            window.close();
+        }
+        $(function ()
+        {
+            initfm();
+        });
+
+    </script>
+
+
+
+}
+else
+{
+     <script>
+         function fileCallback(file) {
+
+         }
+
+         var onlyDir = @Model.OnlyDirectory.ToString().ToLower();
+         $(function ()
+         {
+             initfm(onlyDir);
+         });
+         initfm(onlyDir);
+
+     </script>
+}
+
+
+
+
+
+
+<div id="elfinder"></div>
+
+
+
+

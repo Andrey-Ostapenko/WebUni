@@ -1,0 +1,126 @@
+﻿@{
+    Layout = null;
+}
+
+@{
+    CatalogItemSelectorModel modelWrapper = Model ?? new CatalogItemSelectorModel
+    {
+        CatalogItems = new List<CatalogItem>(),
+        CIID = 0
+    };
+}
+
+
+@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Areas.BWP.Models.CatalogItemSelector
+@using livemenu.Common.Entities.Entities
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.Catalog
+@using livemenu.Kernel.CatalogItemSelector
+@using Microsoft.Practices.ServiceLocation
+@using Unit = System.Web.UI.WebControls.Unit
+@Html.DevExpress().GridView(settings =>
+{
+    settings.Width = new Unit(100, UnitType.Percentage);
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+    settings.Settings.ShowHeaderFilterButton = true;
+    settings.Settings.ShowGroupPanel = true;
+
+    settings.CallbackRouteValues = new { Controller = MVC.CMS.CatalogItemSelector.Name, Action = MVC.CMS.CatalogItemSelector.ActionNames.CatalogItemSelectorGridViewPartial, ciID = modelWrapper.CIID };
+    settings.SettingsBehavior.ConfirmDelete = true;
+
+    settings.SettingsBehavior.AllowSelectByRowClick = true;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.ProcessFocusedRowChangedOnServer = false;
+    settings.SettingsBehavior.ProcessSelectionChangedOnServer = false;
+    settings.SettingsBehavior.SelectionStoringMode = GridViewSelectionStoringMode.PerformanceOptimized;
+
+
+    settings.ClientSideEvents.FocusedRowChanged = "OnCatalogItemSelectorGridViewFocusedRowChanged";
+
+
+    var name = "catalogItemSelectorGridView";
+
+    settings.Name = name;
+    //settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Attributes", Action = "EditAddNewPartial", agCode = ModelWrapper.AttributesGroupCode };
+    //settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Attributes", Action = "EditUpdatePartial", agCode = ModelWrapper.AttributesGroupCode };
+    //settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Attributes", Action = "EditDeletePartial", agCode = ModelWrapper.AttributesGroupCode };
+
+    settings.Settings.ShowFilterRow = true;
+
+    settings.KeyFieldName = "ID";
+
+    settings.Columns.Add(s =>
+    {
+        s.FieldName = "Root.Code";
+        s.Caption = "Каталог";
+
+        s.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        s.ColumnType = MVCxGridViewColumnType.ComboBox;
+        s.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        s.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+        var comboBoxProperties = s.PropertiesEdit as ComboBoxProperties;
+        comboBoxProperties.DataSource = ServiceLocator.Current.GetInstance<ICatalogConfiguration>().GetCatalogConfigs();
+
+        comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+        comboBoxProperties.AllowUserInput = true;
+        comboBoxProperties.DropDownStyle = DropDownStyle.DropDown;
+        comboBoxProperties.TextField = "Name";
+        comboBoxProperties.ValueField = "Code";
+        comboBoxProperties.ValueType = typeof(string);
+    });
+
+    settings.Columns.Add(s =>
+    {
+        s.FieldName = "CatalogItemTypeID";
+        s.Caption = "Тип";
+
+        s.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        s.ColumnType = MVCxGridViewColumnType.ComboBox;
+        s.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        s.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+        var comboBoxProperties = s.PropertiesEdit as ComboBoxProperties;
+        comboBoxProperties.DataSource = UniBlockServiceHelper.UniBlockNames.ToList();// ServiceLocator.Current.GetInstance<ICatalogConfiguration>().GetCatalogItemTypeConfigs();
+
+        comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+        comboBoxProperties.AllowUserInput = true;
+        comboBoxProperties.DropDownStyle = DropDownStyle.DropDown;
+        comboBoxProperties.TextField = "Value";
+        comboBoxProperties.ValueField = "Key";
+        comboBoxProperties.ValueType = typeof(long);
+    });
+
+    settings.Columns.Add(s =>
+    {
+        s.FieldName = "Name";
+        s.Caption = "Название";
+        s.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    });
+    //settings.Columns.Add(s =>
+    //{
+    //    s.FieldName = "Code";
+    //    s.Caption = "Код";
+    //    s.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    //});
+
+    settings.CommandColumn.Visible = false;
+
+
+}).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    e.QueryableSource = ServiceLocator.Current.GetInstance<ICatalogItemSelectorService>().Links(modelWrapper.CIID);
+}).GetHtml()
+
+
+@*}).Bind(modelWrapper.CatalogItems).GetHtml()*@

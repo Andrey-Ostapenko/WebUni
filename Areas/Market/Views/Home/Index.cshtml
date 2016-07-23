@@ -1,0 +1,102 @@
+﻿@using livemenu.DAL
+@using livemenu.Helpers
+@using livemenu.Kernel.Catalog
+@using Microsoft.Practices.ServiceLocation
+
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+    var site = ServiceLocator.Current.GetInstance<ICatalogItemRepository>().Get(x => x.CatalogItemTypeID == 9).SingleOrDefault();
+}
+
+<style>
+    a, a:focus, a:hover, a:active {
+        color: initial;
+    }
+
+    @@media (max-width: 767px) {
+        .jumbotron, .container-fluid {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+    }
+</style>
+
+<div id="dash" class="panel-market">
+
+    <div class="container-fluid ">
+        <div class="panel panel-transparent">
+            <div class="panel-body sortable">
+
+                <div class="row grid-stack">
+                    <div class="grid-stack-item "
+                         data-custom-id="grid-stack-item-sitebuilder"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="sitebuilder" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Market.Home.WebUni())" >
+                                <img src="/Admin/Content/Images/Panels/market/market-WebUni.png">
+                                <div class="WebUni-panel-name">Платформа WebUni</div>
+                                <div class="WebUni-panel-description">магазин</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-catalog-goods"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="catalog-goods" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Market.Home.Shop())" >
+                                <img src="/Admin/Content/Images/Panels/market/market-goods-and-services.png">
+                                <div class="WebUni-panel-name">Купить</div>
+                                <div class="WebUni-panel-description">Товары и услуги</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-catalog-filter"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="catalog-filter" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Market.Home.Shop())" >
+                                <img src="/Admin/Content/Images/Panels/market/market-downloads.png">
+                                <div class="WebUni-panel-name">Загрузки</div>
+                                <div class="WebUni-panel-description">каталог загрузок</div>
+                            </a>
+                        </div>
+                    </div>                    
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var options = {
+        min_width: 0,
+        cell_height: 48,
+        vertical_margin: 10,
+
+    };
+    var name = "WebUni-market-panel";
+    $('.grid-stack').gridstack(options);
+
+    $('.grid-stack').on('dragstop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    $('.grid-stack').on('resizestop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    var saved = $.cookie(name);
+    if (saved) {
+        panelLoadGridData(jQuery.parseJSON(saved));
+    }
+
+</script>

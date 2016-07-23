@@ -1,0 +1,38 @@
+﻿@{
+    Layout = null; // MVC.Shared.Views.ViewNames._Widget;
+}
+
+@using System.Web.UI.WebControls
+@using livemenu.Common.Entities
+
+@model livemenu.Areas.BWP.Models.FieldListModel
+
+@using (Ajax.BeginForm(MVC.CMS.FieldListMicroModule.Save(),
+    new AjaxOptions
+    {
+        InsertionMode = InsertionMode.Replace,
+        UpdateTargetId = Model.ID,
+    },
+    new
+    {
+        @class = "form-horizontal ",
+        @style = "padding: 15px;"
+    }))
+{
+
+    @Html.Partial(MVC.CMS.MicroModule.Views.ElementGroupEditView, Model)
+
+    
+
+    @Html.HiddenFor(m => m.MicroModuleID)
+    @Html.HiddenFor(m => m.ElementGroupID)
+
+
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.Code)
+}
+
+
+<script>
+  
+</script>

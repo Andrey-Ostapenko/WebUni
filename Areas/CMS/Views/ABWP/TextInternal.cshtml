@@ -1,0 +1,32 @@
+﻿@{
+    Layout = null;
+}
+@using livemenu.Helpers
+@model livemenu.Common.Entities.Entities.UniText
+@{
+    
+}
+@using (Ajax.BeginForm(MVC.CMS.WebUni.TextSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "WebUniText",
+    InsertionMode = InsertionMode.Replace,
+
+    OnComplete = "initUniTextCard()"
+},
+
+    new
+    {
+        @class = "form-horizontal ",
+
+    }))
+
+{
+
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.CatalogItemID)
+
+
+
+
+}

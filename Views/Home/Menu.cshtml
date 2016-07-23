@@ -1,0 +1,54 @@
+﻿@{
+    Layout = MVC.Shared.Views._MenuLayout;
+}
+
+<style>
+.long-menu-title{
+
+}
+</style>
+
+<div class="sidebar-menu" id="main-menu">
+    <ul class="menu-items">
+        <li class="m-t-30 ">
+            <a href="@Url.Action(MVC.Home.Index())" data-pjax="#main-region" class="" title="Профиль">
+                <span class="title long-menu-title">Профиль</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-user"></i></span>
+        </li>
+		<li class="">
+            <a href="@Url.Action(MVC.Profile.Account())" class="" title="Аккаунт">
+                <span class="title long-menu-title">Аккаунт</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-pencil"></i></span>
+        </li>
+		<li class="">
+            <a href="@Url.Action(MVC.Profile.Security())"   class="" title="Защита">
+                <span class="title long-menu-title">Защита</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-shield"></i></span>
+        </li>
+		<li class="">
+            <a href="@Url.Action(MVC.Profile.Password())"  class="" title="Пароль">
+                <span class="title long-menu-title ">Пароль</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-lock"></i></span>
+        </li>
+		<li class="">
+            <a href="@Url.Action(MVC.Profile.Purchases())"  class="" title="Покупки">
+                <span class="title long-menu-title">Покупки</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-credit-card"></i></span>
+        </li>
+		<li class="">
+            <a href="@Url.Action(MVC.Profile.License())" class="" title="Лицензия">
+                <span class="title long-menu-title">Лицензия</span>
+            </a>
+            <span class="icon-thumbnail "><i class="fa fa-file-text"></i></span>
+        </li>
+		
+       
+       
+    </ul>
+    <div class="clearfix"></div>
+</div>

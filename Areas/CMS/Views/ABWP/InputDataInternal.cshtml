@@ -1,0 +1,229 @@
+﻿@{
+    Layout = null;
+
+    var confs = Model.CatalogItem.CatalogItemViewGroupConfiguration;
+    var groups = confs.ToDictionary(x => (CatalogItemViewGroup)x.ViewGroup, x => x);
+
+    var modegroup = groups.GetConfigurationSafe(CatalogItemViewGroup.InputDataMode);
+    var modeVisible = modegroup.IsVisible ? string.Empty : "hidden";
+    var modecollapsed = modegroup.IsCollapse ? "collapsed" : string.Empty;
+    var modecollapsein = !modegroup.IsCollapse ? "in" : string.Empty;
+
+
+    var textgroup = groups.GetConfigurationSafe(CatalogItemViewGroup.InputDataText);
+    var textVisible = textgroup.IsVisible ? string.Empty : "hidden";
+    var textcollapsed = textgroup.IsCollapse ? "collapsed" : string.Empty;
+    var textcollapsein = !textgroup.IsCollapse ? "in" : string.Empty;
+}
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CMS
+@model livemenu.Common.Entities.Entities.UniInput
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.InputDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST",
+    //UpdateTargetId = "WebUniLine",
+    //InsertionMode = InsertionMode.Replace,
+
+   OnComplete = "OnCatalogItemFormCompleted"
+},
+
+new
+{
+    @class = "form-horizontal ",
+}))
+
+{
+
+    <div class="" id="">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+        <div class="@modeVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.InputDataMode">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-mode-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@modecollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.InputDataMode]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-mode-acc" class="vg-acc-content collapse @modecollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Выберите режим</label>
+                            <div class="col-sm-5" style="float: right;">
+                            </div>
+                        </div>
+                        <div class="form-group WebUni-form-group">
+                            <div class="col-sm-7 ">
+                                @Html.DropDownListFor(m => m.Mode, new SelectList(
+                                    new[]
+                                    {
+                                        new {Value = 0, Text = "Работа с картой"},
+                                        new {Value = 1, Text = "Привязка колонки базы данных"},
+                                        new {Value = 2, Text = "Привязка поля базы данных"},
+
+                                    },
+                                    "Value",
+                                    "Text",
+                                    Model.Mode),
+                                    new {@class = "cs-select cs-skin-slide", data_init_plugin = "cs-select", onchange = "onInputModeChanged($(this), 'WebUniInputData-" + Model.ID + "')"}
+                                    )
+                            </div>
+                            <div class="col-sm-5" style="float: right;">
+
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="input-map">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Привязать карту</label>
+                                <div class="col-sm-5" style="float: right;">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group WebUni-form-group-input">
+                                <input type="hidden" class="select2-offscreen" id="MapCatalogItemIDDN" style="width: 100%" value="@Model.MapCatalogItemID" />
+                                <input type="text" id="MapCatalogItemID" class='tag-input full-width' name="MapCatalogItemID" value="@Model.MapCatalogItemID" />
+                            </div>
+
+                            <div class="form-group WebUni-form-group">
+                                <label for="Height" class="col-sm-7 control-label">Включить подсказки</label>
+                                <div class="col-sm-5" style="float: right;">
+                                    <div class="checkbox WebUni-checkbox check-success ">
+                                        @{
+                                            var l = "c" + Model.CatalogItemID + "EnableSuggestions";
+                                        }
+                                        @Html.BasicCheckBoxFor(x => x.EnableSuggestions, new { id = l })
+                                        <label for="@l"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-big" style="margin-top: 15px !important; ;">
+                                <label for="Height" class="col-sm-7 control-label">Поиск ближайшей точки на карте</label>
+                                <div class="col-sm-5" style="float: right;">
+                                    <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                        @Html.BasicCheckBoxFor(x => x.SearchNearestPoint, new { data_init_plugin = "switchery_internal" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Поле ввода адреса отправления</label>
+                                <div class="col-sm-5" style="float: right;">
+                                </div>
+                            </div>
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group WebUni-form-group-input" style="margin-top: 0px !important; ;">
+                                <input type="hidden" class="select2-offscreen" id="RouteInputIDDN" style="width: 100%" value="@Model.RouteInputID" />
+                                <input type="text" id="RouteInputID" class='tag-input full-width' name="RouteInputID" value="@Model.RouteInputID" />
+                            </div>
+
+                            <div class="form-group WebUni-form-group">
+                                <label for="Height" class="col-sm-7 control-label">Строить маршрут до ближайшей точки</label>
+                                <div class="col-sm-5" style="float: right;">
+                                    <div class="checkbox WebUni-checkbox check-success ">
+                                        @{
+                                            l = "c" + Model.CatalogItemID + "EnableRoute";
+                                        }
+                                        @Html.BasicCheckBoxFor(x => x.EnableRoute, new { id = l })
+                                        <label for="@l"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="input-save">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Выбрать колонку базы данных</label>
+                                <div class="col-sm-5" style="float: right;">
+                                </div>
+                            </div>
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group WebUni-form-group-input">
+                                <div class="">
+                                    <input type="hidden" class="select2-offscreen" id="DynamicColumnIDH" style="width: 100%" value="@Model.DynamicColumnID"/>
+                                    <input type="text" id="DynamicColumnID" class='tag-input full-width' name="DynamicColumnID" value="@Model.DynamicColumnID"/>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="input-update">
+                            <div class="form-group WebUni-form-group WebUni-form-group-group">
+                                <label for="Height" class="col-sm-7 control-label">Выбрать поле базы данных</label>
+                                <div class="col-sm-5" style="float: right;">
+                                </div>
+                            </div>
+
+                            <div class="form-group WebUni-form-group WebUni-form-group-group WebUni-form-group-input">
+                                <div class="">
+                                    <input type="hidden" class="select2-offscreen" id="DynamicEntityComplexIDsStringH" style="width: 100%" value="@Model.DynamicEntityComplexIDsString" />
+                                    <input type="text" id="DynamicEntityComplexIDsString" class='tag-input full-width' name="DynamicEntityComplexIDsString" value="@Model.DynamicEntityComplexIDsString" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+        <div class="@textVisible vg-view vg-elements flat-panel-group">
+            <div class="panel-group vg-panel" data-ciid="@Model.CatalogItemID" data-vg="@CatalogItemViewGroup.InputDataText">
+                <div class="panel-heading" role="tab" id="headingOne1">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-target="#vg-@Model.CatalogItemID-view-acc" href="#" aria-expanded="false" aria-controls="collapseOne" class="@textcollapsed">
+                            @UniBlockServiceHelper.CatalogItemViewGroupNames[CatalogItemViewGroup.InputDataText]
+                        </a>
+                    </h4>
+                </div>
+                <div id="vg-@Model.CatalogItemID-view-acc" class="vg-acc-content collapse @textcollapsein" role="tabpanel" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                    <div class="panel-body">
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <label for="Height" class="col-sm-7 control-label">Включить маску</label>
+                            <div class="col-sm-5" style="float: right;">
+                                <div class="checkbox WebUni-checkbox check-success checkbox-circle ">
+                                    @Html.BasicCheckBoxFor(x => x.TextEnabled, new { data_init_plugin = "switchery_internal", onchange = "onVGElementsEnabledChanged($(this))" })
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group WebUni-form-group WebUni-form-group-group">
+                            <div class="col-sm-12">
+
+                                @Html.TextBoxFor(m => m.Text, new
+                                   {
+                                       @class = "form-control WebUni-form-element"
+                                   })
+                            </div>
+                        </div>
+
+                      
+
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+}

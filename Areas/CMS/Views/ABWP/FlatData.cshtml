@@ -1,0 +1,277 @@
+﻿
+@using livemenu.Areas.CMS.Helpers
+@using livemenu.Common.Entities
+@using livemenu.Kernel.CMS
+@model livemenu.Kernel.Catalog.CatalogItemCardModel
+
+<div class="catalog-tab-content" id="catalog-tab-data">
+    
+    <div class="row" style="clear: both;">
+        <div class="" >
+            <div data-url="@Url.Action(MVC.CMS.Catalog.GroupStructure(Model.ID, CatalogItemViewType.Data))" data-change-url="@Url.Action(MVC.CMS.Catalog.ChangeGroupStructure())" id="data-flat-group-structure-contrainer" class="form-horizontal"></div>
+            <div id="data-flat">
+                <div class="panel-group" id="accordion-data" role="tablist" aria-multiselectable="true">
+                    @{
+                        bool isFirst = true;
+                        bool firstItem = true;
+                    }
+                    @foreach (var f in Model.CatalogItemFlats.Where(x => x.IsDataVisible))
+                    {
+                        var addClasses = f.IsDataCollapse ? string.Empty : "hide-accord flat-panel-opened";
+                        var target = !f.IsDataCollapse ? string.Empty : "#catalogitem-data-" + f.CatalogItemID;
+                        var collapsed = f.IsDataCollapse ? "collapsed" : string.Empty;
+                        var collapsein = !f.IsDataCollapse ? "in" : string.Empty;
+                        var panelcollapse = f.IsDataCollapse ? "panel-collapse" : string.Empty;
+                        if (isFirst)
+                        {
+                            isFirst = false;
+                        }
+                        else if (f.IsGrouped)
+                        {
+
+                            <div class="flat-group normal-font">Группа @f.CatalogItemName</div>
+                        }
+
+                        <div class="panel flat-panel-group @addClasses">
+
+
+                            <div class="panel-heading" role="tab" id="headingOne1">
+                                <h4 class="panel-title flat-title">
+                                    <a data-toggle="collapse" data-target="@target" href="#" aria-expanded="false" aria-controls="collapseOne" class="@collapsed ">
+                                        @f.CatalogItemName
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="catalogitem-data-@f.CatalogItemID" class="@panelcollapse collapse @collapsein" role="tabpanel" data-is-first="@firstItem" aria-labelledby="headingOne1" aria-expanded="false" style="">
+                                <div class="panel-body" style="margin-bottom: 40px;">
+                                    @if (WebUniUniBlockEditHelper.WebUniDataLoaders.ContainsKey((CatalogItemTypeValue)f.CatalogItemTypeID))
+                                    {
+                                        var actionResult = WebUniUniBlockEditHelper.WebUniDataLoaders[(CatalogItemTypeValue)f.CatalogItemTypeID](f.CatalogItemID);
+
+                                        <div class="WebUni-reloadable" data-reload-id="@Url.Action(actionResult)">
+                                            @if (!f.IsDataCollapse)
+                                            {
+                                               Html.RenderAction(actionResult); 
+                                            }
+                                            
+                                        </div>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                        if (firstItem)
+                        {
+                            firstItem = false;
+                        }
+                    }
+
+
+                </div>
+            </div>
+        </div>
+   
+    </div>
+
+
+
+</div>
+
+
+<div class="catalog-tab-content" id="catalog-tab-design">
+    <div class="row" style="clear: both;">
+        <div class="">
+            <div data-url="@Url.Action(MVC.CMS.Catalog.GroupStructure(Model.ID, CatalogItemViewType.Design))" data-change-url="@Url.Action(MVC.CMS.Catalog.ChangeGroupStructure())" id="design-flat-group-structure-contrainer" class="form-horizontal"></div>
+            <div id="design-flat">
+                <div class="panel-group" id="accordion-design" role="tablist" aria-multiselectable="true">
+
+                    @{
+                        isFirst = true;
+                    }
+
+                    @foreach (var f in Model.CatalogItemFlats.Where(x => x.IsDesignVisible))
+                    {
+                        var addClasses = f.IsDesignCollapse ? string.Empty : "hide-accord flat-panel-opened";
+                        var target = !f.IsDesignCollapse ? string.Empty : "#catalogitem-design-" + f.CatalogItemID;
+                        var collapsed = f.IsDesignCollapse ? "collapsed" : string.Empty;
+                        var collapsein = !f.IsDesignCollapse ? "in" : string.Empty;
+                        var panelcollapse = f.IsDesignCollapse ? "panel-collapse" : string.Empty;
+
+                        if (isFirst)
+                        {
+                            isFirst = false;
+                        }
+                        else if (f.IsGrouped)
+                        {
+                            <div class="flat-group normal-font">Группа @f.CatalogItemName</div>
+                        }
+
+
+
+
+                        <div class="panel  flat-panel-group @addClasses">
+
+                            <div class="panel-heading" role="tab" id="headingOne">
+                                <h4 class="panel-title flat-title">
+                                    <a data-toggle="collapse" data-target="@target" href="#" aria-expanded="false" aria-controls="collapseOne" class="@collapsed">
+                                        @f.CatalogItemName
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="catalogitem-design-@f.CatalogItemID" class="@panelcollapse collapse @collapsein" role="tabpanel" aria-labelledby="headingOne" aria-expanded="false" style="height: 0px;">
+                                <div class="panel-body" style="margin-bottom: 40px;">
+                                    @if (WebUniUniBlockEditHelper.WebUniDesignLoaders.ContainsKey((CatalogItemTypeValue) f.CatalogItemTypeID))
+                                    {
+                                        var actionResult = WebUniUniBlockEditHelper.WebUniDesignLoaders[(CatalogItemTypeValue) f.CatalogItemTypeID](f.CatalogItemID);
+
+
+                                        <div class="WebUni-reloadable" data-reload-id="@Url.Action(actionResult)">
+                                            @*	@{ Html.RenderAction(actionResult); }*@
+                                        </div>
+                                        //Html.RenderAction(WebUniUniBlockEditHelper.WebUniDesignLoaders[(CatalogItemTypeValue)f.CatalogItemTypeID](f.CatalogItemID));
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="catalog-tab-content" id="catalog-tab-shop">
+    <div class="row" style="clear: both;">
+        <div class="">
+            <div id="shop-flat-group-structure-contrainer" class="form-horizontal"></div>
+            <div id="shop-flat">
+                <div class="panel-group" id="accordion-shop" role="tablist" aria-multiselectable="true">
+
+                    @{
+                        isFirst = true;
+                    }
+
+                    @foreach (var f in Model.CatalogItemFlats.Where(x=>x.CatalogItemTypeID == (long)CatalogItemTypeValue.Line))
+                    {
+                        var t = true;
+                        var addClasses = t ? string.Empty : "hide-accord flat-panel-opened";
+                        var target = !t ? string.Empty : "#catalogitem-shop-" + f.CatalogItemID;
+                        var collapsed = t ? "collapsed" : string.Empty;
+                        var collapsein = !t ? "in" : string.Empty;
+                        var panelcollapse = t ? "panel-collapse" : string.Empty;
+
+                        if (isFirst)
+                        {
+                            isFirst = false;
+                        }
+                        else if (f.IsGrouped)
+                        {
+                            <div class="flat-group normal-font">Группа @f.CatalogItemName</div>
+                        }
+                        
+                        <div class="panel  flat-panel-group @addClasses">
+
+                            <div class="panel-heading" role="tab" id="headingOne">
+                                <h4 class="panel-title flat-title">
+                                    <a data-toggle="collapse" data-target="@target" href="#" aria-expanded="false" aria-controls="collapseOne" class="@collapsed">
+                                        @f.CatalogItemName
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="catalogitem-shop-@f.CatalogItemID" class="@panelcollapse collapse @collapsein" role="tabpanel" aria-labelledby="headingOne" aria-expanded="false" style="height: 0px;">
+                                <div class="panel-body" style="margin-bottom: 40px;">
+                                    @if (WebUniUniBlockEditHelper.WebUniShopLoaders.ContainsKey((CatalogItemTypeValue)f.CatalogItemTypeID))
+                                    {
+                                        var actionResult = WebUniUniBlockEditHelper.WebUniShopLoaders[(CatalogItemTypeValue)f.CatalogItemTypeID](f.CatalogItemID);
+
+
+                                        <div class="WebUni-reloadable" data-reload-id="@Url.Action(actionResult)">
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    
+    function onGroupStructureChanged(element) {
+        var url = $('#data-flat-group-structure-contrainer').data('change-url');
+        var val = element.is(":checked");
+        var id = element.data('id');
+        var vt = element.data('view-type');
+        var ct = element.data('change-type');
+        $.post(url,
+        {
+            ID: id,
+            ViewType: vt,
+            ChangeType: ct,
+            Value: val
+        });
+    }
+
+  
+    $('#accordion-data').on('show.bs.collapse', function (e) {
+        var s = $(e.target);
+        if (!s.hasClass('loaded')) {
+            s.addClass('loaded');
+            var a = s;
+            if (s.data('is-first') == "True") {
+                $('#firstItemDataIsLoaded').val(true);
+            }
+            WebUniUniBlockReload(a.find('.WebUni-reloadable'));
+        }
+        s.parent('.flat-panel-group').addClass('flat-panel-opened');
+
+    });
+
+    $('#accordion-data').on('hide.bs.collapse', function (e) {
+        var s = $(e.target);
+        s.parent('.flat-panel-group').removeClass('flat-panel-opened');
+    });
+
+
+    $('#accordion-design').on('show.bs.collapse', function (e) {
+        var s = $(e.target);
+        if (!s.hasClass('loaded')) {
+            s.addClass('loaded');
+            var a = s;
+            WebUniUniBlockReload(a.find('.WebUni-reloadable'));
+        }
+        s.parent('.flat-panel-group').addClass('flat-panel-opened');
+    });
+
+    $('#accordion-design').on('hide.bs.collapse', function (e) {
+        var s = $(e.target);
+        s.parent('.flat-panel-group').removeClass('flat-panel-opened');
+    });
+
+    $('#accordion-shop').on('show.bs.collapse', function (e) {
+        var s = $(e.target);
+        if (!s.hasClass('loaded')) {
+            s.addClass('loaded');
+            var a = s;
+            WebUniUniBlockReload(a.find('.WebUni-reloadable'));
+        }
+        s.parent('.flat-panel-group').addClass('flat-panel-opened');
+    });
+
+    $('#accordion-shop').on('hide.bs.collapse', function (e) {
+        var s = $(e.target);
+        s.parent('.flat-panel-group').removeClass('flat-panel-opened');
+    });
+   
+</script>
+

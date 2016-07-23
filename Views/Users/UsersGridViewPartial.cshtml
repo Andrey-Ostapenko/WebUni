@@ -1,0 +1,260 @@
+﻿@using System.Web.UI.WebControls
+@using DevExpress.Web
+@using livemenu.Common.Entities
+@using livemenu.Helpers
+@using livemenu.Kernel.Positions
+@using Microsoft.Practices.ServiceLocation
+@{
+    Layout = null;
+
+    var settings = new GridViewSettings();
+
+
+
+
+    settings.Name = "UsersGridView";
+    settings.Width = new Unit(100, UnitType.Percentage);
+
+    settings.KeyFieldName = "ID";
+    settings.Settings.ShowFooter = true;
+    settings.Settings.ShowFilterRow = true;
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "FirstName";
+        column.Caption = "Имя";
+        column.Width = new Unit(10, UnitType.Percentage);
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    });
+
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "FathersName";
+        column.Caption = "Отчество";
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "LastName";
+        column.Caption = "Фамилия";
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "PositionID";
+        column.Caption = "Должность";
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.ColumnType = MVCxGridViewColumnType.ComboBox;
+        column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+        var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+        comboBoxProperties.DataSource = ServiceLocator.Current.GetInstance<IPositionService>().GetAll().ToList();
+
+        comboBoxProperties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+        comboBoxProperties.AllowUserInput = true;
+        comboBoxProperties.DropDownStyle = DropDownStyle.DropDown;
+        comboBoxProperties.TextField = "Name";
+        comboBoxProperties.ValueField = "ID";
+        comboBoxProperties.ValueType = typeof(long);
+    });
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Phone";
+        column.Caption = "Телефон";
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Email";
+        column.Caption = "E-mail";
+        column.ColumnType = MVCxGridViewColumnType.TextBox;
+        column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+        column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    });
+
+    //settings.Columns.Add(column =>
+    //{
+    //    column.FieldName = "Login";
+    //    column.Caption = "Логин";
+    //    column.ColumnType = MVCxGridViewColumnType.TextBox;
+    //    column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    //    column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+    //    column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    //});
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "IsActive";
+        column.Caption = "Активность";
+        column.Width = new Unit(1, UnitType.Percentage);
+        column.ColumnType = MVCxGridViewColumnType.CheckBox;
+
+    });
+
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "PositionID");
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "IsActive");
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "VehicleClassID");
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "VehicleStatusID");
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "VehicleModelID");
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "VehicleBrandID");
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Count, "CreationYear");
+
+
+    string name = settings.Name;
+
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+
+    //     settings.Settings.HorizontalScrollBarMode = ScrollBarMode.Auto;
+
+    settings.SettingsPopup.EditForm.AllowResize = true;
+    settings.SettingsPopup.EditForm.HorizontalAlign = PopupHorizontalAlign.Center;
+    settings.SettingsPopup.EditForm.VerticalAlign = PopupVerticalAlign.Middle;
+    settings.SettingsPopup.EditForm.Modal = true;
+
+
+    settings.CallbackRouteValues = new { Controller = MVC.Users.Name, Action = MVC.Users.ActionNames.UsersGridViewPartial };
+    //    settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Vehicle", Action = "VehiclesGridViewPartial" };
+    //    settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Vehicle", Action = "VehiclesGridViewPartial" };
+    settings.SettingsEditing.DeleteRowRouteValues = new { Controller = MVC.Users.Name, Action = MVC.Users.ActionNames.Delete };
+
+
+    settings.SettingsPager.PageSize = 40;
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Auto;
+
+
+    settings.Settings.ShowHeaderFilterButton = true;
+    settings.Settings.ShowGroupPanel = true;
+
+
+
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.AllowGroup = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = true;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+    settings.SettingsBehavior.AllowSort = true;
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.SettingsContextMenu.Enabled = false;
+
+    //settings.SetEditFormTemplateContent(c =>
+    //{
+    //    var idf = DataBinder.Eval(c.DataItem, "ID");
+    //    var mode = idf == null ? CardOpeningMode.Create : CardOpeningMode.Edit;
+
+    //    var id = (long)(idf ?? (long)0);
+
+    //    ViewContext.Writer.Write("<div id='VehicleCardID'>");
+    //    Html.RenderAction(MVC.Vehicle.VehicleCard(mode, id));
+    //    ViewContext.Writer.Write("</div>");
+    //});
+
+
+    //settings.CommandColumn.Visible = false;
+
+
+    //settings.ClientSideEvents.RowDblClick = "function(s, e) { if(s.GetRowKey(e.visibleIndex) != null) { PopupCenter('" + Url.Action(MVC.Vehicle.VehicleCard(CardOpeningMode.Edit)) + "/'" + " +s.GetRowKey(e.visibleIndex)" + ", 'Creation', '800','700');}}";
+    //settings.Columns.Add(column =>
+    //{
+    //    column.Width = new Unit(50, UnitType.Pixel);
+    //    column.SetDataItemTemplateContent(c =>
+    //    {
+    //        var index = (long)DataBinder.Eval(c.DataItem, "ID");
+    //        ViewContext.Writer.Write(Html.StartEditButton("PopupCenter('" + Url.Action(MVC.Vehicle.VehicleCard(CardOpeningMode.Edit, index)) + "', 'Creation', '800','700');"));
+    //    });
+    //    column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton("PopupCenter('" + Url.Action(MVC.Vehicle.VehicleCard(CardOpeningMode.Create)) + "', 'Creation', '800','700');")));
+    //    column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.StartEditButton("PopupCenter('" + Url.Action(MVC.Vehicle.VehicleCard(CardOpeningMode.Edit, 0)) + "', 'Creation', '800','700');")));
+
+    //});
+
+    if (Html.CheckRights(SimpleRightValue.RightsViewEdit))
+    {
+
+        settings.Columns.Add(
+            column =>
+            {
+                column.Caption = "Права";
+                column.Width = new Unit(49, UnitType.Pixel);
+                column.SetEditItemTemplateContent(c => { });
+                column.SetDataItemTemplateContent(c =>
+                {
+                    var id = (long)DataBinder.Eval(c.DataItem, "ID");
+                    //ViewContext.Writer.Write(@"<a class='btn btn-info btn-icon icon-left btn-xs' href='{0}' target='_blank' >  <i class='entypo-archive'></i>Права</button>", Url.Action(MVC.Rights.Index(id)));
+                    //ViewContext.Writer.Write(@"<a class='btn btn-info btn-xs' href='{0}' target='_blank' >  <i class='entypo-archive'></i></button>", Url.Action(MVC.Rights.Index(id)));
+                    var url = Url.Action(MVC.Rights.Index(id));
+                    var str = string.Format("<a class='btn btn-info btn-xs' href='{0}'  >  <i class='fa fa-crosshairs'></i></a>", url);
+                    ViewContext.Writer.Write(str);
+                });
+            });
+    }
+
+    settings.CommandColumn.Visible = false;
+
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var id = (long)DataBinder.Eval(c.DataItem, "ID");
+            ViewContext.Writer.Write(Html.StartEditButton(string.Format("openUserCard('{0}');", Url.Action(MVC.Users.Edit(id)))));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(Html.CreateButton(string.Format("openUserCard('{0}');", Url.Action(MVC.Users.Create())))));
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewSaveButton(name)));
+
+    });
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(1, UnitType.Percentage);
+
+        column.SetEditItemTemplateContent(c => ViewContext.Writer.Write(Html.GridViewCancelEditButton(name)));
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+    });
+
+    //settings.Columns.Add(column =>
+    //{
+    //    column.FieldName = "VehicleColorID";
+    //    column.Caption = "Опции";
+
+    //    column.ColumnType = MVCxGridViewColumnType.ComboBox;
+
+    //    column.Settings.HeaderFilterMode = HeaderFilterMode.CheckedList;
+    //    var comboBoxProperties = column.PropertiesEdit as ComboBoxProperties;
+    //    comboBoxProperties.DataSource = ServiceLocator.Current.GetInstance<IVehicleOptionService>().GetAll().ToList();
+    //    comboBoxProperties.AllowUserInput = true;
+    //    comboBoxProperties.DropDownStyle = DropDownStyle.DropDown;
+    //    comboBoxProperties.TextField = "Name";
+    //    comboBoxProperties.ValueField = "ID";
+    //    comboBoxProperties.ValueType = typeof(long);
+    //});
+
+}
+
+
+        @Html.DevExpress().GridView(settings).Bind(Model).GetHtml()

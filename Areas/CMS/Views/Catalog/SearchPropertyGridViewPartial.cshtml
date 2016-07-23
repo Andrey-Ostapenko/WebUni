@@ -1,0 +1,115 @@
+﻿
+@using System.Data.Entity
+@using System.Web.UI.WebControls
+@using DevExpress.Utils
+@using DevExpress.Web
+@using DevExpress.Web.Mvc
+@using DevExpress.Web.Mvc.UI
+@using livemenu.Helpers
+@using livemenu.Kernel.BWP
+@using livemenu.Kernel.CRM.PriceList
+@using Microsoft.Practices.ServiceLocation
+
+@model long
+
+@{
+    Layout = null;
+
+    var settings = new GridViewSettings();
+
+
+    settings.Name = "CatalogItemSearchPropertyGridView" + Model;
+
+
+    settings.Width = new Unit(100, UnitType.Percentage);
+
+    settings.KeyFieldName = "ID";
+
+    //settings.ClientSideEvents.BeginCallback = "function(s, e) { if(s.cpCIID) e.customArgs['cpCIID'] = s.cpCIID; }";
+    //settings.CustomJSProperties = (sender, e) =>
+    //{
+
+    //    e.Properties["cpCIID"] = ViewBag.CIID;
+
+    //};
+
+
+
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "SearchProperty.Group";
+        column.Caption = "Группа";
+        //column.Settings.FilterMode = ColumnFilterMode.DisplayText;
+        //column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "SearchProperty.Name";
+        column.Caption = "Название";
+
+
+    });
+    
+
+
+
+    string name = settings.Name;
+
+
+    settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+    settings.CallbackRouteValues = new { Controller = MVC.CMS.Catalog.Name, Action = MVC.CMS.Catalog.ActionNames.SearchPropertyGridViewPartial, id = Model };
+
+    settings.SettingsEditing.DeleteRowRouteValues = new { Controller = MVC.CMS.Catalog.Name, Action = MVC.CMS.Catalog.ActionNames.SearchPropertyDeleteGridViewPartial, ciid = Model };
+
+
+    settings.SettingsPager.PageSize = 40;
+
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Hidden;
+
+    settings.Settings.ShowFooter = false;
+
+    settings.Settings.ShowFilterRow = false;
+    settings.SettingsBehavior.AllowFocusedRow = false;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowSelectSingleRowOnly = false;
+    settings.SettingsBehavior.AllowSort = false;
+    settings.SettingsBehavior.ConfirmDelete = true;
+    settings.SettingsContextMenu.Enabled = false;
+
+    settings.CommandColumn.Visible = false;
+
+
+    var i = "showPLSearchSelector(" + Model + ")";
+    settings.Columns.Add(column =>
+    {
+        column.Width = new Unit(0000.5, UnitType.Percentage);
+        column.SetDataItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+        column.SetHeaderCaptionTemplateContent(a => ViewContext.Writer.Write(EditButtonHelpers.CreateButton(i)));
+        column.SetEditItemTemplateContent(c =>
+        {
+            var index = c.Grid.FindVisibleIndexByKeyValue(DataBinder.Eval(c.DataItem, "ID"));
+
+            ViewContext.Writer.Write(Html.GridViewDeleteButton(name, index));
+        });
+
+    });
+
+}
+
+
+
+@Html.DevExpress().GridView(settings).BindToLINQ(string.Empty, string.Empty, (s, e) =>
+{
+    e.KeyExpression = "ID";
+
+    e.QueryableSource = ServiceLocator.Current.GetInstance<ICatalogItemSearchPropertyService>().RawDataQueryable.Include(x=>x.SearchProperty)
+        .Where(x=>x.CatalogItemID == Model);
+}).GetHtml()

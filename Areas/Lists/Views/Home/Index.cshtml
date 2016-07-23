@@ -1,0 +1,100 @@
+﻿@using livemenu.Helpers
+
+@{
+    ViewBag.Title = "Index";
+    Layout = Request.GetLayout(MVC.Shared.Views._NavigationLayout, "#main-region");
+}
+
+<style>
+    a, a:focus, a:hover, a:active {
+        color: initial;
+    }
+
+    @@media (max-width: 767px) {
+        .jumbotron, .container-fluid {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+    }
+</style>
+
+<div id="dash" class="panel-lists">
+
+    <div class="container-fluid ">
+        <div class="panel panel-transparent">
+            <div class="panel-body sortable">
+
+                <div class="row grid-stack">
+                    <div class="grid-stack-item "
+                         data-custom-id="grid-stack-item-catalog"
+                         data-gs-no-resize="true"
+                         data-gs-x="0" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="catalog" class="panel panel-default WebUni-panel grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Lists.Home.Catalog())">
+                                <img src="/Admin/Content/Images/Panels/lists/app-lists-grey.png">
+                                <div class="WebUni-panel-name">Списки</div>
+                                <div class="WebUni-panel-description">приложение</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-db"
+                         data-gs-no-resize="true"
+                         data-gs-x="4" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="db" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Lists.Home.DataBase())">
+                                <img src="/Admin/Content/Images/Panels/lists/database.png">
+                                <div class="WebUni-panel-name">Таблицы</div>
+                                <div class="WebUni-panel-description">база данных</div>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="grid-stack-item"
+                         data-custom-id="grid-stack-item-codes"
+                         data-gs-no-resize="true"
+                         data-gs-x="9" data-gs-y="0"
+                         data-gs-width="4" data-gs-height="4">
+                        <div id="codes" class="panel panel-default WebUni-panel  grid-stack-item-content">
+                            <a href="@Url.Action(MVC.Lists.Home.Codes())">
+                                <img src="/Admin/Content/Images/Panels/lists/codes.png">
+                                <div class="WebUni-panel-name">Коды</div>
+                                <div class="WebUni-panel-description">база данных</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var options = {
+        min_width: 0,
+        cell_height: 40,
+        vertical_margin: 20,
+
+    };
+    var name = "WebUni-lists-panel";
+    $('.grid-stack').gridstack(options);
+
+    $('.grid-stack').on('dragstop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    $('.grid-stack').on('resizestop', function (event, ui) {
+        panelSaveGridData(name);
+    });
+
+    var saved = $.cookie(name);
+    if (saved) {
+        panelLoadGridData(jQuery.parseJSON(saved));
+    }
+
+</script>

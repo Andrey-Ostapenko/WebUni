@@ -1,0 +1,30 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniLeftSideBar
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniLeftSideBarData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.LeftSideBarDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    initUniRowCard($('#WebUniLeftSideBarData-@Model.ID'), @Model.ID);
+
+    function initUniRowCard(element, id) {
+        $.Pages.initSelectFxPluginInElement(element);
+        $.Pages.initSwitcheryPluginInElement('switchery_internal', element);
+    }
+</script>

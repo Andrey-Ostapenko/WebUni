@@ -1,0 +1,165 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniAddresses
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div style='padding-left: 30px; padding-right:30px;' id='WebUniAddressesData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.AddressesDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+<script>
+    initUniAddressesCard($('#WebUniAddressesData-@Model.ID'));
+
+    function initUniAddressesCard(element) {
+        var h = element.find('#BackgroundHoverViewTypeID').val();
+        var b = element.find('#BackgroundViewTypeID').val();
+
+        $.Pages.initSwitcheryPluginInElement('switchery_internal',element);
+        var a = element.find('*[data-eid="' + b + '"]');
+		a.val(true);;
+		a.prop('checked', true);
+		
+		var b = element.find('*[data-heid="' + h + '"]');
+		b.val(true);;
+		b.prop('checked', true);
+      
+		element.find('.BackgroundViewTypeVariant').change(function () {
+		    console.log($(this));
+            var t = $(this).attr('id');
+			 if(!$(this).is(":checked"))
+			 {
+				 
+				  return;
+			 }
+				$(this).attr('disabled','disabled')
+				element.find('#BackgroundViewTypeID').val($(this).data('eid'));
+				$.each(element.find('.BackgroundViewTypeVariant'), function (key, value) {
+      
+                if (value.id !== t) {
+                    $(value).prop('checked', false);
+                    $(value).val(false);
+					$(this).removeAttr('disabled');
+					
+                }
+            });
+			
+        });
+		
+		
+		element.find('.BackgroundHoverViewTypeVariant').change(function () {
+            var t = $(this).attr('id');
+			 if(!$(this).is(":checked"))
+			 {
+				 
+				  return;
+			 }
+				$(this).attr('disabled','disabled')
+				element.find('#BackgroundHoverViewTypeID').val($(this).data('heid'));
+				$.each(element.find('.BackgroundHoverViewTypeVariant'), function (key, value) {
+               
+                if (value.id !== t) {
+                    $(value).prop('checked', false);
+                    $(value).val(false);
+					$(this).removeAttr('disabled');
+					
+                }
+            });
+			
+        });
+
+		element.find(".spin-fe_height").TouchSpin({
+            min: 0,
+            max: 1000000000,
+            step: 1,
+            decimals: 0,
+            boostat: 5,
+            maxboostedstep: 10
+            //postfix: '%'
+        });
+
+		element.find(".spin-fe_width").TouchSpin({
+            min: 0,
+            max: 1000000000,
+            step: 1,
+            decimals: 0,
+            boostat: 5,
+            maxboostedstep: 10
+          //  postfix: '%'
+        });
+
+		element.find(".spin-fe_padding").TouchSpin({
+            min: -1000000000,
+            max: 1000000000,
+            step: 1,
+            decimals: 0,
+            boostat: 5,
+            maxboostedstep: 10
+          //  postfix: 'px'
+        });
+		element.find(".color-picker-fe_internal").on('click', function (e) {
+            if ($(this).data('shown') == false || $(".color-picker-fe_internal").data('shown') == undefined) {
+                $(this).data('shown', true);
+                $(this).trigger("colorpickersliders.show");
+            }
+
+
+        });
+		element.find(".color-picker-fe_internal").ColorPickerSliders({
+            placement: 'auto',
+            trigger: 'manual',
+            hsvpanel: true,
+            order: {
+                rgb: 1,
+                hsl: 2,
+                cie: 3,
+                opacity: 4
+            },
+            titleswatchesadd: 'Добавить в образцы',
+            titleswatchesreset: 'Сбросить образцы',
+            labels: {
+                hslhue: 'HSL-тон',
+                hslsaturation: 'HSL-насыщенность',
+                hsllightness: 'HSL-светлота',
+                rgbred: 'RGP-красный',
+                rgbgreen: 'RGP-зеленый',
+                rgbblue: 'RGP-голубой',
+                ciehue: 'CIE-тон',
+
+                ciechroma: 'CIE-цветность',
+                cielightness: 'CIE-светлота',
+                opacity: 'Прозрачность',
+
+            }
+        });
+
+
+        $('body').on('click', function (e) {
+            if ($(e.target).attr('role') !== 'popover' && !$(e.target).hasClass('color-picker-fe_internal')
+            && $(e.target).parents('.cp-popover-container').length === 0) {
+
+                jQuery.each($('.color-picker-fe_internal'), function (i, val) {
+                    val = $(this);
+                    if ($(val).data('shown')) {
+                        $(val).trigger("colorpickersliders.hide");
+                        $(val).data('shown', false);
+                    }
+                });
+
+
+
+            }
+        });
+    }
+</script>

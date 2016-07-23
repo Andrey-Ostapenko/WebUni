@@ -1,0 +1,24 @@
+﻿@{
+    Layout = null;
+}
+
+@model livemenu.Common.Entities.Entities.UniStorage
+
+@using (Ajax.BeginForm(MVC.CMS.WebUni.StorageDataSave(), new AjaxOptions
+{
+    HttpMethod = "POST"
+},
+    new
+    {
+        @class = "form-horizontal "
+    }))
+
+{
+    <div class="" id="">
+        
+        @Html.HiddenFor(m => m.ID)
+
+        @Html.HiddenFor(m => m.CatalogItemID)
+
+    </div>
+}

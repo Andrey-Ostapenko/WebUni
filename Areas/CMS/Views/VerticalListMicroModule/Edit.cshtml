@@ -1,0 +1,72 @@
+﻿@{
+    Layout = null;
+}
+@using System.Web.UI.WebControls
+@using livemenu.Common.Entities
+@model livemenu.Areas.BWP.Models.VerticalListEditModel
+
+
+<div class="row">
+    <div class="col-md-12">
+
+
+        @using (Ajax.BeginForm(MVC.CMS.VerticalListMicroModule.Save(),
+            new AjaxOptions
+            {
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = @Model.UIID,
+           
+            },
+            new
+            {
+                @class = "form-horizontal ",
+                @style = "padding: 15px;"
+            }))
+        {
+
+             @Html.Partial(MVC.CMS.MicroModule.Views.ElementGroupEditView, Model)
+
+            
+
+            @Html.HiddenFor(m => m.MicroModuleID)
+            @Html.HiddenFor(m => m.ElementGroupID)
+
+            @Html.HiddenFor(m => m.Code)
+            @Html.HiddenFor(m => m.UIID)
+
+          
+
+        }
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+    
+
+        var mainIds = '#sc-' + '@Model.UIID';
+        $('.widget-back-btn').show();
+        $('.widget-save-btn').show();
+
+        $('.widget-back-btn').on("click", function (evt) {
+            var target = $(this);
+            var url = '@Url.Action(MVC.CMS.VerticalListMicroModule.Index(Model.Code, @Model.UIID))';
+
+            $.ajax({
+                type: '@WebRequestMethods.Http.Get',
+                url: url,
+               
+                success: function (data) {
+                    $(mainIds).html(data);
+                 //   ajaxComplete($(mainIds));
+                    $('.widget-back-btn').hide();
+                    $('.widget-save-btn').hide();
+                }
+            });
+
+
+        });
+    });
+</script>

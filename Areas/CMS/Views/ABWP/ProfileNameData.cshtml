@@ -1,0 +1,30 @@
+﻿@{
+    Layout = null;
+}
+@model livemenu.Common.Entities.Entities.UniProfileName
+
+
+<style>
+   
+     
+</style>
+
+<div class="row">
+    <div class="col-sm-12 col-md-12">
+
+        <div id='WebUniProfileNameData-@Model.ID'>
+            @{ Html.RenderPartial(MVC.CMS.WebUni.Views.ProfileNameDataInternal, Model); }
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+
+    initUniTextCard($('#WebUniProfileNameData-@Model.ID'), '@Model.ID');
+
+
+
+
+</script>
